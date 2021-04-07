@@ -1,6 +1,9 @@
 # Licensed under the MIT License
 # https://github.com/craigahobbs/schema-markdown/blob/master/LICENSE
 
+# gh-pages paths
+GHPAGES_SRC := build/doc/ src
+
 # Download JavaScript Build
 define WGET
 ifeq '$$(wildcard $(notdir $(1)))' ''
@@ -20,3 +23,6 @@ JSDOC_ARGS := $(JSDOC_ARGS) README.md src/schema-markdown
 
 clean:
 	rm -rf Makefile.base package.json .eslintrc.js
+
+gh-pages:
+	mv ../$(notdir $(CURDIR)).gh-pages/src ../$(notdir $(CURDIR)).gh-pages/doc
