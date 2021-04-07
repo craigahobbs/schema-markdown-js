@@ -12,9 +12,6 @@ $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-bui
 $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/package.json))
 $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/.eslintrc.js))
 
-# Disable gh-pages
-GHPAGES_SRC :=
-
 # Include JavaScript Build
 include Makefile.base
 
