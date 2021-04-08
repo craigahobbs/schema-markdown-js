@@ -26,5 +26,5 @@ clean:
 	rm -rf Makefile.base jsdoc.json package.json .eslintrc.js
 
 doc:
-	cp -R src build/doc/doc
+	rsync -arv --delete src/ build/doc/doc/
 	mv build/doc/doc/doc.html build/doc/doc/index.html
