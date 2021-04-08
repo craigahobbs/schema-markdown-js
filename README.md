@@ -24,9 +24,9 @@ To schema-validate an object, first parse its *Schema Markdown* using the
 class:
 
 ``` javascript
-import {SchemaMarkdownParser} from './schema_markdown/parser.js';
+import * as smd from './schema_markdown/exports.js';
 
-const parser = new SchemaMarkdownParser(`\
+const parser = new smd.SchemaMarkdownParser(`\
 # An aggregation function
 enum Aggregation
     Average
@@ -47,9 +47,7 @@ Then, validate an object using the
 function:
 
 ``` javascript
-import {validateType} from './schema_markdown/schema.js';
-
-const obj = validateType(parser.types, 'Operation', {
+const obj = smd.validateType(parser.types, 'Operation', {
     'numbers': [1, 2, '3', 4]
 });
 console.assert(obj.numbers[2] === 3);
@@ -60,7 +58,7 @@ Validation fails if the object does not match the schema:
 
 ``` javascript
 try {
-    schema_markdown.validate_type(parser.types, 'Operation', {
+    smd.validateType(parser.types, 'Operation', {
         'numbers': [1, 2, 'asdf', 4]
     });
 } catch ({message}) {
@@ -72,7 +70,7 @@ Validation also fails if a member contraint is violated:
 
 ``` javascript
 try {
-    validateType(parser.types, 'Operation', {
+    smd.validateType(parser.types, 'Operation', {
         'numbers': []
     });
 } catch ({message}) {

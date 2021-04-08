@@ -3,7 +3,7 @@
 
 /* eslint-disable id-length */
 
-import {decodeQueryString, encodeHref, encodeQueryString} from '../../src/schema-markdown/encode.js';
+import {decodeQueryString, encodeHref, encodeQueryString} from '../../src/schema-markdown/export.js';
 import browserEnv from 'browser-env';
 import test from 'ava';
 

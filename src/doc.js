@@ -1,17 +1,14 @@
 // Licensed under the MIT License
 // https://github.com/craigahobbs/schema-markdown/blob/master/LICENSE
 
-import {decodeQueryString, encodeHref} from './schema-markdown/encode.js';
-import {elementModel, renderElements} from './schema-markdown/elements.js';
-import {validateType, validateTypeModel} from './schema-markdown/schema.js';
-import {SchemaMarkdownParser} from './schema-markdown/parser.js';
-import {UserTypeElements} from './schema-markdown/doc.js';
+import * as smd from './schema-markdown/export.js';
+import {elementModel} from './schema-markdown/element.js';
 import {markdownModel} from './schema-markdown/markdown.js';
 import {typeModel as smdTypeModel} from './schema-markdown/typeModel.js';
 
 
 // The application's hash parameter type model
-const docPageTypes = (new SchemaMarkdownParser(`\
+const docPageTypes = (new smd.SchemaMarkdownParser(`\
 # The Schema Markdown documentation application hash parameters struct
 struct Documentation
 
@@ -96,7 +93,7 @@ export class DocPage {
     updateParams(params = null) {
         // Clear, then validate the hash parameters (may throw)
         this.params = null;
-        this.params = validateType(docPageTypes, 'Documentation', decodeQueryString(params));
+        this.params = smd.validateType(docPageTypes, 'Documentation', smd.decodeQueryString(params));
     }
 
     /**
@@ -118,21 +115,21 @@ export class DocPage {
         }
 
         // Clear the page
-        renderElements(document.body);
+        smd.renderElements(document.body);
 
         // Type model URL provided?
         const typeModelURL = 'url' in this.params ? this.params.url : this.defaultTypeModelURL;
         if ('cmd' in this.params) {
             if ('element' in this.params.cmd) {
                 document.title = 'Element';
-                renderElements(document.body, (new UserTypeElements(this.params)).getElements(elementModel.types, 'Element'));
+                smd.renderElements(document.body, (new smd.UserTypeElements(this.params)).getElements(elementModel.types, 'Element'));
             } else if ('markdown' in this.params.cmd) {
                 document.title = 'Markdown';
-                renderElements(document.body, (new UserTypeElements(this.params)).getElements(markdownModel.types, 'Markdown'));
+                smd.renderElements(document.body, (new smd.UserTypeElements(this.params)).getElements(markdownModel.types, 'Markdown'));
             } else {
                 // 'help' in this.params.cmd
                 document.title = 'Documentation';
-                renderElements(document.body, (new UserTypeElements(this.params)).getElements(docPageTypes, 'Documentation'));
+                smd.renderElements(document.body, (new smd.UserTypeElements(this.params)).getElements(docPageTypes, 'Documentation'));
             }
         } else if (typeModelURL !== null) {
             // Load the type model URL
@@ -144,7 +141,7 @@ export class DocPage {
                     return response.json();
                 }).
                 then((typeModel) => {
-                    this.renderTypeModelPage(validateTypeModel(typeModel));
+                    this.renderTypeModelPage(smd.validateTypeModel(typeModel));
                 }).catch(({message}) => {
                     DocPage.renderErrorPage(message);
                 });
@@ -173,19 +170,19 @@ export class DocPage {
     // Helper function to render an index page
     renderIndexPage(typeModel) {
         document.title = typeModel.title;
-        renderElements(document.body, this.indexPage(typeModel));
+        smd.renderElements(document.body, this.indexPage(typeModel));
     }
 
     // Helper function to render a type page
     renderTypePage(typeModel, typeName) {
         document.title = typeName;
-        renderElements(document.body, this.typePage(typeModel, typeName));
+        smd.renderElements(document.body, this.typePage(typeModel, typeName));
     }
 
     // Helper function to render an error page
     static renderErrorPage(message) {
         document.title = 'Error';
-        renderElements(document.body, DocPage.errorPage(message));
+        smd.renderElements(document.body, DocPage.errorPage(message));
     }
 
     // Helper function to generate the error page's element hierarchy model
@@ -236,7 +233,7 @@ export class DocPage {
                     'elem': {'html': 'li', 'elem': {'html': 'ul', 'elem': groups[group].sort().map(
                         (name) => ({
                             'html': 'li',
-                            'elem': {'html': 'a', 'attr': {'href': encodeHref({...this.params, 'name': name})}, 'elem': {'text': name}}
+                            'elem': {'html': 'a', 'attr': {'href': smd.encodeHref({...this.params, 'name': name})}, 'elem': {'text': name}}
                         })
                     )}}
                 }
@@ -260,13 +257,13 @@ export class DocPage {
                 'html': 'p',
                 'elem': {
                     'html': 'a',
-                    'attr': {'href': encodeHref(indexParams)},
+                    'attr': {'href': smd.encodeHref(indexParams)},
                     'elem': {'text': 'Back to documentation index'}
                 }
             },
 
             // The user type elements
-            (new UserTypeElements(this.params)).getElements(typeModel.types, typeName)
+            (new smd.UserTypeElements(this.params)).getElements(typeModel.types, typeName)
         ];
     }
 }

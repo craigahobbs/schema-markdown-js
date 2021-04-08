@@ -3,7 +3,7 @@
 
 /** @module markdown */
 
-import {getBaseURL, isAbsoluteURL} from './elements.js';
+import {getBaseURL, isAbsoluteURL} from './element.js';
 import {SchemaMarkdownParser} from './parser.js';
 import {validateType} from './schema.js';
 
