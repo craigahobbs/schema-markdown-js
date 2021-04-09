@@ -62,7 +62,7 @@ try {
         'numbers': [1, 2, 'asdf', 4]
     });
 } catch ({message}) {
-    console.assert(message === "Invalid value 'asdf' (type 'str') for member 'numbers.2', expected type 'int'");
+    console.assert(message === "Invalid value \"asdf\" (type 'string') for member 'numbers.2', expected type 'int'", message);
 }
 ```
 
@@ -74,7 +74,7 @@ try {
         'numbers': []
     });
 } catch ({message}) {
-    console.assert(message === "Invalid value [] (type 'list') for member 'numbers', expected type 'array' [len > 0]");
+    console.assert(message === "Invalid value [] (type 'object') for member 'numbers', expected type 'array' [len > 0]", message);
 }
 ```
 
