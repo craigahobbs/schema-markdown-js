@@ -6,7 +6,7 @@
 import {getEnumValues, getReferencedTypes, getStructMembers} from './schema.js';
 import {markdownElements, markdownParse} from './markdown.js';
 import {encodeQueryString} from './encode.js';
-import {nbsp} from './elements.js';
+import {nbsp} from './element.js';
 
 
 /**

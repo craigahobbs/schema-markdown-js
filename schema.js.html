@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: schema-markdown/schema.js</title>
+    <title>JSDoc: Source: schema.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: schema-markdown/schema.js</h1>
+    <h1 class="page-title">Source: schema.js</h1>
 
     
 
@@ -73,7 +73,6 @@ function getReferencedTypesHelper(types, type, referencedTypes) {
             referencedTypes[typeName] = userType;
 
             // Struct?
-            /* istanbul ignore else */
             if ('struct' in userType) {
                 const {struct} = userType;
                 if ('bases' in struct) {
