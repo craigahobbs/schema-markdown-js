@@ -17,7 +17,7 @@
         "src/schema-markdown/**/*"
     ],
     "scripts": {
-        "test": "ava 'src/tests/**/*.js'"
+        "test": "ava -v 'src/tests/**/*.js'"
     },
     "devDependencies": {
         "ava": "^4.0.0-alpha.2",

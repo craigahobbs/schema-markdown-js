@@ -43,7 +43,7 @@ struct Operation
 ```
 
 Then, validate an object using the
-[validate_type](https://craigahobbs.github.io/schema-markdown-js/module-schema.html)
+[validate_type](https://craigahobbs.github.io/schema-markdown-js/module-schema.html#.validateType)
 function:
 
 ``` javascript
