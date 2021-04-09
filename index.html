@@ -95,7 +95,7 @@ Validation fails if the object does not match the schema:</p>
         'numbers': [1, 2, 'asdf', 4]
     });
 } catch ({message}) {
-    console.assert(message === &quot;Invalid value 'asdf' (type 'str') for member 'numbers.2', expected type 'int'&quot;);
+    console.assert(message === &quot;Invalid value \&quot;asdf\&quot; (type 'string') for member 'numbers.2', expected type 'int'&quot;, message);
 }
 </code></pre>
 <p>Validation also fails if a member contraint is violated:</p>
@@ -104,7 +104,7 @@ Validation fails if the object does not match the schema:</p>
         'numbers': []
     });
 } catch ({message}) {
-    console.assert(message === &quot;Invalid value [] (type 'list') for member 'numbers', expected type 'array' [len > 0]&quot;);
+    console.assert(message === &quot;Invalid value [] (type 'object') for member 'numbers', expected type 'array' [len > 0]&quot;, message);
 }
 </code></pre>
 <h2>Development</h2>
