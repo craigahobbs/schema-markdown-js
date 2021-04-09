@@ -28,4 +28,5 @@ doc:
 	mkdir -p build/doc/doc/schema-markdown
 	cp src/schema-markdown/doc/* build/doc/doc/
 	cp src/schema-markdown/*.js build/doc/doc/schema-markdown
-	sed -i "s/'..\//'.\/schema-markdown\//g" build/doc/doc/doc.js
+	sed -i.bak "s/'..\//'.\/schema-markdown\//g" build/doc/doc/doc.js
+	rm build/doc/doc/doc.js.bak
