@@ -1,10 +1,10 @@
 // Licensed under the MIT License
 // https://github.com/craigahobbs/schema-markdown/blob/master/LICENSE
 
-import * as smd from './schema-markdown/export.js';
-import {elementModel} from './schema-markdown/element.js';
-import {markdownModel} from './schema-markdown/markdown.js';
-import {typeModel as smdTypeModel} from './schema-markdown/typeModel.js';
+import * as smd from '../index.js';
+import {elementModel} from '../element.js';
+import {markdownModel} from '../markdown.js';
+import {typeModel as smdTypeModel} from '../typeModel.js';
 
 
 // The application's hash parameter type model

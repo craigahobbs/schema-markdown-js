@@ -171,7 +171,6 @@ function markdownPartElements(parts, url, codeBlockLanguages) {
     const partElements = [];
     for (const markdownPart of parts) {
         // Paragraph?
-        /* istanbul ignore else */
         if ('paragraph' in markdownPart) {
             const {paragraph} = markdownPart;
             partElements.push({
@@ -219,7 +218,6 @@ function paragraphSpanElements(spans, url) {
     const spanElements = [];
     for (const span of spans) {
         // Text span?
-        /* istanbul ignore else */
         if ('text' in span) {
             spanElements.push({'text': span.text});
 
@@ -506,7 +504,6 @@ function paragraphSpans(text) {
 
 
         // Line break?
-        /* istanbul ignore else */
         if (typeof match.groups.br !== 'undefined') {
             spans.push({'br': null});
 

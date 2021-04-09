@@ -45,7 +45,6 @@ function getReferencedTypesHelper(types, type, referencedTypes) {
             referencedTypes[typeName] = userType;
 
             // Struct?
-            /* istanbul ignore else */
             if ('struct' in userType) {
                 const {struct} = userType;
                 if ('bases' in struct) {

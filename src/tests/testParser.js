@@ -3,7 +3,7 @@
 
 /* eslint-disable id-length */
 
-import {SchemaMarkdownParser, validateTypeModelTypes} from '../../src/schema-markdown/export.js';
+import {SchemaMarkdownParser, validateTypeModelTypes} from '../schema-markdown/index.js';
 import test from 'ava';
 
 

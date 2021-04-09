@@ -1,9 +1,6 @@
 # Licensed under the MIT License
 # https://github.com/craigahobbs/schema-markdown/blob/master/LICENSE
 
-# gh-pages paths
-GHPAGES_SRC := build/doc/
-
 # Download JavaScript Build
 define WGET
 ifeq '$$(wildcard $(notdir $(1)))' ''
@@ -13,8 +10,10 @@ endif
 endef
 $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/Makefile.base))
 $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/jsdoc.json))
-$(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/package.json))
-$(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/.eslintrc.js))
+$(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/.eslintrc.cjs))
+
+# gh-pages paths
+GHPAGES_SRC := build/doc/
 
 # Include JavaScript Build
 include Makefile.base
@@ -23,8 +22,10 @@ include Makefile.base
 JSDOC_ARGS := $(JSDOC_ARGS) README.md src/schema-markdown
 
 clean:
-	rm -rf Makefile.base jsdoc.json package.json .eslintrc.js
+	rm -rf Makefile.base jsdoc.json .eslintrc.cjs
 
 doc:
-	rsync -arv --delete src/ build/doc/doc/
-	mv build/doc/doc/doc.html build/doc/doc/index.html
+	mkdir -p build/doc/doc/schema-markdown
+	cp src/schema-markdown/doc/* build/doc/doc/
+	cp src/schema-markdown/*.js build/doc/doc/schema-markdown
+	sed -i "s/'..\//'.\/schema-markdown\//g" build/doc/doc/doc.js

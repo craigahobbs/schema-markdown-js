@@ -3,7 +3,7 @@
 
 /* eslint-disable id-length */
 
-import {markdownElements, markdownParse, validateElements, validateType} from '../../src/schema-markdown/export.js';
+import {markdownElements, markdownParse, validateElements, validateType} from '../schema-markdown/index.js';
 import {markdownModel} from '../../src/schema-markdown/markdown.js';
 import test from 'ava';
 
@@ -371,11 +371,19 @@ test('markdownElements, relative and absolute URLs', (t) => {
                     'spans': [
                         {'link': {
                             'href': 'https://craigahobbs.github.io/schema-markdown/doc/',
-                            'spans': [{'text': 'Absolute Link'}]
+                            'spans': [{'text': 'Absolute link URL'}]
                         }},
                         {'link': {
                             'href': 'doc/',
-                            'spans': [{'text': 'Relative Link'}]
+                            'spans': [{'text': 'Relative link URL'}]
+                        }},
+                        {'image': {
+                            'src': 'https://craigahobbs.github.io/schema-markdown/doc/doc.svg',
+                            'alt': 'Absolute image URL'
+                        }},
+                        {'image': {
+                            'src': 'doc.svg',
+                            'alt': 'Relative image URL'
                         }}
                     ]
                 }
@@ -393,13 +401,27 @@ test('markdownElements, relative and absolute URLs', (t) => {
                 'elem': [
                     {
                         'attr': {'href': 'https://craigahobbs.github.io/schema-markdown/doc/'},
-                        'elem': [{'text': 'Absolute Link'}],
+                        'elem': [{'text': 'Absolute link URL'}],
                         'html': 'a'
                     },
                     {
                         'attr': {'href': 'doc/'},
-                        'elem': [{'text': 'Relative Link'}],
+                        'elem': [{'text': 'Relative link URL'}],
                         'html': 'a'
+                    },
+                    {
+                        'attr': {
+                            'src': 'https://craigahobbs.github.io/schema-markdown/doc/doc.svg',
+                            'alt': 'Absolute image URL'
+                        },
+                        'html': 'img'
+                    },
+                    {
+                        'attr': {
+                            'src': 'doc.svg',
+                            'alt': 'Relative image URL'
+                        },
+                        'html': 'img'
                     }
                 ],
                 'html': 'p'
@@ -417,13 +439,27 @@ test('markdownElements, relative and absolute URLs', (t) => {
                 'elem': [
                     {
                         'attr': {'href': 'https://craigahobbs.github.io/schema-markdown/doc/'},
-                        'elem': [{'text': 'Absolute Link'}],
+                        'elem': [{'text': 'Absolute link URL'}],
                         'html': 'a'
                     },
                     {
                         'attr': {'href': 'https://foo.com/doc/'},
-                        'elem': [{'text': 'Relative Link'}],
+                        'elem': [{'text': 'Relative link URL'}],
                         'html': 'a'
+                    },
+                    {
+                        'attr': {
+                            'src': 'https://craigahobbs.github.io/schema-markdown/doc/doc.svg',
+                            'alt': 'Absolute image URL'
+                        },
+                        'html': 'img'
+                    },
+                    {
+                        'attr': {
+                            'src': 'https://foo.com/doc.svg',
+                            'alt': 'Relative image URL'
+                        },
+                        'html': 'img'
                     }
                 ],
                 'html': 'p'
