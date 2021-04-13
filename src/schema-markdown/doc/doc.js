@@ -1,5 +1,5 @@
 // Licensed under the MIT License
-// https://github.com/craigahobbs/schema-markdown/blob/master/LICENSE
+// https://github.com/craigahobbs/schema-markdown/blob/main/LICENSE
 
 import * as smd from '../index.js';
 import {elementModel} from '../element.js';
