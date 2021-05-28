@@ -12,14 +12,8 @@ $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-bui
 $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/jsdoc.json))
 $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/.eslintrc.cjs))
 
-# gh-pages paths
-GHPAGES_SRC := build/doc/
-
 # Include JavaScript Build
 include Makefile.base
-
-# Add additional jsdoc paths
-JSDOC_ARGS := $(JSDOC_ARGS) README.md src/schema-markdown
 
 clean:
 	rm -rf Makefile.base jsdoc.json .eslintrc.cjs
