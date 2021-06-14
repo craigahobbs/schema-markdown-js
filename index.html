@@ -43,7 +43,7 @@
 
 
     <section>
-        <article><h1>schema-markdown.js</h1>
+        <article><h1>schema-markdown</h1>
 <p><strong>Schema Markdown</strong> is a human-friendly schema definition language and schema validator. Here are
 its features at a glance:</p>
 <ul>
@@ -63,7 +63,7 @@ its features at a glance:</p>
 <p>To schema-validate an object, first parse its <em>Schema Markdown</em> using the
 <a href="https://craigahobbs.github.io/schema-markdown-js/module-parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a>
 class:</p>
-<pre class="prettyprint source lang-javascript"><code>import * as smd from './schema_markdown/exports.js';
+<pre class="prettyprint source lang-javascript"><code>import * as smd from 'schema_markdown/index.js';
 
 const parser = new smd.SchemaMarkdownParser(`\
 # An aggregation function
@@ -119,7 +119,7 @@ Validation fails if the object does not match the schema:</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-doc.html">doc</a></li><li><a href="module-elements.html">elements</a></li><li><a href="module-encode.html">encode</a></li><li><a href="module-markdown.html">markdown</a></li><li><a href="module-parser.html">parser</a></li><li><a href="module-schema.html">schema</a></li></ul><h3>Classes</h3><ul><li><a href="module-doc.UserTypeElements.html">UserTypeElements</a></li><li><a href="module-parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="module-parser-SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#decodeQueryString">decodeQueryString</a></li><li><a href="global.html#encodeQueryString">encodeQueryString</a></li><li><a href="global.html#getEnumValues">getEnumValues</a></li><li><a href="global.html#getReferencedTypes">getReferencedTypes</a></li><li><a href="global.html#getStructMembers">getStructMembers</a></li><li><a href="global.html#validateType">validateType</a></li><li><a href="global.html#validateTypeModel">validateTypeModel</a></li><li><a href="global.html#validateTypeModelTypes">validateTypeModelTypes</a></li></ul>
 </nav>
 
 <br class="clear">

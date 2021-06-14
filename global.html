@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: schema</title>
+    <title>JSDoc: Global</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: schema</h1>
+    <h1 class="page-title">Global</h1>
 
     
 
@@ -28,6 +28,7 @@
 
 <header>
     
+        <h2></h2>
         
     
 </header>
@@ -36,6 +37,45 @@
     <div class="container-overview">
     
         
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
 
         
     
@@ -64,7 +104,319 @@
     
 
     
-    <h4 class="name" id=".getEnumValues"><span class="type-signature">(static) </span>getEnumValues<span class="signature">(types, enum_)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
+    <h4 class="name" id="decodeQueryString"><span class="type-signature"></span>decodeQueryString<span class="signature">(paramStr)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Decode an object from a query/hash string. Each member key of the query string is expressed in fully-qualified
+form. List keys are the index into the list, must be in order.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>paramStr</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The parameters string</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="encode.js.html">encode.js</a>, <a href="encode.js.html#line58">line 58</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="encodeQueryString"><span class="type-signature"></span>encodeQueryString<span class="signature">(obj)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Encode an object as a query/hash string. Dictionaries, lists, and tuples are recursed. Each member key is expressed
+in fully-qualified form. List keys are the index into the list, and are in order.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The parameters object</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="encode.js.html">encode.js</a>, <a href="encode.js.html#line12">line 12</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getEnumValues"><span class="type-signature"></span>getEnumValues<span class="signature">(types, enum_)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
     
 
     
@@ -188,7 +540,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line472">line 472</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line470">line 470</a>
     </li></ul></dd>
     
 
@@ -246,7 +598,7 @@
     
 
     
-    <h4 class="name" id=".getReferencedTypes"><span class="type-signature">(static) </span>getReferencedTypes<span class="signature">(types, typeName, referencedTypes<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="getReferencedTypes"><span class="type-signature"></span>getReferencedTypes<span class="signature">(types, typeName, referencedTypes<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -437,7 +789,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line18">line 18</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -491,7 +843,7 @@
     
 
     
-    <h4 class="name" id=".getStructMembers"><span class="type-signature">(static) </span>getStructMembers<span class="signature">(types, struct)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
+    <h4 class="name" id="getStructMembers"><span class="type-signature"></span>getStructMembers<span class="signature">(types, struct)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
     
 
     
@@ -615,7 +967,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line440">line 440</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line438">line 438</a>
     </li></ul></dd>
     
 
@@ -673,7 +1025,7 @@
     
 
     
-    <h4 class="name" id=".validateType"><span class="type-signature">(static) </span>validateType<span class="signature">(types, typeName, value, memberFqn<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="validateType"><span class="type-signature"></span>validateType<span class="signature">(types, typeName, value, memberFqn<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -900,7 +1252,7 @@ transformed during validation.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line110">line 110</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -987,7 +1339,7 @@ transformed during validation.
     
 
     
-    <h4 class="name" id=".validateTypeModel"><span class="type-signature">(static) </span>validateTypeModel<span class="signature">(userTypeModel)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="validateTypeModel"><span class="type-signature"></span>validateTypeModel<span class="signature">(userTypeModel)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -1088,7 +1440,7 @@ transformed during validation.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line523">line 523</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line521">line 521</a>
     </li></ul></dd>
     
 
@@ -1146,7 +1498,7 @@ transformed during validation.
     
 
     
-    <h4 class="name" id=".validateTypeModelTypes"><span class="type-signature">(static) </span>validateTypeModelTypes<span class="signature">(types)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="validateTypeModelTypes"><span class="type-signature"></span>validateTypeModelTypes<span class="signature">(types)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -1247,7 +1599,7 @@ transformed during validation.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line503">line 503</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line501">line 501</a>
     </li></ul></dd>
     
 
@@ -1315,7 +1667,7 @@ transformed during validation.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-doc.html">doc</a></li><li><a href="module-elements.html">elements</a></li><li><a href="module-encode.html">encode</a></li><li><a href="module-markdown.html">markdown</a></li><li><a href="module-parser.html">parser</a></li><li><a href="module-schema.html">schema</a></li></ul><h3>Classes</h3><ul><li><a href="module-doc.UserTypeElements.html">UserTypeElements</a></li><li><a href="module-parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="module-parser-SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#decodeQueryString">decodeQueryString</a></li><li><a href="global.html#encodeQueryString">encodeQueryString</a></li><li><a href="global.html#getEnumValues">getEnumValues</a></li><li><a href="global.html#getReferencedTypes">getReferencedTypes</a></li><li><a href="global.html#getStructMembers">getStructMembers</a></li><li><a href="global.html#validateType">validateType</a></li><li><a href="global.html#validateTypeModel">validateTypeModel</a></li><li><a href="global.html#validateTypeModelTypes">validateTypeModelTypes</a></li></ul>
 </nav>
 
 <br class="clear">
