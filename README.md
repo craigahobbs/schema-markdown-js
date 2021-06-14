@@ -1,4 +1,4 @@
-# schema-markdown.js
+# schema-markdown
 
 **Schema Markdown** is a human-friendly schema definition language and schema validator. Here are
 its features at a glance:
