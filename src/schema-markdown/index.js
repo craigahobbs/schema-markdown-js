@@ -36,3 +36,7 @@ export {
     validateTypeModel,
     validateTypeModelTypes
 } from './schema.js';
+
+export {
+    typeModel
+} from './typeModel.js';
