@@ -1,5 +1,8 @@
 # schema-markdown
 
+[![npm](https://img.shields.io/npm/v/schema-markdown)](https://www.npmjs.com/package/schema-markdown)
+[![GitHub](https://img.shields.io/github/license/craigahobbs/schema-markdown)](https://github.com/craigahobbs/schema-markdown/blob/main/LICENSE)
+
 **Schema Markdown** is a human-friendly schema definition language and schema validator. Here are
 its features at a glance:
 
