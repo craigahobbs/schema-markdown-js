@@ -1,44 +1,6 @@
 // Licensed under the MIT License
 // https://github.com/craigahobbs/schema-markdown/blob/main/LICENSE
 
-/** @module encode */
-
-
-/**
- * Create a resource location string for the local server.
- *
- * @param {Object} [hash=null] - The hash parameters
- * @param {Object} [query=null] - The query string parameters
- * @param {string} [pathname=null] - The location's path. If null, use "window.location.pathname".
- * @returns {string}
- */
-export function encodeHref(hash = null, query = null, pathname = null) {
-    // Encode the hash parameters, if any
-    let hashStr = '';
-    if (hash !== null) {
-        hashStr = `#${encodeQueryString(hash)}`;
-    } else if (query === null) {
-        hashStr = '#';
-    }
-
-    // Encode the query parameters, if any
-    let queryStr = '';
-    if (query !== null) {
-        queryStr = `?${encodeQueryString(query)}`;
-        if (queryStr === '?') {
-            queryStr = '';
-        }
-    }
-
-    // No pathname provided? If so, provide a default.
-    let pathname_ = pathname;
-    if (pathname_ === null) {
-        pathname_ = window.location.pathname;
-    }
-
-    return `${pathname_}${queryStr}${hashStr}`;
-}
-
 
 /**
  * Encode an object as a query/hash string. Dictionaries, lists, and tuples are recursed. Each member key is expressed
@@ -90,20 +52,13 @@ function encodeQueryStringHelper(obj, memberFqn = null, keyValues = []) {
  * Decode an object from a query/hash string. Each member key of the query string is expressed in fully-qualified
  * form. List keys are the index into the list, must be in order.
  *
- * @param {string} [paramStr=null] - The parameters string.
- *     If null, "window.location.hash.substring(1)" is used.
+ * @param {string} paramStr - The parameters string
  * @returns {Object}
  */
-export function decodeQueryString(paramStr = null) {
-    // No parameters string provided? If so, provide a default
-    let paramStr_ = paramStr;
-    if (paramStr_ === null) {
-        paramStr_ = window.location.hash.substring(1);
-    }
-
+export function decodeQueryString(paramStr) {
     // Decode the parameter string key/values
     const result = [null];
-    paramStr_.split('&').filter((keyValue) => keyValue.length).forEach(
+    paramStr.split('&').filter((keyValue) => keyValue.length).forEach(
         (keyValue, ixKeyValue, keyValuesFiltered) => {
             const [keyFqn, valueEncoded = null] = keyValue.split('=');
             if (valueEncoded === null) {

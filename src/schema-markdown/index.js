@@ -2,27 +2,9 @@
 // https://github.com/craigahobbs/schema-markdown/blob/main/LICENSE
 
 export {
-    UserTypeElements
-} from './doc.js';
-
-export {
-    getBaseURL,
-    isAbsoluteURL,
-    nbsp,
-    renderElements,
-    validateElements
-} from './element.js';
-
-export {
     decodeQueryString,
-    encodeHref,
     encodeQueryString
 } from './encode.js';
-
-export {
-    markdownElements,
-    markdownParse
-} from './markdown.js';
 
 export {
     SchemaMarkdownParser

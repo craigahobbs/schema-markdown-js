@@ -3,91 +3,13 @@
 
 /* eslint-disable id-length */
 
-import {decodeQueryString, encodeHref, encodeQueryString} from '../schema-markdown/index.js';
-import browserEnv from 'browser-env';
+import {decodeQueryString, encodeQueryString} from '../schema-markdown/index.js';
 import test from 'ava';
-
-
-// Add browser globals
-browserEnv(['window']);
-
-
-//
-// href tests
-//
-
-test('href', (t) => {
-    t.is(
-        encodeHref(),
-        'blank#'
-    );
-});
-
-
-test('href, hash', (t) => {
-    t.is(
-        encodeHref({'width': 600, 'height': 400, 'id': null, 'alpha': 'abc'}),
-        'blank#alpha=abc&height=400&id=null&width=600'
-    );
-});
-
-
-test('href, empty hash', (t) => {
-    t.is(
-        encodeHref({}),
-        'blank#'
-    );
-});
-
-
-test('href, query', (t) => {
-    t.is(
-        encodeHref(null, {'width': 600, 'height': 400, 'id': null, 'alpha': 'abc'}),
-        'blank?alpha=abc&height=400&id=null&width=600'
-    );
-});
-
-
-test('href, empty query', (t) => {
-    t.is(
-        encodeHref(null, {}),
-        'blank'
-    );
-});
-
-
-test('href, pathname', (t) => {
-    t.is(
-        encodeHref(null, null, 'static'),
-        'static#'
-    );
-});
-
-
-test('href, all', (t) => {
-    t.is(
-        encodeHref(
-            {'width': 600, 'height': 400, 'id': null, 'alpha': 'abc'},
-            {'width': 600, 'height': 400, 'id': null, 'alpha': 'abc'},
-            'static'
-        ),
-        'static?alpha=abc&height=400&id=null&width=600#alpha=abc&height=400&id=null&width=600'
-    );
-});
 
 
 //
 // decodeQueryString tests
 //
-
-test('decodeQueryString, default', (t) => {
-    window.location.hash = '_a=7&a=7&b.c=%2Bx%20y%20%2B%20z&b.d.0=2&b.d.1=-4&b.d.2=6';
-    t.deepEqual(
-        decodeQueryString(),
-        {'a': '7', '_a': '7', 'b': {'c': '+x y + z', 'd': ['2', '-4', '6']}}
-    );
-});
-
 
 test('decodeQueryString, complex dict', (t) => {
     t.deepEqual(

@@ -24,7 +24,7 @@ To schema-validate an object, first parse its *Schema Markdown* using the
 class:
 
 ``` javascript
-import * as smd from './schema_markdown/exports.js';
+import * as smd from 'schema_markdown/index.js';
 
 const parser = new smd.SchemaMarkdownParser(`\
 # An aggregation function
