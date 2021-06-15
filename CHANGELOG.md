@@ -1,3 +1,7 @@
+## 1.0.1 (2021-06-15)
+
+- [ed56a41](https://github.com/craigahobbs/schema-markdown-js/commit/ed56a41) - update links
+
 ## 1.0.0 (2021-06-15)
 
 - [2088297](https://github.com/craigahobbs/schema-markdown-js/commit/2088297) - add ValidationError
