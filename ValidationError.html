@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: SchemaMarkdownParserError</title>
+    <title>JSDoc: Class: ValidationError</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: SchemaMarkdownParserError</h1>
+    <h1 class="page-title">Class: ValidationError</h1>
 
     
 
@@ -28,9 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>SchemaMarkdownParserError<span class="signature">(errors)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>ValidationError<span class="signature">(memberFqn<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Schema Markdown parser error</div>
+            <div class="class-description">Schema Markdown type model validation error</div>
         
     
 </header>
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="SchemaMarkdownParserError"><span class="type-signature"></span>new SchemaMarkdownParserError<span class="signature">(errors)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ValidationError"><span class="type-signature"></span>new ValidationError<span class="signature">(memberFqn<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -53,7 +53,7 @@
 
 
 <div class="description">
-    Create a Schema Markdown parser error instance
+    Schema Markdown type model validation error constructor
 </div>
 
 
@@ -77,7 +77,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -89,23 +93,39 @@
 
         <tr>
             
-                <td class="name"><code>errors</code></td>
+                <td class="name"><code>memberFqn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;string></span>
+<span class="param-type">string</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last">The list of error strings</td>
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
+
+            <td class="description last">Optional fully-qualified member name</td>
         </tr>
 
     
@@ -131,6 +151,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -143,18 +165,26 @@
 
         <tr>
             
-                <td class="name"><code>errors</code></td>
+                <td class="name"><code>memberFqn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;string></span>
+<span class="param-type">string</span>
 
 
             
             </td>
 
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+                </td>
             
 
             
@@ -198,7 +228,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line170">line 170</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -239,7 +269,7 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></dt>
+            <dt><a href="ValidationError.html">ValidationError</a></dt>
             <dd></dd>
         </dl>
     
