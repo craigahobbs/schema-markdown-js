@@ -1,3 +1,9 @@
+## 1.0.0 (2021-06-15)
+
+- [2088297](https://github.com/craigahobbs/schema-markdown-js/commit/2088297) - add ValidationError
+
+- [f162797](https://github.com/craigahobbs/schema-markdown-js/commit/f162797) - export SchemaMarkdownParserError
+
 ## 0.9.17 (2021-06-14)
 
 - [f4875f8](https://github.com/craigahobbs/schema-markdown-js/commit/f4875f8) - re-factor element-model, markdown-model, and schema-markdown-doc
