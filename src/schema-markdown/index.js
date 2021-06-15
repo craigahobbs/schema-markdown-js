@@ -12,6 +12,7 @@ export {
 } from './parser.js';
 
 export {
+    ValidationError,
     getEnumValues,
     getReferencedTypes,
     getStructMembers,

@@ -95,6 +95,24 @@ function getReferencedTypesHelper(types, type, referencedTypes) {
 
 
 /**
+ * Schema Markdown type model validation error
+ *
+ * @property {?string} memberFqn - The list of error strings
+ */
+export class ValidationError extends Error {
+    /**
+     * Schema Markdown type model validation error constructor
+     *
+     * @param {string} [memberFqn=null] - Optional fully-qualified member name
+     */
+    constructor(message, memberFqn = null) {
+        super(message);
+        this.memberFqn = memberFqn;
+    }
+}
+
+
+/**
  * Type-validate a value using a user type model. Container values are duplicated since some member types are
  * transformed during validation.
  *
@@ -103,11 +121,11 @@ function getReferencedTypesHelper(types, type, referencedTypes) {
  * @param {Object} value - The value object to validate
  * @param {string} [memberFqn=null] - Optional fully-qualified member name
  * @returns {Object} The validated, transformed value object
- * @throws {Error} Validation error string
+ * @throws {ValidationError} A validation error occurred
  */
 export function validateType(types, typeName, value, memberFqn = null) {
     if (!(typeName in types)) {
-        throw new Error(`Unknown type '${typeName}'`);
+        throw new ValidationError(`Unknown type '${typeName}'`);
     }
     return validateTypeHelper(types, {'user': typeName}, value, memberFqn);
 }
@@ -336,7 +354,7 @@ function validateTypeHelper(types, type, value, memberFqn) {
                 // Missing non-optional member?
                 if (!(valueNew instanceof Map ? valueNew.has(memberName) : memberName in valueNew)) {
                     if (!memberOptional && !isUnion) {
-                        throw new Error(`Required member '${memberFqnMember}' missing`);
+                        throw new ValidationError(`Required member '${memberFqnMember}' missing`);
                     }
                 } else {
                     // Validate the member value
@@ -362,7 +380,7 @@ function validateTypeHelper(types, type, value, memberFqn) {
                 const memberSet = new Set(getStructMembers(types, struct).map((member) => member.name));
                 const [unknownKey] = valueNewKeys.filter((key) => !memberSet.has(key));
                 const unknownFqn = memberFqn !== null ? `${memberFqn}.${unknownKey}` : `${unknownKey}`;
-                throw new Error(`Unknown member '${unknownFqn.slice(0, 100)}'`);
+                throw new ValidationError(`Unknown member '${unknownFqn.slice(0, 100)}'`);
             }
 
             // Return the validated, transformed copy
@@ -380,7 +398,7 @@ function throwMemberError(type, value, memberFqn, attr = null) {
     const attrPart = attr !== null ? ` [${attr}]` : '';
     const valueStr = `${JSON.stringify(value)}`;
     const msg = `Invalid value ${valueStr.slice(0, 100)} (type '${typeof value}')${memberPart}, expected type '${typeName}'${attrPart}`;
-    throw new Error(msg);
+    throw new ValidationError(msg, memberFqn);
 }
 
 
@@ -497,6 +515,7 @@ export function getEnumValues(types, enum_) {
  *
  * @param {Object} types - The map of user type name to user type model
  * @returns {Object} The validated, transformed types object
+ * @throws {ValidationError} A validation error occurred
  */
 export function validateTypeModelTypes(types) {
     // Validate with the type model
@@ -505,7 +524,7 @@ export function validateTypeModelTypes(types) {
     // Do additional type model validation
     const errors = validateTypeModelTypesErrors(validatedTypes);
     if (errors.length) {
-        throw new Error(errors.map(([,, message]) => message).join('\n'));
+        throw new ValidationError(errors.map(([,, message]) => message).join('\n'));
     }
 
     return validatedTypes;
@@ -517,6 +536,7 @@ export function validateTypeModelTypes(types) {
  *
  * @param {Object} userTypeModel - The user type model
  * @returns {Object} The validated, transformed type model
+ * @throws {ValidationError} A validation error occurred
  */
 export function validateTypeModel(userTypeModel) {
     // Validate with the type model
@@ -525,7 +545,7 @@ export function validateTypeModel(userTypeModel) {
     // Do additional type model validation
     const errors = validateTypeModelTypesErrors(validatedUserTypeModel.types);
     if (errors.length) {
-        throw new Error(errors.map(([,, message]) => message).join('\n'));
+        throw new ValidationError(errors.map(([,, message]) => message).join('\n'));
     }
 
     return validatedUserTypeModel;

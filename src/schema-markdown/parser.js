@@ -163,7 +163,7 @@ const compareTuple =
 
 
 /**
- * Schema Markdown parser exception
+ * Schema Markdown parser error
  *
  * @property {string[]} errors - The list of error strings
  */
