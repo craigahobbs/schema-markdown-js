@@ -57,13 +57,14 @@ its features at a glance:</p>
 </ul>
 <h2>Links</h2>
 <ul>
+<li><a href="https://craigahobbs.github.io/schema-markdown/schema-markdown.html">Schema Markdown Language Reference</a></li>
 <li><a href="https://craigahobbs.github.io/schema-markdown-js/">Documentation on GitHub Pages</a></li>
 <li><a href="https://www.npmjs.com/package/schema-markdown">Package on npm</a></li>
 <li><a href="https://github.com/craigahobbs/schema-markdown-js">Source code on GitHub</a></li>
 </ul>
 <h2>Usage</h2>
 <p>To schema-validate an object, first parse its <em>Schema Markdown</em> using the
-<a href="https://craigahobbs.github.io/schema-markdown-js/module-parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a>
+<a href="https://craigahobbs.github.io/schema-markdown-js/SchemaMarkdownParser.html">SchemaMarkdownParser</a>
 class:</p>
 <pre class="prettyprint source lang-javascript"><code>import * as smd from 'schema_markdown/index.js';
 
@@ -83,7 +84,7 @@ struct Operation
 `);
 </code></pre>
 <p>Then, validate an object using the
-<a href="https://craigahobbs.github.io/schema-markdown-js/module-schema.html#.validateType">validate_type</a>
+<a href="https://craigahobbs.github.io/schema-markdown-js/global.html#validateType">validateType</a>
 function:</p>
 <pre class="prettyprint source lang-javascript"><code>const obj = smd.validateType(parser.types, 'Operation', {
     'numbers': [1, 2, '3', 4]
