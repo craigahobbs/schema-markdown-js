@@ -7,7 +7,8 @@ export {
 } from './encode.js';
 
 export {
-    SchemaMarkdownParser
+    SchemaMarkdownParser,
+    SchemaMarkdownParserError
 } from './parser.js';
 
 export {

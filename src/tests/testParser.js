@@ -3,7 +3,7 @@
 
 /* eslint-disable id-length */
 
-import {SchemaMarkdownParser, validateTypeModelTypes} from '../schema-markdown/index.js';
+import {SchemaMarkdownParser, SchemaMarkdownParserError, validateTypeModelTypes} from '../schema-markdown/index.js';
 import test from 'ava';
 
 
@@ -308,6 +308,7 @@ action MyAction
         GET
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -330,6 +331,7 @@ action MyAction
         GET /
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -483,6 +485,7 @@ struct MyStruct5 (MyStruct4, MyDict)
     int b
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -511,6 +514,7 @@ struct MyStruct3 (MyStruct)
     int c
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -577,6 +581,7 @@ enum MyEnum5 (MyEnum4, MyDict)
     B
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -605,6 +610,7 @@ enum MyEnum3 (MyEnum)
     c
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -939,6 +945,7 @@ struct MyStruct
 struct MyStruct2
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -964,6 +971,7 @@ action MyAction
         MyBadType b
 `, 'foo');
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -988,6 +996,7 @@ struct MyStruct
 typedef MyBadType MyTypedef
 `, 'foo');
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1012,6 +1021,7 @@ struct MyStruct
 typedef MyBadType MyTypedef
 `, 'foo');
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1036,6 +1046,7 @@ struct MyStruct
 typedef MyBadType MyTypedef
 `, 'foo');
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1061,6 +1072,7 @@ struct Foo
 action MyAction
 `, 'foo');
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1084,6 +1096,7 @@ enum Foo
     B
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1109,6 +1122,7 @@ struct Foo
     int a
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1138,6 +1152,7 @@ struct Foo
 typedef int(> 5) Foo
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1165,6 +1180,7 @@ action MyAction
         string b
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1209,8 +1225,9 @@ input
 output
 errors
 `);
-    } catch ({message}) {
-        errorMessage = message;
+    } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
+        errorMessage = error.message;
     }
     t.is(errorMessage, `\
 :6: error: Syntax error
@@ -1258,6 +1275,7 @@ enum MyEnum
 int cde
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1294,6 +1312,7 @@ action MyAction
         MyError
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1462,6 +1481,7 @@ function testParserError(t, expectedErrors, text) {
     try {
         parser.parseString(text);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     t.deepEqual(errors, expectedErrors);
@@ -1810,6 +1830,7 @@ struct Foo
     int : int {} a
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1849,6 +1870,7 @@ action Foo
         int e2
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -1889,6 +1911,7 @@ struct Base
     int b
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -2018,6 +2041,7 @@ action MyDictAction
         int a
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -2144,6 +2168,7 @@ action MyDictAction
         int a
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -2270,6 +2295,7 @@ action MyDictAction
         int a
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -2317,6 +2343,7 @@ action MyDictAction
         int a
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -2444,6 +2471,7 @@ action MyDictAction
         int a
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -2563,6 +2591,7 @@ action BonkAction
         A
 `);
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
@@ -2632,6 +2661,7 @@ test('SchemaMarkdownParser, finalize no parse error', (t) => {
     try {
         parser.finalize();
     } catch (error) {
+        t.true(error instanceof SchemaMarkdownParserError);
         ({errors} = error);
     }
     const expectedErrors = [
