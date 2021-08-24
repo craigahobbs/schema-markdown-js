@@ -1,7 +1,7 @@
 # schema-markdown
 
 [![npm](https://img.shields.io/npm/v/schema-markdown)](https://www.npmjs.com/package/schema-markdown)
-[![GitHub](https://img.shields.io/github/license/craigahobbs/schema-markdown)](https://github.com/craigahobbs/schema-markdown/blob/main/LICENSE)
+[![GitHub](https://img.shields.io/github/license/craigahobbs/schema-markdown-js)](https://github.com/craigahobbs/schema-markdown-js/blob/main/LICENSE)
 
 **Schema Markdown** is a human-friendly schema definition language and schema validator. Here are
 its features at a glance:
@@ -85,4 +85,9 @@ try {
 
 ## Development
 
-This project is developed using [JavaScript Build](https://github.com/craigahobbs/javascript-build#readme).
+This project is developed using [JavaScript Build](https://github.com/craigahobbs/javascript-build#readme). It was started
+using [javascript-template](https://github.com/craigahobbs/javascript-template#readme) as follows:
+
+```
+template-specialize javascript-template/template/ schema-markdown-js/ -k package schema-markdown -k name 'Craig A. Hobbs' -k email 'craigahobbs@gmail.com' -k github 'craigahobbs' -k noapp 1
+```
