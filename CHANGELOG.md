@@ -1,3 +1,7 @@
+## 1.0.2 (2021-08-24)
+
+- [bc5b932](https://github.com/craigahobbs/schema-markdown-js/commit/bc5b932) - updates from javascript-template
+
 ## 1.0.1 (2021-06-15)
 
 - [ed56a41](https://github.com/craigahobbs/schema-markdown-js/commit/ed56a41) - update links
