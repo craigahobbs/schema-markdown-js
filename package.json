@@ -3,7 +3,12 @@
     "name": "schema-markdown",
     "version": "1.0.2",
     "description": "Human-friendly schema definition language and schema validator",
-    "keywords": "schema validation json",
+    "keywords": [
+        "schema",
+        "definition",
+        "validation",
+        "json"
+    ],
     "homepage": "https://github.com/craigahobbs/schema-markdown-js#readme",
     "bugs": "https://github.com/craigahobbs/schema-markdown-js/issues",
     "license": "MIT",
