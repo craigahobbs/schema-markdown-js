@@ -1,3 +1,7 @@
+## 1.0.3 (2021-09-09)
+
+- [8d1e867](https://github.com/craigahobbs/schema-markdown-js/commit/8d1e867) - fix package keywords
+
 ## 1.0.2 (2021-08-24)
 
 - [bc5b932](https://github.com/craigahobbs/schema-markdown-js/commit/bc5b932) - updates from javascript-template
