@@ -1,3 +1,7 @@
+## 1.0.4 (2021-10-05)
+
+- [53a722e](https://github.com/craigahobbs/schema-markdown-js/commit/53a722e) - fix doc comment
+
 ## 1.0.3 (2021-09-09)
 
 - [8d1e867](https://github.com/craigahobbs/schema-markdown-js/commit/8d1e867) - fix package keywords
