@@ -97,7 +97,7 @@ function getReferencedTypesHelper(types, type, referencedTypes) {
 /**
  * Schema Markdown type model validation error
  *
- * @property {?string} memberFqn - The list of error strings
+ * @property {?string} memberFqn - The fully qualified member name
  */
 export class ValidationError extends Error {
     /**
