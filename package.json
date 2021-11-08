@@ -25,9 +25,9 @@
         "test": "ava -v 'src/tests/**/*.js'"
     },
     "devDependencies": {
-        "ava": "^4.0.0-alpha.2",
+        "ava": "^4.0.0-rc.1",
         "c8": "~7.10",
-        "eslint": "~8.0",
+        "eslint": "~8.2",
         "jsdoc": "~3.6",
         "jsdom": "~18.0"
     }
