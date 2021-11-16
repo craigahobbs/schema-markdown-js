@@ -1,3 +1,7 @@
+## 1.0.5 (2021-11-16)
+
+- [e3e18cc](https://github.com/craigahobbs/schema-markdown-js/commit/e3e18cc) - fix date parsing
+
 ## 1.0.4 (2021-10-05)
 
 - [53a722e](https://github.com/craigahobbs/schema-markdown-js/commit/53a722e) - fix doc comment
