@@ -584,7 +584,7 @@ test('validateType, datetime string', (t) => {
 
 test('validateType, datetime string date', (t) => {
     const obj = '2020-06-26';
-    t.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(Date.UTC(2020, 5, 26)));
+    t.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(2020, 5, 26));
 });
 
 

@@ -194,13 +194,13 @@ function validateTypeHelper(types, type, value, memberFqn) {
         } else if (builtin === 'date' || builtin === 'datetime') {
             // Convert string?
             if (typeof value === 'string') {
-                valueNew = new Date(value);
-                if (isNaN(valueNew)) {
-                    throwMemberError(type, value, memberFqn);
-                }
-
-                // Invalid date format?
-                if (!(rDate.test(value) || rDatetime.test(value))) {
+                // Valid date format?
+                if (rDate.test(value)) {
+                    const localDate = new Date(value);
+                    valueNew = new Date(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate());
+                } else if (rDatetime.test(value)) {
+                    valueNew = new Date(value);
+                } else {
                     throwMemberError(type, value, memberFqn);
                 }
 
