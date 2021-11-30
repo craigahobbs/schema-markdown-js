@@ -35,7 +35,7 @@ test('decodeQueryString, top-level array', (t) => {
 });
 
 
-test('decodeQueryString, empty query string', (t) => {
+test('decodeQueryString, empty string', (t) => {
     t.deepEqual(
         decodeQueryString(''),
         {}
