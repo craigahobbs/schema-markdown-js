@@ -58,11 +58,11 @@ function encodeQueryStringHelper(obj, memberFqn = null, keyValues = []) {
 export function decodeQueryString(paramStr) {
     // Decode the parameter string key/values
     const result = [null];
-    paramStr.split('&').filter((keyValue) => keyValue.length).forEach(
+    paramStr.split('&').forEach(
         (keyValue, ixKeyValue, keyValuesFiltered) => {
-            const [keyFqn, valueEncoded = null] = keyValue.split('=');
+            const [keyFqn, valueEncoded = null] = keyValue.split('=', 2);
             if (valueEncoded === null) {
-                // Ignore anchor tags
+                // Ignore hash IDs
                 if (ixKeyValue === keyValuesFiltered.length - 1) {
                     return;
                 }

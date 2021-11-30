@@ -148,18 +148,24 @@ test('decodeQueryString, empty string key with no equal', (t) => {
 
 
 test('decodeQueryString, two empty string key/values', (t) => {
-    t.deepEqual(
-        decodeQueryString('&'),
-        {}
-    );
+    let errorMessage = null;
+    try {
+        decodeQueryString('&');
+    } catch ({message}) {
+        errorMessage = message;
+    }
+    t.is(errorMessage, "Invalid key/value pair ''");
 });
 
 
 test('decodeQueryString, multiple empty string key/values', (t) => {
-    t.deepEqual(
-        decodeQueryString('&&'),
-        {}
-    );
+    let errorMessage = null;
+    try {
+        decodeQueryString('&&');
+    } catch ({message}) {
+        errorMessage = message;
+    }
+    t.is(errorMessage, "Invalid key/value pair ''");
 });
 
 
