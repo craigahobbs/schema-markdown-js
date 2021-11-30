@@ -1,3 +1,7 @@
+## 1.0.6 (2021-11-30)
+
+- [dbeea7b](https://github.com/craigahobbs/schema-markdown-js/commit/dbeea7b) - decodeQueryString improvements
+
 ## 1.0.5 (2021-11-16)
 
 - [e3e18cc](https://github.com/craigahobbs/schema-markdown-js/commit/e3e18cc) - fix date parsing
