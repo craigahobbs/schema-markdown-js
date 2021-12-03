@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Global</title>
+    <title>JSDoc: Module: lib/schema</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Global</h1>
+    <h1 class="page-title">Module: lib/schema</h1>
 
     
 
@@ -28,7 +28,6 @@
 
 <header>
     
-        <h2></h2>
         
     
 </header>
@@ -39,45 +38,6 @@
         
 
         
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
     
     </div>
 
@@ -85,6 +45,13 @@
 
     
 
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-lib_schema.ValidationError.html">ValidationError</a></dt>
+            <dd></dd>
+        </dl>
     
 
     
@@ -104,319 +71,7 @@
     
 
     
-    <h4 class="name" id="decodeQueryString"><span class="type-signature"></span>decodeQueryString<span class="signature">(paramStr)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Decode an object from a query/hash string. Each member key of the query string is expressed in fully-qualified
-form. List keys are the index into the list, must be in order.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>paramStr</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The parameters string</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="encode.js.html">encode.js</a>, <a href="encode.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="encodeQueryString"><span class="type-signature"></span>encodeQueryString<span class="signature">(obj)</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Encode an object as a query/hash string. Dictionaries, lists, and tuples are recursed. Each member key is expressed
-in fully-qualified form. List keys are the index into the list, and are in order.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>obj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The parameters object</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="encode.js.html">encode.js</a>, <a href="encode.js.html#line12">line 12</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="getEnumValues"><span class="type-signature"></span>getEnumValues<span class="signature">(types, enum_)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
+    <h4 class="name" id=".getEnumValues"><span class="type-signature">(static) </span>getEnumValues<span class="signature">(types, enum_)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
     
 
     
@@ -540,7 +195,7 @@ in fully-qualified form. List keys are the index into the list, and are in order
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line488">line 488</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line490">line 490</a>
     </li></ul></dd>
     
 
@@ -598,7 +253,7 @@ in fully-qualified form. List keys are the index into the list, and are in order
     
 
     
-    <h4 class="name" id="getReferencedTypes"><span class="type-signature"></span>getReferencedTypes<span class="signature">(types, typeName, referencedTypes<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".getReferencedTypes"><span class="type-signature">(static) </span>getReferencedTypes<span class="signature">(types, typeName, referencedTypes<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -789,7 +444,7 @@ in fully-qualified form. List keys are the index into the list, and are in order
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line16">line 16</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line18">line 18</a>
     </li></ul></dd>
     
 
@@ -843,7 +498,7 @@ in fully-qualified form. List keys are the index into the list, and are in order
     
 
     
-    <h4 class="name" id="getStructMembers"><span class="type-signature"></span>getStructMembers<span class="signature">(types, struct)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
+    <h4 class="name" id=".getStructMembers"><span class="type-signature">(static) </span>getStructMembers<span class="signature">(types, struct)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
     
 
     
@@ -967,7 +622,7 @@ in fully-qualified form. List keys are the index into the list, and are in order
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line456">line 456</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line458">line 458</a>
     </li></ul></dd>
     
 
@@ -1025,7 +680,7 @@ in fully-qualified form. List keys are the index into the list, and are in order
     
 
     
-    <h4 class="name" id="validateType"><span class="type-signature"></span>validateType<span class="signature">(types, typeName, value, memberFqn<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".validateType"><span class="type-signature">(static) </span>validateType<span class="signature">(types, typeName, value, memberFqn<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -1252,7 +907,7 @@ transformed during validation.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line126">line 126</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line128">line 128</a>
     </li></ul></dd>
     
 
@@ -1293,7 +948,7 @@ transformed during validation.
             </dt>
             <dd>
                 
-<span class="param-type"><a href="ValidationError.html">ValidationError</a></span>
+<span class="param-type">ValidationError</span>
 
 
             </dd>
@@ -1339,7 +994,7 @@ transformed during validation.
     
 
     
-    <h4 class="name" id="validateTypeModel"><span class="type-signature"></span>validateTypeModel<span class="signature">(userTypeModel)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".validateTypeModel"><span class="type-signature">(static) </span>validateTypeModel<span class="signature">(userTypeModel)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -1440,7 +1095,7 @@ transformed during validation.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line541">line 541</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line543">line 543</a>
     </li></ul></dd>
     
 
@@ -1481,7 +1136,7 @@ transformed during validation.
             </dt>
             <dd>
                 
-<span class="param-type"><a href="ValidationError.html">ValidationError</a></span>
+<span class="param-type">ValidationError</span>
 
 
             </dd>
@@ -1527,7 +1182,7 @@ transformed during validation.
     
 
     
-    <h4 class="name" id="validateTypeModelTypes"><span class="type-signature"></span>validateTypeModelTypes<span class="signature">(types)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".validateTypeModelTypes"><span class="type-signature">(static) </span>validateTypeModelTypes<span class="signature">(types)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -1628,7 +1283,7 @@ transformed during validation.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line520">line 520</a>
+        <a href="schema.js.html">schema.js</a>, <a href="schema.js.html#line522">line 522</a>
     </li></ul></dd>
     
 
@@ -1669,7 +1324,7 @@ transformed during validation.
             </dt>
             <dd>
                 
-<span class="param-type"><a href="ValidationError.html">ValidationError</a></span>
+<span class="param-type">ValidationError</span>
 
 
             </dd>
@@ -1725,7 +1380,7 @@ transformed during validation.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="ValidationError.html">ValidationError</a></li></ul><h3>Global</h3><ul><li><a href="global.html#decodeQueryString">decodeQueryString</a></li><li><a href="global.html#encodeQueryString">encodeQueryString</a></li><li><a href="global.html#getEnumValues">getEnumValues</a></li><li><a href="global.html#getReferencedTypes">getReferencedTypes</a></li><li><a href="global.html#getStructMembers">getStructMembers</a></li><li><a href="global.html#validateType">validateType</a></li><li><a href="global.html#validateTypeModel">validateTypeModel</a></li><li><a href="global.html#validateTypeModelTypes">validateTypeModelTypes</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
 </nav>
 
 <br class="clear">
