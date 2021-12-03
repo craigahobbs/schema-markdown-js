@@ -1,3 +1,7 @@
+## 1.1.0 (2021-12-02)
+
+- [3735ba2](https://github.com/craigahobbs/schema-markdown-js/commit/3735ba2) - updates from javascript-template
+
 ## 1.0.6 (2021-11-30)
 
 - [dbeea7b](https://github.com/craigahobbs/schema-markdown-js/commit/dbeea7b) - decodeQueryString improvements
