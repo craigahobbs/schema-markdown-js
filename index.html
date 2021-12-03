@@ -64,7 +64,7 @@ its features at a glance:</p>
 </ul>
 <h2>Usage</h2>
 <p>To schema-validate an object, first parse its <em>Schema Markdown</em> using the
-<a href="https://craigahobbs.github.io/schema-markdown-js/SchemaMarkdownParser.html">SchemaMarkdownParser</a>
+<a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a>
 class:</p>
 <pre class="prettyprint source lang-javascript"><code>import * as smd from 'schema_markdown/index.js';
 
@@ -84,7 +84,7 @@ struct Operation
 `);
 </code></pre>
 <p>Then, validate an object using the
-<a href="https://craigahobbs.github.io/schema-markdown-js/global.html#validateType">validateType</a>
+<a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_schema.html#.validateType">validateType</a>
 function:</p>
 <pre class="prettyprint source lang-javascript"><code>const obj = smd.validateType(parser.types, 'Operation', {
     'numbers': [1, 2, '3', 4]
