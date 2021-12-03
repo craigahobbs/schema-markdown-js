@@ -1,3 +1,7 @@
+## 1.1.1 (2021-12-03)
+
+- [c600f76](https://github.com/craigahobbs/schema-markdown-js/commit/c600f76) - fix readme links
+
 ## 1.1.0 (2021-12-02)
 
 - [3735ba2](https://github.com/craigahobbs/schema-markdown-js/commit/3735ba2) - updates from javascript-template
