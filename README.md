@@ -24,7 +24,7 @@ its features at a glance:
 ## Usage
 
 To schema-validate an object, first parse its *Schema Markdown* using the
-[SchemaMarkdownParser](https://craigahobbs.github.io/schema-markdown-js/SchemaMarkdownParser.html)
+[SchemaMarkdownParser](https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.SchemaMarkdownParser.html)
 class:
 
 ``` javascript
@@ -47,7 +47,7 @@ struct Operation
 ```
 
 Then, validate an object using the
-[validateType](https://craigahobbs.github.io/schema-markdown-js/global.html#validateType)
+[validateType](https://craigahobbs.github.io/schema-markdown-js/module-lib_schema.html#.validateType)
 function:
 
 ``` javascript
