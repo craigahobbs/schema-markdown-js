@@ -15,13 +15,6 @@ $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-bui
 $(eval $(call WGET, https://raw.githubusercontent.com/craigahobbs/javascript-build/main/.eslintrc.cjs))
 
 
-# Override defaults
-AVA_ARGS ?= test/
-C8_ARGS ?= --100 --allowExternal
-ESLINT_ARGS ?= lib/ test/
-JSDOC_ARGS ?= -c jsdoc.json -r README.md lib/
-
-
 # Include javascript-build
 include Makefile.base
 
