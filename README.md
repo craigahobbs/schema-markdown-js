@@ -85,8 +85,8 @@ try {
 
 ## Development
 
-This project is developed using [javascript-build](https://github.com/craigahobbs/javascript-build#readme). It was started
-using [javascript-template](https://github.com/craigahobbs/javascript-template#readme) as follows:
+schema-markdown is developed using [javascript-build](https://github.com/craigahobbs/javascript-build#readme)
+and it was started using [javascript-template](https://github.com/craigahobbs/javascript-template#readme):
 
 ```
 template-specialize javascript-template/template/ schema-markdown-js/ -k package schema-markdown -k name 'Craig A. Hobbs' -k email 'craigahobbs@gmail.com' -k github 'craigahobbs' -k noapp 1

@@ -18,11 +18,10 @@
         "url": "https://github.com/craigahobbs"
     },
     "files": [
-        "index.js",
-        "src/schema-markdown/**/*"
+        "lib/**/*"
     ],
     "scripts": {
-        "test": "ava -v 'src/tests/**/*.js'"
+        "test": "ava -v test/"
     },
     "devDependencies": {
         "ava": "^4.0.0-rc.1",

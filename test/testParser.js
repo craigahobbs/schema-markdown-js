@@ -3,8 +3,9 @@
 
 /* eslint-disable id-length */
 
-import {SchemaMarkdownParser, SchemaMarkdownParserError, validateTypeModelTypes} from '../schema-markdown/index.js';
+import {SchemaMarkdownParser, SchemaMarkdownParserError} from '../lib/parser.js';
 import test from 'ava';
+import {validateTypeModelTypes} from '../lib/schema.js';
 
 
 test('SchemaMarkdownParser', (t) => {

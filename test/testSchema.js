@@ -3,10 +3,9 @@
 
 /* eslint-disable id-length */
 
-import {
-    ValidationError, getReferencedTypes, typeModel, validateType, validateTypeModel, validateTypeModelTypes
-} from '../schema-markdown/index.js';
+import {ValidationError, getReferencedTypes, validateType, validateTypeModel, validateTypeModelTypes} from '../lib/schema.js';
 import test from 'ava';
+import {typeModel} from '../lib/typeModel.js';
 
 
 //
