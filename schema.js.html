@@ -263,12 +263,12 @@ function validateTypeHelper(types, type, value, memberFqn) {
         for (let ixArrayValue = 0; ixArrayValue &lt; valueNew.length; ixArrayValue++) {
             const memberFqnValue = memberFqn !== null ? `${memberFqn}.${ixArrayValue}` : `${ixArrayValue}`;
             let arrayValue = valueNew[ixArrayValue];
-            if (arrayValue === null || (arrayValueNullable &amp;&amp; arrayValue === 'null')) {
+            if (arrayValueNullable &amp;&amp; (arrayValue === null || arrayValue === 'null')) {
                 arrayValue = null;
             } else {
                 arrayValue = validateTypeHelper(types, arrayType, arrayValue, memberFqnValue);
+                validateAttr(arrayType, arrayAttr, arrayValue, memberFqnValue);
             }
-            validateAttr(arrayType, arrayAttr, arrayValue, memberFqnValue);
             valueCopy.push(arrayValue);
         }
 
@@ -297,20 +297,20 @@ function validateTypeHelper(types, type, value, memberFqn) {
             const memberFqnKey = memberFqn !== null ? `${memberFqn}.${dictKey}` : `${dictKey}`;
 
             // Validate the key
-            if (dictKey === null || (dictKeyNullable &amp;&amp; dictKey === 'null')) {
+            if (dictKeyNullable &amp;&amp; (dictKey === null || dictKey === 'null')) {
                 dictKey = null;
             } else {
                 dictKey = validateTypeHelper(types, dictKeyType, dictKey, memberFqn);
+                validateAttr(dictKeyType, dictKeyAttr, dictKey, memberFqn);
             }
-            validateAttr(dictKeyType, dictKeyAttr, dictKey, memberFqn);
 
             // Validate the value
-            if (dictValue === null || (dictValueNullable &amp;&amp; dictValue === 'null')) {
+            if (dictValueNullable &amp;&amp; (dictValue === null || dictValue === 'null')) {
                 dictValue = null;
             } else {
                 dictValue = validateTypeHelper(types, dictType, dictValue, memberFqnKey);
+                validateAttr(dictType, dictAttr, dictValue, memberFqnKey);
             }
-            validateAttr(dictType, dictAttr, dictValue, memberFqnKey);
 
             // Copy the key/value
             if (valueCopy instanceof Map) {
@@ -339,12 +339,12 @@ function validateTypeHelper(types, type, value, memberFqn) {
 
             // Validate the value
             const valueNullable = typedefAttr !== null &amp;&amp; 'nullable' in typedefAttr &amp;&amp; typedefAttr.nullable;
-            if (value === null || (valueNullable &amp;&amp; value === 'null')) {
+            if (valueNullable &amp;&amp; (value === null || value === 'null')) {
                 valueNew = null;
             } else {
                 valueNew = validateTypeHelper(types, typedef.type, value, memberFqn);
+                validateAttr(type, typedefAttr, valueNew, memberFqn);
             }
-            validateAttr(type, typedefAttr, valueNew, memberFqn);
 
         // enum?
         } else if ('enum' in userType) {
@@ -379,7 +379,8 @@ function validateTypeHelper(types, type, value, memberFqn) {
             for (const member of getStructMembers(types, struct)) {
                 const memberName = member.name;
                 const memberFqnMember = memberFqn !== null ? `${memberFqn}.${memberName}` : `${memberName}`;
-                const memberOptional = 'optional' in member ? member.optional : false;
+                const memberOptional = 'optional' in member &amp;&amp; member.optional;
+                const memberNullable = 'attr' in member &amp;&amp; 'nullable' in member.attr &amp;&amp; member.attr.nullable;
 
                 // Missing non-optional member?
                 if (!(valueNew instanceof Map ? valueNew.has(memberName) : memberName in valueNew)) {
@@ -389,10 +390,12 @@ function validateTypeHelper(types, type, value, memberFqn) {
                 } else {
                     // Validate the member value
                     let memberValue = valueNew instanceof Map ? valueNew.get(memberName) : valueNew[memberName];
-                    if (memberValue !== null) {
+                    if (memberNullable &amp;&amp; (memberValue === null || memberValue === 'null')) {
+                        memberValue = null;
+                    } else {
                         memberValue = validateTypeHelper(types, member.type, memberValue, memberFqnMember);
+                        validateAttr(member.type, 'attr' in member ? member.attr : null, memberValue, memberFqnMember);
                     }
-                    validateAttr(member.type, 'attr' in member ? member.attr : null, memberValue, memberFqnMember);
 
                     // Copy the validated member
                     if (valueCopy instanceof Map) {
@@ -433,12 +436,7 @@ function throwMemberError(type, value, memberFqn, attr = null) {
 
 
 function validateAttr(type, attr, value, memberFqn) {
-    if (value === null) {
-        const valueNullable = attr !== null &amp;&amp; 'nullable' in attr &amp;&amp; attr.nullable;
-        if (!valueNullable) {
-            throwMemberError(type, value, memberFqn);
-        }
-    } else if (attr !== null) {
+    if (attr !== null) {
         const length = Array.isArray(value) || typeof value === 'string' ? value.length
             : (typeof value === 'object' ? Object.keys(value).length : null);
 
