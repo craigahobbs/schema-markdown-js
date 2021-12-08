@@ -1154,7 +1154,7 @@ test('validateType, typedef', (t) => {
         t.is(error.memberFqn, null);
         errorMessage = error.message;
     }
-    t.is(errorMessage, "Invalid value null (type 'object'), expected type 'MyTypedef'");
+    t.is(errorMessage, "Invalid value null (type 'object'), expected type 'int'");
 
     obj = 'null';
     try {
@@ -1805,17 +1805,10 @@ test('validateType, struct nullable', (t) => {
     t.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7, 'b': null, 'c': 'null', 'd': 7.1};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    t.deepEqual(validateType(types, 'MyStruct', obj), {'a': 7, 'b': null, 'c': null, 'd': 7.1});
 
     obj = {'a': 7, 'b': 'null', 'c': null, 'd': 7.1};
-    try {
-        validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'b');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"null\" (type 'string') for member 'b', expected type 'int'");
+    t.deepEqual(validateType(types, 'MyStruct', obj), {'a': 7, 'b': null, 'c': null, 'd': 7.1});
 
     obj = {'a': null, 'b': null, 'c': null, 'd': 7.1};
     try {
