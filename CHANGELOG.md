@@ -1,3 +1,7 @@
+## 1.1.3 (2021-12-09)
+
+- [8274847](https://github.com/craigahobbs/schema-markdown-js/commit/8274847) - update readme
+
 ## 1.1.2 (2021-12-08)
 
 - [7951437](https://github.com/craigahobbs/schema-markdown-js/commit/7951437) - fix nullable member issue
