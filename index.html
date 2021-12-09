@@ -66,9 +66,10 @@ its features at a glance:</p>
 <p>To schema-validate an object, first parse its <em>Schema Markdown</em> using the
 <a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a>
 class:</p>
-<pre class="prettyprint source lang-javascript"><code>import * as smd from 'schema_markdown/index.js';
+<pre class="prettyprint source lang-javascript"><code>import {SchemaMarkdownParser} from 'schema-markdown/parser.js';
+import {validateType} from 'schema-markdown/schema.js';
 
-const parser = new smd.SchemaMarkdownParser(`\
+const parser = new SchemaMarkdownParser(`\
 # An aggregation function
 enum Aggregation
     Average
@@ -86,7 +87,7 @@ struct Operation
 <p>Then, validate an object using the
 <a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_schema.html#.validateType">validateType</a>
 function:</p>
-<pre class="prettyprint source lang-javascript"><code>const obj = smd.validateType(parser.types, 'Operation', {
+<pre class="prettyprint source lang-javascript"><code>const obj = validateType(parser.types, 'Operation', {
     'numbers': [1, 2, '3', 4]
 });
 console.assert(obj.numbers[2] === 3);
@@ -94,7 +95,7 @@ console.assert(obj.numbers[2] === 3);
 <p>Notice that the numerical input '3' above is <em>type-massaged</em> to the integer 3 by validation.
 Validation fails if the object does not match the schema:</p>
 <pre class="prettyprint source lang-javascript"><code>try {
-    smd.validateType(parser.types, 'Operation', {
+    validateType(parser.types, 'Operation', {
         'numbers': [1, 2, 'asdf', 4]
     });
 } catch ({message}) {
@@ -103,7 +104,7 @@ Validation fails if the object does not match the schema:</p>
 </code></pre>
 <p>Validation also fails if a member contraint is violated:</p>
 <pre class="prettyprint source lang-javascript"><code>try {
-    smd.validateType(parser.types, 'Operation', {
+    validateType(parser.types, 'Operation', {
         'numbers': []
     });
 } catch ({message}) {
