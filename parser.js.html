@@ -71,7 +71,7 @@ const RE_PART_TYPEDEF =
 const RE_TYPEDEF = new RegExp('^typedef\\s+' + RE_PART_TYPEDEF + '\\s*$');
 const RE_MEMBER = new RegExp('^\\s+(?&lt;optional>optional\\s+)?' + RE_PART_TYPEDEF + '\\s*$');
 const RE_VALUE = new RegExp('^\\s+(?&lt;id>' + RE_PART_ID + ')\\s*$');
-const RE_VALUE_QUOTED = new RegExp('^\\s+"(?&lt;id>' + RE_PART_ID + '.*?)"\\s*$');
+const RE_VALUE_QUOTED = /^\s+"(?&lt;id>.*?)"\s*$/;
 const RE_URL = /^\s+(?&lt;method>[A-Za-z]+|\*)(?:\s+(?&lt;path>\/[^\s]*))?/;
 
 
