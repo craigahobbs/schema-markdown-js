@@ -14,8 +14,9 @@ test('SchemaMarkdownParser', (t) => {
 # This is an enum
 enum MyEnum
     Foo
-    Bar
     "Foo and Bar"
+    ""
+    "@#$!@"
 
 # This is the struct
 struct MyStruct
@@ -185,8 +186,9 @@ action MyAction4 \\
                 'doc': ['This is an enum'],
                 'values': [
                     {'name': 'Foo'},
-                    {'name': 'Bar'},
-                    {'name': 'Foo and Bar'}
+                    {'name': 'Foo and Bar'},
+                    {'name': ''},
+                    {'name': '@#$!@'}
                 ]
             }
         },
