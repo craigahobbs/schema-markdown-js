@@ -1,3 +1,7 @@
+## 1.1.4 (2021-12-11)
+
+- [62c037b](https://github.com/craigahobbs/schema-markdown-js/commit/62c037b) - allow arbitrary quoted enum values
+
 ## 1.1.3 (2021-12-09)
 
 - [8274847](https://github.com/craigahobbs/schema-markdown-js/commit/8274847) - update readme
