@@ -2,7 +2,7 @@
 # https://github.com/craigahobbs/schema-markdown-js/blob/main/LICENSE
 
 #
-# The Schema Markdown Documentation application
+# The Schema Markdown documentation viewer
 #
 # url - The Schema Markdown text or JSON resource URL
 # title - The schema title

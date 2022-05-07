@@ -24,4 +24,4 @@ clean:
 
 
 doc:
-	cp -R static/doc/ build/doc/doc/
+	cp -R static/* build/doc/
