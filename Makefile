@@ -21,7 +21,3 @@ include Makefile.base
 
 clean:
 	rm -rf Makefile.base jsdoc.json .eslintrc.cjs
-
-
-doc:
-	cp -R static/* build/doc/
