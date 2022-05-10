@@ -3,7 +3,7 @@
 
 /* eslint-disable id-length */
 
-import {ValidationError, getReferencedTypes, validateType, validateTypeModel, validateTypeModelTypes} from '../lib/schema.js';
+import {ValidationError, getReferencedTypes, validateType, validateTypeModel} from '../lib/schema.js';
 import test from 'ava';
 import {typeModel} from '../lib/typeModel.js';
 
@@ -98,13 +98,13 @@ test('getReferencedTypes', (t) => {
         }
     };
 
-    const expectedTypes = validateTypeModelTypes(types);
+    const expectedTypes = validateTypeModel(types);
     delete expectedTypes.MyEnumNoref;
     delete expectedTypes.MyStructNoref;
     delete expectedTypes.MyTypedefNoref;
 
     const referencedTypes = getReferencedTypes(types, 'MyAction');
-    validateTypeModelTypes(referencedTypes);
+    validateTypeModel(referencedTypes);
     t.deepEqual(referencedTypes, expectedTypes);
 });
 
@@ -124,11 +124,11 @@ test('getReferencedTypes, empty action', (t) => {
         }
     };
 
-    const expectedTypes = validateTypeModelTypes(types);
+    const expectedTypes = validateTypeModel(types);
     delete expectedTypes.MyTypedefNoref;
 
     const referencedTypes = getReferencedTypes(types, 'MyAction');
-    validateTypeModelTypes(referencedTypes);
+    validateTypeModel(referencedTypes);
     t.deepEqual(referencedTypes, expectedTypes);
 });
 
@@ -159,11 +159,11 @@ test('getReferencedTypes, circular', (t) => {
         }
     };
 
-    const expectedTypes = validateTypeModelTypes(types);
+    const expectedTypes = validateTypeModel(types);
     delete expectedTypes.MyTypedefNoref;
 
     const referencedTypes = getReferencedTypes(types, 'MyStruct');
-    validateTypeModelTypes(referencedTypes);
+    validateTypeModel(referencedTypes);
     t.deepEqual(referencedTypes, expectedTypes);
 });
 
@@ -201,11 +201,11 @@ test('getReferencedTypes, struct base', (t) => {
         }
     };
 
-    const expectedTypes = validateTypeModelTypes(types);
+    const expectedTypes = validateTypeModel(types);
     delete expectedTypes.MyTypedefNoref;
 
     const referencedTypes = getReferencedTypes(types, 'MyStruct');
-    validateTypeModelTypes(referencedTypes);
+    validateTypeModel(referencedTypes);
     t.deepEqual(referencedTypes, expectedTypes);
 });
 
@@ -237,11 +237,11 @@ test('getReferencedTypes, enum base', (t) => {
         }
     };
 
-    const expectedTypes = validateTypeModelTypes(types);
+    const expectedTypes = validateTypeModel(types);
     delete expectedTypes.MyTypedefNoref;
 
     const referencedTypes = getReferencedTypes(types, 'MyEnum');
-    validateTypeModelTypes(referencedTypes);
+    validateTypeModel(referencedTypes);
     t.deepEqual(referencedTypes, expectedTypes);
 });
 
@@ -2194,17 +2194,17 @@ test('validateType, invalid model', (t) => {
 
 
 //
-// validateTypeModelTypes tests
+// validateTypeModel tests
 //
 
-test('validateTypeModelTypes', (t) => {
-    const validatedTypeModel = validateTypeModelTypes(typeModel.types);
-    t.deepEqual(typeModel.types, validatedTypeModel);
-    t.not(typeModel.types, validatedTypeModel);
+test('validateTypeModel', (t) => {
+    const validatedTypeModel = validateTypeModel(typeModel);
+    t.deepEqual(typeModel, validatedTypeModel);
+    t.not(typeModel, validatedTypeModel);
 });
 
 
-test('validateTypeModelTypes, type validation error', (t) => {
+test('validateTypeModel, type validation error', (t) => {
     const types = {
         'MyStruct': {
             'struct': {}
@@ -2212,7 +2212,7 @@ test('validateTypeModelTypes, type validation error', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2222,7 +2222,7 @@ test('validateTypeModelTypes, type validation error', (t) => {
 });
 
 
-test('validateTypeModelTypes, struct empty', (t) => {
+test('validateTypeModel, struct empty', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2230,11 +2230,11 @@ test('validateTypeModelTypes, struct empty', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, struct inconsistent type name', (t) => {
+test('validateTypeModel, struct inconsistent type name', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2244,7 +2244,7 @@ test('validateTypeModelTypes, struct inconsistent type name', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2254,7 +2254,7 @@ test('validateTypeModelTypes, struct inconsistent type name', (t) => {
 });
 
 
-test('validateTypeModelTypes, struct unknown member type', (t) => {
+test('validateTypeModel, struct unknown member type', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2267,7 +2267,7 @@ test('validateTypeModelTypes, struct unknown member type', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2277,7 +2277,7 @@ test('validateTypeModelTypes, struct unknown member type', (t) => {
 });
 
 
-test('validateTypeModelTypes, struct duplicate member name', (t) => {
+test('validateTypeModel, struct duplicate member name', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2292,7 +2292,7 @@ test('validateTypeModelTypes, struct duplicate member name', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2302,7 +2302,7 @@ test('validateTypeModelTypes, struct duplicate member name', (t) => {
 });
 
 
-test('validateTypeModelTypes, struct member attributes', (t) => {
+test('validateTypeModel, struct member attributes', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2313,11 +2313,11 @@ test('validateTypeModelTypes, struct member attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, struct member attributes invalid', (t) => {
+test('validateTypeModel, struct member attributes invalid', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2330,7 +2330,7 @@ test('validateTypeModelTypes, struct member attributes invalid', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2342,7 +2342,7 @@ Invalid attribute 'len > 0' from 'MyStruct' member 'a'`);
 });
 
 
-test('validateTypeModelTypes, struct base', (t) => {
+test('validateTypeModel, struct base', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2368,11 +2368,11 @@ test('validateTypeModelTypes, struct base', (t) => {
             }
         }
     };
-    t.deepEqual(validateTypeModelTypes(types), types);
+    t.deepEqual(validateTypeModel(types), types);
 });
 
 
-test('validateTypeModelTypes, struct base unknown', (t) => {
+test('validateTypeModel, struct base unknown', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2389,7 +2389,7 @@ test('validateTypeModelTypes, struct base unknown', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2401,7 +2401,7 @@ Invalid struct base type 'Unknown'\
 });
 
 
-test('validateTypeModelTypes, struct base typedef unknown', (t) => {
+test('validateTypeModel, struct base typedef unknown', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2418,7 +2418,7 @@ test('validateTypeModelTypes, struct base typedef unknown', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2431,7 +2431,7 @@ Unknown type 'Unknown' from 'MyTypedef'\
 });
 
 
-test('validateTypeModelTypes, struct base non-user', (t) => {
+test('validateTypeModel, struct base non-user', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2448,7 +2448,7 @@ test('validateTypeModelTypes, struct base non-user', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2460,7 +2460,7 @@ Invalid struct base type 'MyInt'\
 });
 
 
-test('validateTypeModelTypes, struct base enum', (t) => {
+test('validateTypeModel, struct base enum', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2476,7 +2476,7 @@ test('validateTypeModelTypes, struct base enum', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2488,7 +2488,7 @@ Invalid struct base type 'MyEnum'\
 });
 
 
-test('validateTypeModelTypes, struct base circular', (t) => {
+test('validateTypeModel, struct base circular', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2505,7 +2505,7 @@ test('validateTypeModelTypes, struct base circular', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2518,7 +2518,7 @@ Circular base type detected for type 'MyStruct2'\
 });
 
 
-test('validateTypeModelTypes, struct base union', (t) => {
+test('validateTypeModel, struct base union', (t) => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2535,7 +2535,7 @@ test('validateTypeModelTypes, struct base union', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2547,7 +2547,7 @@ Invalid struct base type 'MyUnion'\
 });
 
 
-test('validateTypeModelTypes, struct base union struct', (t) => {
+test('validateTypeModel, struct base union struct', (t) => {
     const types = {
         'MyUnion': {
             'struct': {
@@ -2564,7 +2564,7 @@ test('validateTypeModelTypes, struct base union struct', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2576,7 +2576,7 @@ Invalid struct base type 'MyStruct'\
 });
 
 
-test('validateTypeModelTypes, enum empty', (t) => {
+test('validateTypeModel, enum empty', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2584,11 +2584,11 @@ test('validateTypeModelTypes, enum empty', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, enum inconsistent type name', (t) => {
+test('validateTypeModel, enum inconsistent type name', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2598,7 +2598,7 @@ test('validateTypeModelTypes, enum inconsistent type name', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2608,7 +2608,7 @@ test('validateTypeModelTypes, enum inconsistent type name', (t) => {
 });
 
 
-test('validateTypeModelTypes,  enum duplicate value', (t) => {
+test('validateTypeModel,  enum duplicate value', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2623,7 +2623,7 @@ test('validateTypeModelTypes,  enum duplicate value', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2633,7 +2633,7 @@ test('validateTypeModelTypes,  enum duplicate value', (t) => {
 });
 
 
-test('validateTypeModelTypes, enum base', (t) => {
+test('validateTypeModel, enum base', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2659,11 +2659,11 @@ test('validateTypeModelTypes, enum base', (t) => {
             }
         }
     };
-    t.deepEqual(validateTypeModelTypes(types), types);
+    t.deepEqual(validateTypeModel(types), types);
 });
 
 
-test('validateTypeModelTypes, enum base unknown', (t) => {
+test('validateTypeModel, enum base unknown', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2680,7 +2680,7 @@ test('validateTypeModelTypes, enum base unknown', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2692,7 +2692,7 @@ Invalid enum base type 'Unknown'\
 });
 
 
-test('validateTypeModelTypes, enum base non-user', (t) => {
+test('validateTypeModel, enum base non-user', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2709,7 +2709,7 @@ test('validateTypeModelTypes, enum base non-user', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2721,7 +2721,7 @@ Invalid enum base type 'MyInt'\
 });
 
 
-test('validateTypeModelTypes, enum base struct', (t) => {
+test('validateTypeModel, enum base struct', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2737,7 +2737,7 @@ test('validateTypeModelTypes, enum base struct', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2749,7 +2749,7 @@ Invalid enum base type 'MyStruct'\
 });
 
 
-test('validateTypeModelTypes, enum base circular', (t) => {
+test('validateTypeModel, enum base circular', (t) => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2766,7 +2766,7 @@ test('validateTypeModelTypes, enum base circular', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2779,7 +2779,7 @@ Circular base type detected for type 'MyEnum2'\
 });
 
 
-test('validateTypeModelTypes, array', (t) => {
+test('validateTypeModel, array', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2788,11 +2788,11 @@ test('validateTypeModelTypes, array', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, array attributes', (t) => {
+test('validateTypeModel, array attributes', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2801,11 +2801,11 @@ test('validateTypeModelTypes, array attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, array invalid attribute', (t) => {
+test('validateTypeModel, array invalid attribute', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2816,7 +2816,7 @@ test('validateTypeModelTypes, array invalid attribute', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2826,7 +2826,7 @@ test('validateTypeModelTypes, array invalid attribute', (t) => {
 });
 
 
-test('validateTypeModelTypes, array unknown type', (t) => {
+test('validateTypeModel, array unknown type', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2837,7 +2837,7 @@ test('validateTypeModelTypes, array unknown type', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2847,7 +2847,7 @@ test('validateTypeModelTypes, array unknown type', (t) => {
 });
 
 
-test('validateTypeModelTypes, dict', (t) => {
+test('validateTypeModel, dict', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2856,11 +2856,11 @@ test('validateTypeModelTypes, dict', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, dict key type', (t) => {
+test('validateTypeModel, dict key type', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2878,11 +2878,11 @@ test('validateTypeModelTypes, dict key type', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, dict attributes', (t) => {
+test('validateTypeModel, dict attributes', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2891,11 +2891,11 @@ test('validateTypeModelTypes, dict attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, dict key attributes', (t) => {
+test('validateTypeModel, dict key attributes', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2904,11 +2904,11 @@ test('validateTypeModelTypes, dict key attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, dict invalid attribute', (t) => {
+test('validateTypeModel, dict invalid attribute', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2919,7 +2919,7 @@ test('validateTypeModelTypes, dict invalid attribute', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2929,7 +2929,7 @@ test('validateTypeModelTypes, dict invalid attribute', (t) => {
 });
 
 
-test('validateTypeModelTypes, dict invalid key attribute', (t) => {
+test('validateTypeModel, dict invalid key attribute', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2940,7 +2940,7 @@ test('validateTypeModelTypes, dict invalid key attribute', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2950,7 +2950,7 @@ test('validateTypeModelTypes, dict invalid key attribute', (t) => {
 });
 
 
-test('validateTypeModelTypes, dict unknown type', (t) => {
+test('validateTypeModel, dict unknown type', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2961,7 +2961,7 @@ test('validateTypeModelTypes, dict unknown type', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2971,7 +2971,7 @@ test('validateTypeModelTypes, dict unknown type', (t) => {
 });
 
 
-test('validateTypeModelTypes, dict unknown key type', (t) => {
+test('validateTypeModel, dict unknown key type', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2982,7 +2982,7 @@ test('validateTypeModelTypes, dict unknown key type', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -2994,7 +2994,7 @@ Invalid dictionary key type from 'MyTypedef'`);
 });
 
 
-test('validateTypeModelTypes, typedef invalid attribute', (t) => {
+test('validateTypeModel, typedef invalid attribute', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -3011,7 +3011,7 @@ test('validateTypeModelTypes, typedef invalid attribute', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3021,7 +3021,7 @@ test('validateTypeModelTypes, typedef invalid attribute', (t) => {
 });
 
 
-test('validateTypeModelTypes, typedef nullable', (t) => {
+test('validateTypeModel, typedef nullable', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -3036,11 +3036,11 @@ test('validateTypeModelTypes, typedef nullable', (t) => {
             }
         }
     };
-    t.deepEqual(validateTypeModelTypes(types), types);
+    t.deepEqual(validateTypeModel(types), types);
 });
 
 
-test('validateTypeModelTypes, typedef attributes', (t) => {
+test('validateTypeModel, typedef attributes', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -3056,11 +3056,11 @@ test('validateTypeModelTypes, typedef attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, typedef inconsistent type name', (t) => {
+test('validateTypeModel, typedef inconsistent type name', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -3071,7 +3071,7 @@ test('validateTypeModelTypes, typedef inconsistent type name', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3081,7 +3081,7 @@ test('validateTypeModelTypes, typedef inconsistent type name', (t) => {
 });
 
 
-test('validateTypeModelTypes, typedef unknown type', (t) => {
+test('validateTypeModel, typedef unknown type', (t) => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -3098,7 +3098,7 @@ test('validateTypeModelTypes, typedef unknown type', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3108,7 +3108,7 @@ test('validateTypeModelTypes, typedef unknown type', (t) => {
 });
 
 
-test('validateTypeModelTypes, action empty struct', (t) => {
+test('validateTypeModel, action empty struct', (t) => {
     const types = {
         'MyAction': {
             'action': {
@@ -3122,11 +3122,11 @@ test('validateTypeModelTypes, action empty struct', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModelTypes(types));
+    t.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModelTypes, action inconsistent type name', (t) => {
+test('validateTypeModel, action inconsistent type name', (t) => {
     const types = {
         'MyAction': {
             'action': {
@@ -3136,7 +3136,7 @@ test('validateTypeModelTypes, action inconsistent type name', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3146,7 +3146,7 @@ test('validateTypeModelTypes, action inconsistent type name', (t) => {
 });
 
 
-test('validateTypeModelTypes, action unknown type', (t) => {
+test('validateTypeModel, action unknown type', (t) => {
     const types = {
         'MyAction': {
             'action': {
@@ -3157,7 +3157,7 @@ test('validateTypeModelTypes, action unknown type', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3167,7 +3167,7 @@ test('validateTypeModelTypes, action unknown type', (t) => {
 });
 
 
-test('validateTypeModelTypes, action action', (t) => {
+test('validateTypeModel, action action', (t) => {
     const types = {
         'MyAction': {
             'action': {
@@ -3183,7 +3183,7 @@ test('validateTypeModelTypes, action action', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3193,7 +3193,7 @@ test('validateTypeModelTypes, action action', (t) => {
 });
 
 
-test('validateTypeModelTypes, action duplicate member', (t) => {
+test('validateTypeModel, action duplicate member', (t) => {
     const types = {
         'MyAction': {
             'action': {
@@ -3223,7 +3223,7 @@ test('validateTypeModelTypes, action duplicate member', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3236,7 +3236,7 @@ Redefinition of 'MyAction_query' member 'c'\
 });
 
 
-test('validateTypeModelTypes, action duplicate member inherited', (t) => {
+test('validateTypeModel, action duplicate member inherited', (t) => {
     const types = {
         'MyAction': {
             'action': {
@@ -3274,7 +3274,7 @@ test('validateTypeModelTypes, action duplicate member inherited', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3287,7 +3287,7 @@ Redefinition of 'MyAction_query' member 'c'\
 });
 
 
-test('validateTypeModelTypes, action duplicate member circular', (t) => {
+test('validateTypeModel, action duplicate member circular', (t) => {
     const types = {
         'MyAction': {
             'action': {
@@ -3326,7 +3326,7 @@ test('validateTypeModelTypes, action duplicate member circular', (t) => {
     };
     let errorMessage = null;
     try {
-        validateTypeModelTypes(types);
+        validateTypeModel(types);
     } catch (error) {
         t.true(error instanceof ValidationError);
         t.is(error.memberFqn, null);
@@ -3336,52 +3336,4 @@ test('validateTypeModelTypes, action duplicate member circular', (t) => {
 Circular base type detected for type 'MyAction_input'
 Circular base type detected for type 'MyBase'\
 `);
-});
-
-
-//
-// validateTypeModel tests
-//
-
-test('validateTypeModel', (t) => {
-    const testTypeModel = {
-        'title': 'My Type Model',
-        'types': {
-            'MyStruct': {
-                'struct': {
-                    'name': 'MyStruct'
-                }
-            }
-        }
-    };
-    const typeModelValidated = validateTypeModel(testTypeModel);
-    t.deepEqual(typeModelValidated, testTypeModel);
-    t.not(typeModelValidated, testTypeModel);
-});
-
-
-test('validateTypeModel, types error', (t) => {
-    const testTypeModel = {
-        'title': 'My Type Model',
-        'types': {
-            'MyStruct': {
-                'struct': {
-                    'name': 'MyStruct',
-                    'members': [
-                        {'name': 'a', 'type': {'user': 'Unknown'}}
-                    ]
-                }
-            }
-        }
-    };
-    let errorMessage = null;
-    try {
-        validateTypeModel(testTypeModel);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
-Unknown type 'Unknown' from 'MyStruct' member 'a'`);
 });

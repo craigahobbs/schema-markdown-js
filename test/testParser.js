@@ -5,7 +5,7 @@
 
 import {SchemaMarkdownParser, SchemaMarkdownParserError} from '../lib/parser.js';
 import test from 'ava';
-import {validateTypeModelTypes} from '../lib/schema.js';
+import {validateTypeModel} from '../lib/schema.js';
 
 
 test('SchemaMarkdownParser', (t) => {
@@ -409,7 +409,7 @@ typedef MyStruct4 MyTypedef
 struct MyStruct5 (MyStruct2, MyTypedef)
     datetime e
 `);
-    validateTypeModelTypes(parser.types);
+    validateTypeModel(parser.types);
     t.deepEqual(parser.types, {
         'MyStruct': {
             'struct': {
