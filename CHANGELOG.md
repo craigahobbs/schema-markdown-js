@@ -1,3 +1,9 @@
+## 1.1.6 (2022-05-10)
+
+- [3c233e7](https://github.com/craigahobbs/schema-markdown-js/commit/3c233e7) - remove TypeModel
+
+- [9b30191](https://github.com/craigahobbs/schema-markdown-js/commit/9b30191) - remove schema-markdown-doc application
+
 ## 1.1.5 (2021-12-19)
 
 - [b941910](https://github.com/craigahobbs/schema-markdown-js/commit/b941910) - parser performance improvements
