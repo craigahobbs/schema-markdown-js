@@ -3,14 +3,12 @@
 
 /* eslint-disable id-length */
 
-import {SchemaMarkdownParser, SchemaMarkdownParserError} from '../lib/parser.js';
+import {SchemaMarkdownParserError, parseSchemaMarkdown} from '../lib/parser.js';
 import test from 'ava';
-import {validateTypeModel} from '../lib/schema.js';
 
 
-test('SchemaMarkdownParser', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown', (t) => {
+    const types = parseSchemaMarkdown(`\
 # This is an enum
 enum MyEnum
     Foo
@@ -83,7 +81,7 @@ action MyAction3
 # The fourth action
 action MyAction4 \\
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyAction': {
             'action': {
                 'name': 'MyAction',
@@ -237,18 +235,15 @@ action MyAction4 \\
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, parse defaults', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parse([
-        'struct MyStruct',
-        '    int a',
+test('parseSchemaMarkdown, array', (t) => {
+    const types = parseSchemaMarkdown([
+        'struct MyStruct\n    int a',
         '    int b'
     ]);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyStruct': {
             'struct': {
                 'name': 'MyStruct',
@@ -259,12 +254,11 @@ test('SchemaMarkdownParser, parse defaults', (t) => {
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, action urls', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, action urls', (t) => {
+    const types = parseSchemaMarkdown(`\
 action MyAction
 
 action MyActionUrl
@@ -274,7 +268,7 @@ action MyActionUrl
         *
         * /star
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyAction': {
             'action': {
                 'name': 'MyAction'
@@ -292,14 +286,12 @@ action MyActionUrl
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
-test('SchemaMarkdownParser, action url duplicate', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+
+test('parseSchemaMarkdown, action url duplicate', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action MyAction
     urls
         GET /
@@ -310,44 +302,34 @@ action MyAction
     urls
         GET
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ':4: error: Duplicate URL: GET /',
         ':7: error: Duplicate URL: GET ',
         ':8: error: Redefinition of action urls'
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, action url typed', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, action url typed', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action MyAction
     url (BaseType)
         GET /
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ':2: error: Syntax error',
         ':3: error: Syntax error'
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, group', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, group', (t) => {
+    const types = parseSchemaMarkdown(`\
 action MyAction
 
 enum MyEnum
@@ -374,7 +356,7 @@ group
 
 action MyAction4
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyAction': {'action': {'name': 'MyAction'}},
         'MyAction2': {'action': {'docGroup': 'Stuff', 'name': 'MyAction2'}},
         'MyAction3': {'action': {'docGroup': 'Other Stuff', 'name': 'MyAction3'}},
@@ -386,12 +368,11 @@ action MyAction4
         'MyTypedef': {'typedef': {'name': 'MyTypedef', 'type': {'builtin': 'int'}}},
         'MyTypedef3': {'typedef': {'docGroup': 'Other Stuff', 'name': 'MyTypedef3', 'type': {'builtin': 'int'}}}
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, struct base types', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, struct base types', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct MyStruct (MyStruct2)
     int c
 
@@ -409,8 +390,7 @@ typedef MyStruct4 MyTypedef
 struct MyStruct5 (MyStruct2, MyTypedef)
     datetime e
 `);
-    validateTypeModel(parser.types);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyStruct': {
             'struct': {
                 'name': 'MyStruct',
@@ -461,15 +441,12 @@ struct MyStruct5 (MyStruct2, MyTypedef)
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, struct base types error', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, struct base types error', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct (MyEnum)
     int a
 
@@ -487,26 +464,20 @@ struct MyStruct4
 struct MyStruct5 (MyStruct4, MyDict)
     int b
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":1: error: Invalid struct base type 'MyEnum'",
         ":8: error: Redefinition of 'MyStruct3' member 'a'",
         ":15: error: Invalid struct base type 'MyDict'",
         ":16: error: Redefinition of 'MyStruct5' member 'b'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, struct base types circular', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, struct base types circular', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct (MyStruct2)
     int a
 
@@ -516,22 +487,18 @@ struct MyStruct2 (MyStruct3)
 struct MyStruct3 (MyStruct)
     int c
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":1: error: Circular base type detected for type 'MyStruct'",
         ":4: error: Circular base type detected for type 'MyStruct2'",
         ":7: error: Circular base type detected for type 'MyStruct3'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, enum base types', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, enum base types', (t) => {
+    const types = parseSchemaMarkdown(`\
 enum MyEnum (MyEnum2)
     c
 
@@ -549,7 +516,7 @@ typedef MyEnum4 MyTypedef
 enum MyEnum5 (MyEnum2, MyTypedef)
     e
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyEnum': {'enum': {'bases': ['MyEnum2'], 'name': 'MyEnum', 'values': [{'name': 'c'}]}},
         'MyEnum2': {'enum': {'bases': ['MyEnum3'], 'name': 'MyEnum2', 'values': [{'name': 'b'}]}},
         'MyEnum3': {'enum': {'name': 'MyEnum3', 'values': [{'name': 'a'}]}},
@@ -557,15 +524,12 @@ enum MyEnum5 (MyEnum2, MyTypedef)
         'MyEnum5': {'enum': {'bases': ['MyEnum2', 'MyTypedef'], 'name': 'MyEnum5', 'values': [{'name': 'e'}]}},
         'MyTypedef': {'typedef': {'name': 'MyTypedef', 'type': {'user': 'MyEnum4'}}}
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, enum base types error', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, enum base types error', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 enum MyEnum (MyStruct)
     A
 
@@ -583,26 +547,20 @@ enum MyEnum4
 enum MyEnum5 (MyEnum4, MyDict)
     B
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":1: error: Invalid enum base type 'MyStruct'",
         ":8: error: Redefinition of 'MyEnum3' value 'A'",
         ":15: error: Invalid enum base type 'MyDict'",
         ":16: error: Redefinition of 'MyEnum5' value 'B'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, enum base types circular', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, enum base types circular', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 enum MyEnum (MyEnum2)
     a
 
@@ -612,23 +570,18 @@ enum MyEnum2 (MyEnum3)
 enum MyEnum3 (MyEnum)
     c
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":1: error: Circular base type detected for type 'MyEnum'",
         ":4: error: Circular base type detected for type 'MyEnum2'",
         ":7: error: Circular base type detected for type 'MyEnum3'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, multiple', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, multiple', (t) => {
+    const types = parseSchemaMarkdown(`\
 enum MyEnum
     A
     B
@@ -644,8 +597,8 @@ struct MyStruct
     string c
     MyEnum2 d
     MyStruct2 e
-`, '', false);
-    parser.parseString(`\
+`, {'validate': false});
+    parseSchemaMarkdown(`\
 action MyAction2
     input
         MyStruct d
@@ -659,8 +612,8 @@ struct MyStruct2
 enum MyEnum2
     C
     D
-`);
-    t.deepEqual(parser.types, {
+`, {'types': types});
+    t.deepEqual(types, {
         'MyAction': {
             'action': {
                 'name': 'MyAction',
@@ -746,78 +699,34 @@ enum MyEnum2
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, multiple finalize', (t) => {
-    const parser = new SchemaMarkdownParser(`\
-struct MyStruct
-    MyEnum a
-
-enum MyEnum
-    A
-    B
-`);
-    parser.parseString(`\
-struct MyStruct2
+test('parseSchemaMarkdown, error multiple', (t) => {
+    const types = parseSchemaMarkdown(`\
+struct MyStruct (MyStruct2)
     int a
-    MyEnum b
-    MyEnum2 c
-
-enum MyEnum2
-    C
-    D
-`);
-    t.deepEqual(parser.types, {
-        'MyEnum': {
-            'enum': {
-                'name': 'MyEnum',
-                'values': [
-                    {'name': 'A'},
-                    {'name': 'B'}
-                ]
-            }
-        },
-        'MyEnum2': {
-            'enum': {
-                'name': 'MyEnum2',
-                'values': [
-                    {'name': 'C'},
-                    {'name': 'D'}
-                ]
-            }
-        },
-        'MyStruct': {
-            'struct': {
-                'name': 'MyStruct',
-                'members': [
-                    {'name': 'a', 'type': {'user': 'MyEnum'}}
-                ]
-            }
-        },
-        'MyStruct2': {
-            'struct': {
-                'name': 'MyStruct2',
-                'members': [
-                    {'name': 'a', 'type': {'builtin': 'int'}},
-                    {'name': 'b', 'type': {'user': 'MyEnum'}},
-                    {'name': 'c', 'type': {'user': 'MyEnum2'}}
-                ]
-            }
-        }
+`, {'validate': false});
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
+struct MyStruct3
+    int b
+`, {'types': types});
     });
-    t.deepEqual(parser.errors, []);
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ':1: error: Invalid struct base type \'MyStruct2\''
+    ]);
 });
 
 
-test('SchemaMarkdownParser, array attr', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, array attr', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct MyStruct
     MyStruct2[len > 0] a
 struct MyStruct2
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyStruct': {
             'struct': {
                 'name': 'MyStruct',
@@ -830,18 +739,17 @@ struct MyStruct2
             'struct': {'name': 'MyStruct2'}
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, dict attr', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, dict attr', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct MyStruct
     MyEnum : MyStruct2{len > 0} a
 enum MyEnum
 struct MyStruct2
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyEnum': {
             'enum': {
                 'name': 'MyEnum'
@@ -864,12 +772,11 @@ struct MyStruct2
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, nullable', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, nullable', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct MyStruct
     int(nullable) a
     float[nullable] b
@@ -880,7 +787,7 @@ struct MyStruct
 
 typedef string(nullable) MyTypedef
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyStruct': {
             'struct': {
                 'name': 'MyStruct',
@@ -915,16 +822,15 @@ typedef string(nullable) MyTypedef
             'typedef': {'name': 'MyTypedef', 'type': {'builtin': 'string'}, 'attr': {'nullable': true}}
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, nullable with attr', (t) => {
-    const parser = new SchemaMarkdownParser(`\
+test('parseSchemaMarkdown, nullable with attr', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct MyStruct
     int(nullable, > 0) a
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyStruct': {
             'struct': {
                 'name': 'MyStruct',
@@ -934,36 +840,27 @@ struct MyStruct
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, invalid attr', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, invalid attr', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     MyStruct2(len > 0) a
 struct MyStruct2
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid attribute 'len > 0' from 'MyStruct' member 'a'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error unknown type', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error unknown type', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct Foo
     MyBadType a
 
@@ -972,125 +869,95 @@ action MyAction
         MyBadType2 a
     output
         MyBadType b
-`, 'foo');
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+`, {'filename': 'foo'});
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         "foo:2: error: Unknown type 'MyBadType' from 'Foo' member 'a'",
         "foo:6: error: Unknown type 'MyBadType2' from 'MyAction_input' member 'a'",
         "foo:8: error: Unknown type 'MyBadType' from 'MyAction_output' member 'b'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error unknown array type', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error unknown array type', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     MyBadType[] a
     MyTypedef[] b
 
 typedef MyBadType MyTypedef
-`, 'foo');
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+`, {'filename': 'foo'});
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
         "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
         "foo:5: error: Unknown type 'MyBadType' from 'MyTypedef'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error unknown dict type', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error unknown dict type', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     MyBadType{} a
     MyTypedef{} b
 
 typedef MyBadType MyTypedef
-`, 'foo');
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+`, {'filename': 'foo'});
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
         "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
         "foo:5: error: Unknown type 'MyBadType' from 'MyTypedef'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error unknown dict key type', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error unknown dict key type', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     MyBadType : int{} a
     MyTypedef : int{} b
 
 typedef MyBadType MyTypedef
-`, 'foo');
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+`, {'filename': 'foo'});
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         "foo:2: error: Invalid dictionary key type from 'MyStruct' member 'a'",
         "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
         "foo:3: error: Invalid dictionary key type from 'MyStruct' member 'b'",
         "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
         "foo:5: error: Unknown type 'MyBadType' from 'MyTypedef'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error action type', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error action type', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct Foo
     MyAction a
 
 action MyAction
-`, 'foo');
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+`, {'filename': 'foo'});
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         "foo:2: error: Invalid reference to action 'MyAction' from 'Foo' member 'a'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error struct redefinition', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error struct redefinition', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct Foo
     int a
 
@@ -1098,25 +965,17 @@ enum Foo
     A
     B
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":4: error: Redefinition of type 'Foo'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-    t.deepEqual(parser.types, {
-        'Foo': {'enum': {'name': 'Foo', 'values': [{'name': 'A'}, {'name': 'B'}]}}
-    });
+    ]);
 });
 
-test('SchemaMarkdownParser, error enum redefinition', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+
+test('parseSchemaMarkdown, error enum redefinition', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 enum Foo
     A
     B
@@ -1124,56 +983,33 @@ enum Foo
 struct Foo
     int a
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
-        ":5: error: Redefinition of type 'Foo'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-    t.deepEqual(parser.types, {
-        'Foo': {
-            'struct': {
-                'name': 'Foo',
-                'members': [{'name': 'a', 'type': {'builtin': 'int'}}]
-            }
-        }
     });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":5: error: Redefinition of type 'Foo'"
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error typedef redefinition', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error typedef redefinition', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct Foo
     int a
 
 typedef int(> 5) Foo
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
-        ":4: error: Redefinition of type 'Foo'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-    t.deepEqual(parser.types, {
-        'Foo': {'typedef': {'attr': {'gt': 5.0}, 'name': 'Foo', 'type': {'builtin': 'int'}}}
     });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":4: error: Redefinition of type 'Foo'"
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error action redefinition', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error action redefinition', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action MyAction
     input
         int a
@@ -1182,39 +1018,17 @@ action MyAction
     input
         string b
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
-        ":5: error: Redefinition of action 'MyAction'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-    t.deepEqual(parser.types, {
-        'MyAction': {
-            'action': {
-                'name': 'MyAction',
-                'input': 'MyAction_input'
-            }
-        },
-        'MyAction_input': {
-            'struct': {
-                'name': 'MyAction_input',
-                'members': [
-                    {'name': 'b', 'type': {'builtin': 'string'}}
-                ]
-            }
-        }
     });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":5: error: Redefinition of action 'MyAction'"
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error action section', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errorMessage = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error action section', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action MyAction
 
 struct MyStruct
@@ -1228,29 +1042,9 @@ input
 output
 errors
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
-:6: error: Syntax error
-:7: error: Syntax error
-:8: error: Syntax error
-:10: error: Syntax error
-:11: error: Syntax error
-:12: error: Syntax error`);
-    t.deepEqual(parser.types, {
-        'MyAction': {'action': {'name': 'MyAction'}},
-        'MyStruct': {
-            'struct': {
-                'name': 'MyStruct',
-                'members': [
-                    {'name': 'a', 'type': {'builtin': 'int'}}
-                ]
-            }
-        }
     });
-    t.deepEqual(parser.errors, [
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ':6: error: Syntax error',
         ':7: error: Syntax error',
         ':8: error: Syntax error',
@@ -1261,11 +1055,9 @@ errors
 });
 
 
-test('SchemaMarkdownParser, error member', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error member', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action MyAction
     int abc
 
@@ -1277,30 +1069,19 @@ enum MyEnum
 
 int cde
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ':2: error: Syntax error',
         ':8: error: Syntax error',
         ':10: error: Syntax error'
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-    t.deepEqual(parser.types, {
-        'MyAction': {'action': {'name': 'MyAction'}},
-        'MyEnum': {'enum': {'name': 'MyEnum'}},
-        'MyStruct': {'struct': {'name': 'MyStruct'}}
-    });
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error enum', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error enum', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 enum MyEnum
     "abc
     abc"
@@ -1314,46 +1095,20 @@ action MyAction
     input
         MyError
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ':2: error: Syntax error',
         ':3: error: Syntax error',
         ':4: error: Syntax error',
         ':8: error: Syntax error',
         ':12: error: Syntax error'
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-    t.deepEqual(parser.types, {
-        'MyAction': {
-            'action': {
-                'name': 'MyAction',
-                'input': 'MyAction_input'
-            }
-        },
-        'MyAction_input': {
-            'struct': {
-                'name': 'MyAction_input'
-            }
-        },
-        'MyEnum': {
-            'enum': {'name': 'MyEnum'}
-        },
-        'MyStruct': {
-            'struct': {
-                'name': 'MyStruct'
-            }
-        }
-    });
+    ]);
 });
 
 
-test('SchemaMarkdownParser, attributes', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, attributes', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct MyStruct
     optional int(> 1,<= 10.5) i1
     optional int (>= 1, < 10 ) i2
@@ -1372,8 +1127,8 @@ struct MyStruct
     string(len > 5){len > 10} ds1
     string(len == 2){len == 3} ds2
     string(len == 1) : string(len == 2){len == 3} ds3
-`, 'foo');
-    t.deepEqual(parser.types, {
+`, {'filename': 'foo'});
+    t.deepEqual(types, {
         'MyStruct': {
             'struct': {
                 'name': 'MyStruct',
@@ -1474,71 +1229,69 @@ struct MyStruct
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-function testParserError(t, expectedErrors, text) {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(text);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-}
-
-
-test('test_error_attribute_eq', (t) => {
-    testParserError(t, [":2: error: Invalid attribute '== 7' from 'MyStruct' member 's'"], `\
+test('parseSchemaMarkdown, error attribute eq', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     string(== 7) s
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute '== 7' from 'MyStruct' member 's'"
+    ]);
 });
 
 
-test('test_error_attribute_lt', (t) => {
-    testParserError(t, [":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'"], `\
+test('parseSchemaMarkdown, error attribute lt', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     string(< 7) s
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'"
+    ]);
 });
 
 
-test('test_error_attribute_gt', (t) => {
-    testParserError(t, [":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"], `\
+test('parseSchemaMarkdown, error attribute gt', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     string(> 7) s
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"
+    ]);
 });
 
 
-test('test_error_attribute_lt_gt', (t) => {
-    testParserError(
-        t,
-        [
-            ":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'",
-            ":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"
-        ],
-        `\
+test('parseSchemaMarkdown, error attribute lt gt', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     string(< 7, > 7) s
-`
-    );
+`);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'",
+        ":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"
+    ]);
 });
 
 
-test('test_error_attribute_lte_gte', (t) => {
-    testParserError(
-        t,
-        [
-            ":6: error: Invalid attribute '>= 1' from 'MyStruct' member 'a'",
-            ":7: error: Invalid attribute '<= 2' from 'MyStruct' member 'b'"
-        ],
-        `\
+test('parseSchemaMarkdown, error attribute lte gte', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 enum MyEnum
     Foo
     Bar
@@ -1546,115 +1299,154 @@ enum MyEnum
 struct MyStruct
     MyStruct(>= 1) a
     MyEnum(<= 2) b
-`
-    );
+`);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":6: error: Invalid attribute '>= 1' from 'MyStruct' member 'a'",
+        ":7: error: Invalid attribute '<= 2' from 'MyStruct' member 'b'"
+    ]);
 });
 
 
-test('test_error_attribute_len_eq', (t) => {
-    testParserError(t, [":2: error: Invalid attribute 'len == 1' from 'MyStruct' member 'i'"], `\
+test('parseSchemaMarkdown, error attribute len eq', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     int(len == 1) i
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute 'len == 1' from 'MyStruct' member 'i'"
+    ]);
 });
 
 
-test('test_error_attribute_len_lt', (t) => {
-    testParserError(t, [":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'"], `\
+test('parseSchemaMarkdown, error attribute len lt', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     float(len < 10) f
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'"
+    ]);
 });
 
 
-test('test_error_attribute_len_gt', (t) => {
-    testParserError(t, [":2: error: Invalid attribute 'len > 1' from 'MyStruct' member 'i'"], `\
+test('parseSchemaMarkdown, error attribute len gt', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     int(len > 1) i
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute 'len > 1' from 'MyStruct' member 'i'"
+    ]);
 });
 
 
-test('test_error_attribute_len_lt_gt', (t) => {
-    testParserError(
-        t,
-        [
-            ":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'",
-            ":2: error: Invalid attribute 'len > 10' from 'MyStruct' member 'f'"
-        ],
-        `\
+test('parseSchemaMarkdown, error attribute len lt gt', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     float(len < 10, len > 10) f
-`
-    );
+`);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'",
+        ":2: error: Invalid attribute 'len > 10' from 'MyStruct' member 'f'"
+    ]);
 });
 
 
-test('test_error_attribute_len_lte_gte', (t) => {
-    testParserError(
-        t,
-        [
-            ":2: error: Invalid attribute 'len <= 10' from 'MyStruct' member 'f'",
-            ":3: error: Invalid attribute 'len >= 10' from 'MyStruct' member 'f2'"
-        ],
-        `\
+test('parseSchemaMarkdown, error attribute len lte gte', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     float(len <= 10) f
     float(len >= 10) f2
-`
-    );
+`);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":2: error: Invalid attribute 'len <= 10' from 'MyStruct' member 'f'",
+        ":3: error: Invalid attribute 'len >= 10' from 'MyStruct' member 'f2'"
+    ]);
 });
 
 
-test('test_error_attribute_invalid', (t) => {
-    testParserError(t, [':2: error: Syntax error'], `\
+test('parseSchemaMarkdown, error attribute invalid', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     string(regex="abc") a
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ':2: error: Syntax error'
+    ]);
 });
 
 
-test('test_error_member_invalid', (t) => {
-    testParserError(
-        t,
-        [
-            ':1: error: Syntax error',
-            ':5: error: Syntax error'
-        ],
-        `\
+test('parseSchemaMarkdown, error member invalid', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
     string a
 
 enum MyEnum
     Foo
     int b
-`
-    );
+`);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ':1: error: Syntax error', ':5: error: Syntax error'
+    ]);
 });
 
 
-test('test_error_member_redefinition', (t) => {
-    testParserError(t, [":4: error: Redefinition of 'MyStruct' member 'b'"], `\
+test('parseSchemaMarkdown, error member redefinition', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct MyStruct
     string b
     int a
     float b
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":4: error: Redefinition of 'MyStruct' member 'b'"
+    ]);
 });
 
 
-test('test_error_enum_duplicate_value', (t) => {
-    testParserError(t, [":4: error: Redefinition of 'MyEnum' value 'bar'"], `\
+test('parseSchemaMarkdown, error enum duplicate value', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 enum MyEnum
     bar
     foo
     bar
 `);
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
+        ":4: error: Redefinition of 'MyEnum' value 'bar'"
+    ]);
 });
 
 
-test('SchemaMarkdownParser, doc', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, doc', (t) => {
+    const types = parseSchemaMarkdown(`\
 # My enum
 enum MyEnum
 
@@ -1704,7 +1496,7 @@ action MyAction
     # My output member
     datetime b
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyAction': {
             'action': {
                 'name': 'MyAction',
@@ -1766,13 +1558,11 @@ action MyAction
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, typedef', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, typedef', (t) => {
+    const types = parseSchemaMarkdown(`\
 typedef MyEnum MyTypedef2
 
 enum MyEnum
@@ -1786,7 +1576,7 @@ struct MyStruct
     int a
     optional int b
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'MyEnum': {
             'enum': {
                 'name': 'MyEnum',
@@ -1820,35 +1610,26 @@ struct MyStruct
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, error_dict_non_string_key', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error dict non-string key', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 struct Foo
     int : int {} a
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid dictionary key type from 'Foo' member 'a'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error_action_section_redefinition', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error action section redefinition', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action Foo
     urls
         POST
@@ -1872,27 +1653,21 @@ action Foo
     output
         int e2
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ':13: error: Redefinition of action urls',
         ':15: error: Redefinition of action path',
         ':17: error: Redefinition of action query',
         ':19: error: Redefinition of action input',
         ':21: error: Redefinition of action output'
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, error_action_input_member_redefinition', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, error action input member redefinition', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action MyAction
     path
         int a
@@ -1913,11 +1688,9 @@ struct Base
     int a
     int b
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":3: error: Redefinition of 'MyAction_path' member 'a'",
         ":4: error: Redefinition of 'MyAction_path' member 'b'",
         ":6: error: Redefinition of 'MyAction_query' member 'a'",
@@ -1926,15 +1699,12 @@ struct Base
         ":11: error: Redefinition of 'MyAction2_path' member 'b'",
         ":13: error: Redefinition of 'MyAction2_query' member 'a'",
         ":15: error: Redefinition of 'MyAction2_input' member 'b'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, action_path_base_types', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, action path base types', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct Foo
     int a
     optional string b
@@ -1952,7 +1722,7 @@ action BarAction
     path (Foo, Bar)
         datetime d
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'Bar': {
             'typedef': {
                 'name': 'Bar',
@@ -2007,15 +1777,12 @@ action BarAction
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, action_path_non_struct', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, action path non-struct', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action FooAction
     path (Foo)
         #- will not error
@@ -2043,25 +1810,20 @@ action MyDictAction
     path (MyDict)
         int a
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
         ":19: error: Invalid struct base type 'MyUnion'",
         ":20: error: Redefinition of 'BonkAction_path' member 'a'",
         ":25: error: Invalid struct base type 'MyDict'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, action_query_base_types', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, action query base types', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct Foo
     int a
     optional string b
@@ -2079,7 +1841,7 @@ action BarAction
     query (Foo, Bar)
         datetime d
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'Bar': {
             'typedef': {
                 'name': 'Bar',
@@ -2134,15 +1896,12 @@ action BarAction
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, action_query_non_struct', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, action query non-struct', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action FooAction
     query (Foo)
         #- will not error
@@ -2170,25 +1929,20 @@ action MyDictAction
     query (MyDict)
         int a
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
         ":19: error: Invalid struct base type 'MyUnion'",
         ":20: error: Redefinition of 'BonkAction_query' member 'a'",
         ":25: error: Invalid struct base type 'MyDict'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, action_input_base_types', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, action input base types', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct Foo
     int a
     optional string b
@@ -2206,7 +1960,7 @@ action BarAction
     input (Foo, Bar)
         datetime d
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'Bar': {
             'typedef': {
                 'name': 'Bar',
@@ -2261,15 +2015,12 @@ action BarAction
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, action_input_non_struct', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, action input non-struct', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action FooAction
     input (Foo)
         #- will not error
@@ -2297,27 +2048,21 @@ action MyDictAction
     input (MyDict)
         int a
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
         ":19: error: Invalid struct base type 'MyUnion'",
         ":20: error: Redefinition of 'BonkAction_input' member 'a'",
         ":25: error: Invalid struct base type 'MyDict'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, action_input_member_redef', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, action input member redef', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action FooAction
     input (Foo)
         #- will not error
@@ -2345,25 +2090,20 @@ action MyDictAction
     input (MyDict)
         int a
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
         ":19: error: Invalid struct base type 'MyUnion'",
         ":20: error: Redefinition of 'BonkAction_input' member 'a'",
         ":25: error: Invalid struct base type 'MyDict'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, action_output_struct', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, action output struct', (t) => {
+    const types = parseSchemaMarkdown(`\
 struct Foo
     int a
     optional string b
@@ -2381,7 +2121,7 @@ action BarAction
     output (Foo, Bar)
         datetime d
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'Bar': {
             'typedef': {
                 'name': 'Bar',
@@ -2436,15 +2176,12 @@ action BarAction
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, action_output_non_struct', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, action output non-struct', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action FooAction
     output (Foo)
         #- will not error
@@ -2473,25 +2210,20 @@ action MyDictAction
         #- will not error
         int a
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
         ":19: error: Invalid struct base type 'MyUnion'",
         ":20: error: Redefinition of 'BonkAction_output' member 'a'",
         ":25: error: Invalid struct base type 'MyDict'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
 
 
-test('SchemaMarkdownParser, action_errors_enum', (t) => {
-    const parser = new SchemaMarkdownParser();
-    parser.parseString(`\
+test('parseSchemaMarkdown, action errors enum', (t) => {
+    const types = parseSchemaMarkdown(`\
 action FooAction
     errors (Foo)
         C
@@ -2509,7 +2241,7 @@ action BarAction
     errors (Foo, Bar)
         D
 `);
-    t.deepEqual(parser.types, {
+    t.deepEqual(types, {
         'Bar': {
             'typedef': {
                 'name': 'Bar',
@@ -2564,15 +2296,12 @@ action BarAction
             }
         }
     });
-    t.deepEqual(parser.errors, []);
 });
 
 
-test('SchemaMarkdownParser, action_errors_non_enum', (t) => {
-    const parser = new SchemaMarkdownParser();
-    let errors = null;
-    try {
-        parser.parseString(`\
+test('parseSchemaMarkdown, action errors non-enum', (t) => {
+    const error = t.throws(() => {
+        parseSchemaMarkdown(`\
 action FooAction
     errors (Foo)
 
@@ -2593,86 +2322,12 @@ action BonkAction
     errors (MyEnum)
         A
 `);
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
+    });
+    t.true(error instanceof SchemaMarkdownParserError);
+    t.deepEqual(error.errors, [
         ":2: error: Invalid enum base type 'Foo'",
         ":14: error: Invalid enum base type 'Bar'",
         ":15: error: Redefinition of 'BarAction_errors' value 'A'",
         ":19: error: Redefinition of 'BonkAction_errors' value 'A'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
-});
-
-
-test('SchemaMarkdownParser, finalize no parse', (t) => {
-    const types = {
-        'MyAction': {
-            'action': {
-                'name': 'MyAction',
-                'query': 'MyAction_query'
-            }
-        },
-        'MyAction_query': {
-            'struct': {
-                'name': 'MyAction_query',
-                'members': [
-                    {'name': 'a', 'type': {'builtin': 'int'}}
-                ]
-            }
-        },
-        'OtherType': {}
-    };
-    const parser = new SchemaMarkdownParser(null, types);
-    parser.finalize();
-    t.is(parser.types, types);
-});
-
-
-test('SchemaMarkdownParser, finalize no parse error', (t) => {
-    const types = {
-        'MyAction': {
-            'action': {
-                'name': 'MyAction',
-                'query': 'MyAction_query',
-                'input': 'PositiveInt',
-                'output': 'MyAction_output'
-            }
-        },
-        'MyAction_input': {
-            'struct': {
-                'name': 'MyAction_input',
-                'members': [
-                    {'name': 'a', 'type': {'user': 'NegativeInt'}},
-                    {'name': 'a', 'type': {'builtin': 'int'}}
-                ]
-            }
-        },
-        'PositiveInt': {
-            'typedef': {
-                'name': 'PositiveInt',
-                'type': {'builtin': 'int'},
-                'attr': {'gt': 0}
-            }
-        }
-    };
-    const parser = new SchemaMarkdownParser(null, types);
-    let errors = null;
-    try {
-        parser.finalize();
-    } catch (error) {
-        t.true(error instanceof SchemaMarkdownParserError);
-        ({errors} = error);
-    }
-    const expectedErrors = [
-        ":1: error: Redefinition of 'MyAction_input' member 'a'",
-        ":1: error: Unknown type 'MyAction_output' from 'MyAction'",
-        ":1: error: Unknown type 'MyAction_query' from 'MyAction'",
-        ":1: error: Unknown type 'NegativeInt' from 'MyAction_input' member 'a'"
-    ];
-    t.deepEqual(errors, expectedErrors);
-    t.deepEqual(parser.errors, expectedErrors);
+    ]);
 });
