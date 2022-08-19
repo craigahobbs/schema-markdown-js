@@ -1,3 +1,7 @@
+## 1.2.0 (2022-08-19)
+
+- [528b19f](https://github.com/craigahobbs/schema-markdown-js/commit/528b19f) - refactor SchemaMarkdownParser class as parseSchemaMarkdown function
+
 ## 1.1.6 (2022-05-10)
 
 - [3c233e7](https://github.com/craigahobbs/schema-markdown-js/commit/3c233e7) - remove TypeModel
