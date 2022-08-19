@@ -64,12 +64,12 @@ its features at a glance:</p>
 </ul>
 <h2>Usage</h2>
 <p>To schema-validate an object, first parse its <em>Schema Markdown</em> using the
-<a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a>
-class:</p>
-<pre class="prettyprint source lang-javascript"><code>import {SchemaMarkdownParser} from 'schema-markdown/parser.js';
+<a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.parseSchemaMarkdown.html">parseSchemaMarkdown</a>
+function:</p>
+<pre class="prettyprint source lang-javascript"><code>import {parseSchemaMarkdown} from 'schema-markdown/parser.js';
 import {validateType} from 'schema-markdown/schema.js';
 
-const parser = new SchemaMarkdownParser(`\
+const types = parseSchemaMarkdown(`\
 # An aggregation function
 enum Aggregation
     Average
@@ -87,7 +87,7 @@ struct Operation
 <p>Then, validate an object using the
 <a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_schema.html#.validateType">validateType</a>
 function:</p>
-<pre class="prettyprint source lang-javascript"><code>const obj = validateType(parser.types, 'Operation', {
+<pre class="prettyprint source lang-javascript"><code>const obj = validateType(types, 'Operation', {
     'numbers': [1, 2, '3', 4]
 });
 console.assert(obj.numbers[2] === 3);
@@ -95,7 +95,7 @@ console.assert(obj.numbers[2] === 3);
 <p>Notice that the numerical input '3' above is <em>type-massaged</em> to the integer 3 by validation.
 Validation fails if the object does not match the schema:</p>
 <pre class="prettyprint source lang-javascript"><code>try {
-    validateType(parser.types, 'Operation', {
+    validateType(types, 'Operation', {
         'numbers': [1, 2, 'asdf', 4]
     });
 } catch ({message}) {
@@ -104,7 +104,7 @@ Validation fails if the object does not match the schema:</p>
 </code></pre>
 <p>Validation also fails if a member contraint is violated:</p>
 <pre class="prettyprint source lang-javascript"><code>try {
-    validateType(parser.types, 'Operation', {
+    validateType(types, 'Operation', {
         'numbers': []
     });
 } catch ({message}) {
@@ -126,7 +126,7 @@ and it was started using <a href="https://github.com/craigahobbs/javascript-temp
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
 </nav>
 
 <br class="clear">

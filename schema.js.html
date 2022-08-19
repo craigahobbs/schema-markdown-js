@@ -150,7 +150,7 @@ export class ValidationError extends Error {
  * @param {Object} value - The value object to validate
  * @param {string} [memberFqn=null] - Optional fully-qualified member name
  * @returns {Object} The validated, transformed value object
- * @throws {ValidationError} A validation error occurred
+ * @throws [ValidationError]{@link module:lib/schema.ValidationError}
  */
 export function validateType(types, typeName, value, memberFqn = null) {
     if (!(typeName in types)) {
@@ -542,7 +542,7 @@ export function getEnumValues(types, enum_) {
  *
  * @param {Object} types - The map of user type name to user type model
  * @returns {Object} The validated, transformed types object
- * @throws {ValidationError} A validation error occurred
+ * @throws [ValidationError]{@link module:lib/schema.ValidationError}
  */
 export function validateTypeModel(types) {
     // Validate with the type model
@@ -566,7 +566,7 @@ export function validateTypeModel(types) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
 </nav>
 
 <br class="clear">

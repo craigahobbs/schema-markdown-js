@@ -31,11 +31,13 @@
 
 /** @module lib/typeModel */
 
-import {SchemaMarkdownParser} from './parser.js';
+import {parseSchemaMarkdown} from './parser.js';
 
 
-// The Schema Markdown type model defined as Schema Markdown
-const typeModelSmd = `\
+/**
+ * The Schema Markdown type model
+ */
+export const typeModel = parseSchemaMarkdown(`\
 # Map of user type name to user type model
 typedef UserType{len > 0} Types
 
@@ -268,13 +270,7 @@ struct ActionURL
 
     # The URL path. If not provided, uses the default URL path of "/&lt;actionName>".
     optional string path
-`;
-
-
-/**
- * The Schema Markdown type model
- */
-export const typeModel = (new SchemaMarkdownParser(typeModelSmd)).types;
+`);
 </code></pre>
         </article>
     </section>
@@ -285,7 +281,7 @@ export const typeModel = (new SchemaMarkdownParser(typeModelSmd)).types;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
 </nav>
 
 <br class="clear">

@@ -49,9 +49,6 @@
         <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            <dt><a href="module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></dt>
-            <dd></dd>
-        
             <dt><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></dt>
             <dd></dd>
         </dl>
@@ -65,6 +62,318 @@
 
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".parseSchemaMarkdown"><span class="type-signature">(static) </span>parseSchemaMarkdown<span class="signature">(text)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Parse Schema Markdown from an iterator of line strings (e.g an input stream). This method can
+be called repeatedly.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The Schema Markdown text</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.types</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ''
+                
+                </td>
+            
+
+            <td class="description last">The <a href="https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'">type model</a></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.filename</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ''
+                
+                </td>
+            
+
+            <td class="description last">The name of file being parsed (for error messages)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.validate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last">If true, validate after parsing</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line67">line 67</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        <a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a>
+    
+    </div>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The <a href="https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'">type model</a>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
     
 
     
@@ -80,7 +389,7 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParser.html">SchemaMarkdownParser</a></li><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_encode.html">lib/encode</a></li><li><a href="module-lib_parser.html">lib/parser</a></li><li><a href="module-lib_schema.html">lib/schema</a></li><li><a href="module-lib_typeModel.html">lib/typeModel</a></li></ul><h3>Classes</h3><ul><li><a href="module-lib_parser.SchemaMarkdownParserError.html">SchemaMarkdownParserError</a></li><li><a href="module-lib_schema.ValidationError.html">ValidationError</a></li></ul>
 </nav>
 
 <br class="clear">
