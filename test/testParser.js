@@ -302,8 +302,7 @@ action MyAction
     urls
         GET
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':4: error: Duplicate URL: GET /',
         ':7: error: Duplicate URL: GET ',
@@ -319,8 +318,7 @@ action MyAction
     url (BaseType)
         GET /
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':2: error: Syntax error',
         ':3: error: Syntax error'
@@ -464,8 +462,7 @@ struct MyStruct4
 struct MyStruct5 (MyStruct4, MyDict)
     int b
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":1: error: Invalid struct base type 'MyEnum'",
         ":8: error: Redefinition of 'MyStruct3' member 'a'",
@@ -487,8 +484,7 @@ struct MyStruct2 (MyStruct3)
 struct MyStruct3 (MyStruct)
     int c
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":1: error: Circular base type detected for type 'MyStruct'",
         ":4: error: Circular base type detected for type 'MyStruct2'",
@@ -547,8 +543,7 @@ enum MyEnum4
 enum MyEnum5 (MyEnum4, MyDict)
     B
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":1: error: Invalid enum base type 'MyStruct'",
         ":8: error: Redefinition of 'MyEnum3' value 'A'",
@@ -570,8 +565,7 @@ enum MyEnum2 (MyEnum3)
 enum MyEnum3 (MyEnum)
     c
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":1: error: Circular base type detected for type 'MyEnum'",
         ":4: error: Circular base type detected for type 'MyEnum2'",
@@ -712,8 +706,7 @@ struct MyStruct (MyStruct2)
 struct MyStruct3
     int b
 `, {'types': types});
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':1: error: Invalid struct base type \'MyStruct2\''
     ]);
@@ -850,8 +843,7 @@ struct MyStruct
     MyStruct2(len > 0) a
 struct MyStruct2
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute 'len > 0' from 'MyStruct' member 'a'"
     ]);
@@ -870,8 +862,7 @@ action MyAction
     output
         MyBadType b
 `, {'filename': 'foo'});
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         "foo:2: error: Unknown type 'MyBadType' from 'Foo' member 'a'",
         "foo:6: error: Unknown type 'MyBadType2' from 'MyAction_input' member 'a'",
@@ -889,8 +880,7 @@ struct MyStruct
 
 typedef MyBadType MyTypedef
 `, {'filename': 'foo'});
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
         "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
@@ -908,8 +898,7 @@ struct MyStruct
 
 typedef MyBadType MyTypedef
 `, {'filename': 'foo'});
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
         "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
@@ -927,8 +916,7 @@ struct MyStruct
 
 typedef MyBadType MyTypedef
 `, {'filename': 'foo'});
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         "foo:2: error: Invalid dictionary key type from 'MyStruct' member 'a'",
         "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
@@ -947,8 +935,7 @@ struct Foo
 
 action MyAction
 `, {'filename': 'foo'});
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         "foo:2: error: Invalid reference to action 'MyAction' from 'Foo' member 'a'"
     ]);
@@ -965,8 +952,7 @@ enum Foo
     A
     B
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":4: error: Redefinition of type 'Foo'"
     ]);
@@ -983,8 +969,7 @@ enum Foo
 struct Foo
     int a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":5: error: Redefinition of type 'Foo'"
     ]);
@@ -999,8 +984,7 @@ struct Foo
 
 typedef int(> 5) Foo
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":4: error: Redefinition of type 'Foo'"
     ]);
@@ -1018,8 +1002,7 @@ action MyAction
     input
         string b
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":5: error: Redefinition of action 'MyAction'"
     ]);
@@ -1042,8 +1025,7 @@ input
 output
 errors
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':6: error: Syntax error',
         ':7: error: Syntax error',
@@ -1069,8 +1051,7 @@ enum MyEnum
 
 int cde
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':2: error: Syntax error',
         ':8: error: Syntax error',
@@ -1095,8 +1076,7 @@ action MyAction
     input
         MyError
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':2: error: Syntax error',
         ':3: error: Syntax error',
@@ -1238,8 +1218,7 @@ test('parseSchemaMarkdown, error attribute eq', (t) => {
 struct MyStruct
     string(== 7) s
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute '== 7' from 'MyStruct' member 's'"
     ]);
@@ -1252,8 +1231,7 @@ test('parseSchemaMarkdown, error attribute lt', (t) => {
 struct MyStruct
     string(< 7) s
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'"
     ]);
@@ -1266,8 +1244,7 @@ test('parseSchemaMarkdown, error attribute gt', (t) => {
 struct MyStruct
     string(> 7) s
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"
     ]);
@@ -1280,8 +1257,7 @@ test('parseSchemaMarkdown, error attribute lt gt', (t) => {
 struct MyStruct
     string(< 7, > 7) s
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'",
         ":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"
@@ -1300,8 +1276,7 @@ struct MyStruct
     MyStruct(>= 1) a
     MyEnum(<= 2) b
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":6: error: Invalid attribute '>= 1' from 'MyStruct' member 'a'",
         ":7: error: Invalid attribute '<= 2' from 'MyStruct' member 'b'"
@@ -1315,8 +1290,7 @@ test('parseSchemaMarkdown, error attribute len eq', (t) => {
 struct MyStruct
     int(len == 1) i
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute 'len == 1' from 'MyStruct' member 'i'"
     ]);
@@ -1329,8 +1303,7 @@ test('parseSchemaMarkdown, error attribute len lt', (t) => {
 struct MyStruct
     float(len < 10) f
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'"
     ]);
@@ -1343,8 +1316,7 @@ test('parseSchemaMarkdown, error attribute len gt', (t) => {
 struct MyStruct
     int(len > 1) i
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute 'len > 1' from 'MyStruct' member 'i'"
     ]);
@@ -1357,8 +1329,7 @@ test('parseSchemaMarkdown, error attribute len lt gt', (t) => {
 struct MyStruct
     float(len < 10, len > 10) f
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'",
         ":2: error: Invalid attribute 'len > 10' from 'MyStruct' member 'f'"
@@ -1373,8 +1344,7 @@ struct MyStruct
     float(len <= 10) f
     float(len >= 10) f2
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid attribute 'len <= 10' from 'MyStruct' member 'f'",
         ":3: error: Invalid attribute 'len >= 10' from 'MyStruct' member 'f2'"
@@ -1388,8 +1358,7 @@ test('parseSchemaMarkdown, error attribute invalid', (t) => {
 struct MyStruct
     string(regex="abc") a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':2: error: Syntax error'
     ]);
@@ -1405,8 +1374,7 @@ enum MyEnum
     Foo
     int b
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':1: error: Syntax error', ':5: error: Syntax error'
     ]);
@@ -1421,8 +1389,7 @@ struct MyStruct
     int a
     float b
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":4: error: Redefinition of 'MyStruct' member 'b'"
     ]);
@@ -1437,8 +1404,7 @@ enum MyEnum
     foo
     bar
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":4: error: Redefinition of 'MyEnum' value 'bar'"
     ]);
@@ -1619,8 +1585,7 @@ test('parseSchemaMarkdown, error dict non-string key', (t) => {
 struct Foo
     int : int {} a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid dictionary key type from 'Foo' member 'a'"
     ]);
@@ -1653,8 +1618,7 @@ action Foo
     output
         int e2
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ':13: error: Redefinition of action urls',
         ':15: error: Redefinition of action path',
@@ -1688,8 +1652,7 @@ struct Base
     int a
     int b
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":3: error: Redefinition of 'MyAction_path' member 'a'",
         ":4: error: Redefinition of 'MyAction_path' member 'b'",
@@ -1810,8 +1773,7 @@ action MyDictAction
     path (MyDict)
         int a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
@@ -1929,8 +1891,7 @@ action MyDictAction
     query (MyDict)
         int a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
@@ -2048,8 +2009,7 @@ action MyDictAction
     input (MyDict)
         int a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
@@ -2090,8 +2050,7 @@ action MyDictAction
     input (MyDict)
         int a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
@@ -2210,8 +2169,7 @@ action MyDictAction
         #- will not error
         int a
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid struct base type 'Foo'",
         ":14: error: Invalid struct base type 'Foo'",
@@ -2322,8 +2280,7 @@ action BonkAction
     errors (MyEnum)
         A
 `);
-    });
-    t.true(error instanceof SchemaMarkdownParserError);
+    }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
         ":2: error: Invalid enum base type 'Foo'",
         ":14: error: Invalid enum base type 'Bar'",

@@ -12,6 +12,7 @@ import {typeModel} from '../lib/typeModel.js';
 // getReferencedTypes tests
 //
 
+
 test('getReferencedTypes', (t) => {
     const types = {
         'MyAction': {
@@ -250,6 +251,7 @@ test('getReferencedTypes, enum base', (t) => {
 // validateType tests
 //
 
+
 function validateTypeHelper(type, obj) {
     const types = {
         'MyTypedef': {
@@ -263,15 +265,11 @@ function validateTypeHelper(type, obj) {
 
 
 test('validateType, unknown', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateType({}, 'Unknown', null);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown type 'Unknown'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown type 'Unknown'");
 });
 
 
@@ -282,30 +280,22 @@ test('validateType, string', (t) => {
 
 
 test('validateType, string error', (t) => {
-    let errorMessage = null;
     const obj = 7;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'string'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 7 (type 'number'), expected type 'string'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'string'");
 });
 
 
 test('validateType, string error undefined', (t) => {
-    let errorMessage = null;
     const obj = undefined;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'string'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value undefined (type 'undefined'), expected type 'string'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value undefined (type 'undefined'), expected type 'string'");
 });
 
 
@@ -322,58 +312,42 @@ test('validateType, int string', (t) => {
 
 
 test('validateType, int float', (t) => {
-    let errorMessage = null;
     const obj = 7.1;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'int'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 7.1 (type 'number'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 7.1 (type 'number'), expected type 'int'");
 });
 
 
 test('validateType, int error', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'int'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'int'");
 });
 
 
 test('validateType, int error float', (t) => {
-    let errorMessage = null;
     const obj = 7.5;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'int'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 7.5 (type 'number'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 7.5 (type 'number'), expected type 'int'");
 });
 
 
 test('validateType, int error bool', (t) => {
-    let errorMessage = null;
     const obj = true;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'int'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value true (type 'boolean'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value true (type 'boolean'), expected type 'int'");
 });
 
 
@@ -396,58 +370,42 @@ test('validateType, float string', (t) => {
 
 
 test('validateType, float error', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'float'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'float'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'float'");
 });
 
 
 test('validateType, float error nan', (t) => {
-    let errorMessage = null;
     const obj = 'nan';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'float'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"nan\" (type 'string'), expected type 'float'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"nan\" (type 'string'), expected type 'float'");
 });
 
 
 test('validateType, float error inf', (t) => {
-    let errorMessage = null;
     const obj = 'inf';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'float'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"inf\" (type 'string'), expected type 'float'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"inf\" (type 'string'), expected type 'float'");
 });
 
 
 test('validateType, float error bool', (t) => {
-    let errorMessage = null;
     const obj = true;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'float'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value true (type 'boolean'), expected type 'float'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value true (type 'boolean'), expected type 'float'");
 });
 
 
@@ -470,30 +428,22 @@ test('validateType, bool false', (t) => {
 
 
 test('validateType, bool error', (t) => {
-    let errorMessage = null;
     const obj = 0;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'bool'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 0 (type 'number'), expected type 'bool'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'bool'");
 });
 
 
 test('validateType, bool error string', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'bool'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'bool'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'bool'");
 });
 
 
@@ -522,44 +472,32 @@ test('validateType, date string datetime', (t) => {
 
 
 test('validateType, date string error', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'date'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'date'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'date'");
 });
 
 
 test('validateType, date error', (t) => {
-    let errorMessage = null;
     const obj = 0;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'date'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 0 (type 'number'), expected type 'date'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'date'");
 });
 
 
 test('validateType, date error excluded', (t) => {
-    let errorMessage = null;
     const obj = 'December 17, 1995 03:24:00';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'date'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'date'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'date'");
 });
 
 
@@ -588,44 +526,32 @@ test('validateType, datetime string date', (t) => {
 
 
 test('validateType, datetime string error', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'datetime'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'datetime'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'datetime'");
 });
 
 
 test('validateType, datetime error', (t) => {
-    let errorMessage = null;
     const obj = 0;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'datetime'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 0 (type 'number'), expected type 'datetime'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'datetime'");
 });
 
 
 test('validateType, datetime error excluded', (t) => {
-    let errorMessage = null;
     const obj = 'December 17, 1995 03:24:00';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'datetime'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'datetime'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'datetime'");
 });
 
 
@@ -642,30 +568,22 @@ test('validateType, uuid lowercase', (t) => {
 
 
 test('validateType, uuid error', (t) => {
-    let errorMessage = null;
     const obj = 0;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'uuid'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 0 (type 'number'), expected type 'uuid'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'uuid'");
 });
 
 
 test('validateType, uuid error string', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'builtin': 'uuid'}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'uuid'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'uuid'");
 });
 
 
@@ -703,15 +621,11 @@ test('validateType, array nullable', (t) => {
     const obj = [1, null, 3];
     t.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj), obj);
 
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, '1');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object') for member '1', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, '1');
+    t.is(error.message, "Invalid value null (type 'object') for member '1', expected type 'int'");
 });
 
 
@@ -722,15 +636,11 @@ test('validateType, array nullable as string', (t) => {
         [1, null, 3]
     );
 
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, '1');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"null\" (type 'string') for member '1', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, '1');
+    t.is(error.message, "Invalid value \"null\" (type 'string') for member '1', expected type 'int'");
 });
 
 
@@ -747,58 +657,42 @@ test('validateType, array attributes', (t) => {
 
 
 test('validateType, array error', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'array'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'array'");
 });
 
 
 test('validateType, array error value', (t) => {
-    let errorMessage = null;
     const obj = [1, 'abc', 3];
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, '1');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string') for member '1', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, '1');
+    t.is(error.message, "Invalid value \"abc\" (type 'string') for member '1', expected type 'int'");
 });
 
 
 test('validateType, array error value nested', (t) => {
-    let errorMessage = null;
     const obj = [[1, 2], [1, 'abc', 3]];
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'array': {'type': {'array': {'type': {'builtin': 'int'}}}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, '1.1');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string') for member '1.1', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, '1.1');
+    t.is(error.message, "Invalid value \"abc\" (type 'string') for member '1.1', expected type 'int'");
 });
 
 
 test('validateType, array attribute error', (t) => {
-    let errorMessage = null;
     const obj = [1, 2, 5];
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, '2');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 5 (type 'number') for member '2', expected type 'int' [< 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, '2');
+    t.is(error.message, "Invalid value 5 (type 'number') for member '2', expected type 'int' [< 5]");
 });
 
 
@@ -812,15 +706,11 @@ test('validateType, dict nullable', (t) => {
     const obj = {'a': 1, 'b': null, 'c': 3};
     t.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj), obj);
 
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'b');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object') for member 'b', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'b');
+    t.is(error.message, "Invalid value null (type 'object') for member 'b', expected type 'int'");
 });
 
 
@@ -831,15 +721,11 @@ test('validateType, dict nullable as string', (t) => {
         {'a': 1, 'b': null, 'c': 3}
     );
 
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'b');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"null\" (type 'string') for member 'b', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'b');
+    t.is(error.message, "Invalid value \"null\" (type 'string') for member 'b', expected type 'int'");
 });
 
 
@@ -854,15 +740,11 @@ test('validateType, dict key nullable', (t) => {
     t.is(obj2.get(null), 2);
     t.is(obj2.get('c'), 3);
 
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object'), expected type 'string'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value null (type 'object'), expected type 'string'");
 });
 
 
@@ -877,15 +759,11 @@ test('validateType, dict key nullable as string', (t) => {
     t.is(obj2.get(null), 2);
     t.is(obj2.get('c'), 3);
 
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object'), expected type 'string'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value null (type 'object'), expected type 'string'");
 });
 
 
@@ -902,58 +780,42 @@ test('validateType, dict attributes', (t) => {
 
 
 test('validateType, dict error', (t) => {
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'dict'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'dict'");
 });
 
 
 test('validateType, dict error value', (t) => {
-    let errorMessage = null;
     const obj = {'a': 1, 'b': 'abc', 'c': 3};
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'b');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string') for member 'b', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'b');
+    t.is(error.message, "Invalid value \"abc\" (type 'string') for member 'b', expected type 'int'");
 });
 
 
 test('validateType, dict error value nested', (t) => {
-    let errorMessage = null;
     const obj = [{'a': 1}, {'a': 1, 'b': 'abc', 'c': 3}];
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'array': {'type': {'dict': {'type': {'builtin': 'int'}}}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, '1.b');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string') for member '1.b', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, '1.b');
+    t.is(error.message, "Invalid value \"abc\" (type 'string') for member '1.b', expected type 'int'");
 });
 
 
 test('validateType, dict attribute error', (t) => {
-    let errorMessage = null;
     const obj = {'a': 1, 'b': 2, 'c': 5};
-    try {
+    const error = t.throws(() => {
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'c');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 5 (type 'number') for member 'c', expected type 'int' [< 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'c');
+    t.is(error.message, "Invalid value 5 (type 'number') for member 'c', expected type 'int' [< 5]");
 });
 
 
@@ -975,20 +837,16 @@ test('validateType, dict key type', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = {'A': 1, 'B': 2};
     t.deepEqual(validateType(types, 'MyTypedef', obj), obj);
 
     obj = {'A': 1, 'C': 2};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"C\" (type 'string'), expected type 'MyEnum'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"C\" (type 'string'), expected type 'MyEnum'");
 });
 
 
@@ -1001,20 +859,16 @@ test('validateType, dict key attr', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = {'abc': 1, 'abcdefghi': 2};
     t.deepEqual(validateType(types, 'MyTypedef', obj), obj);
 
     obj = {'abc': 1, 'abcdefghij': 2};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abcdefghij\" (type 'string'), expected type 'string' [len < 10]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abcdefghij\" (type 'string'), expected type 'string' [len < 10]");
 });
 
 
@@ -1030,20 +884,16 @@ test('validateType, enum', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = 'a';
     t.is(validateType(types, 'MyEnum', obj), obj);
 
     obj = 'c';
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyEnum', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"c\" (type 'string'), expected type 'MyEnum'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"c\" (type 'string'), expected type 'MyEnum'");
 });
 
 
@@ -1055,17 +905,13 @@ test('validateType, enum empty', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     const obj = 'a';
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyEnum', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"a\" (type 'string'), expected type 'MyEnum'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"a\" (type 'string'), expected type 'MyEnum'");
 });
 
 
@@ -1101,7 +947,6 @@ test('validateType, enum base', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = 'a';
     t.is(validateType(types, 'MyEnum', obj), obj);
@@ -1110,14 +955,11 @@ test('validateType, enum base', (t) => {
     t.is(validateType(types, 'MyEnum', obj), obj);
 
     obj = 'c';
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyEnum', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"c\" (type 'string'), expected type 'MyEnum'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"c\" (type 'string'), expected type 'MyEnum'");
 });
 
 
@@ -1131,40 +973,30 @@ test('validateType, typedef', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = 5;
     t.is(validateType(types, 'MyTypedef', obj), obj);
 
     obj = 4;
-    try {
+    let error = t.throws(() => {
         validateType(types, 'MyTypedef', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 4 (type 'number'), expected type 'MyTypedef' [>= 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 4 (type 'number'), expected type 'MyTypedef' [>= 5]");
 
     obj = null;
-    try {
+    error = t.throws(() => {
         validateType(types, 'MyTypedef', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value null (type 'object'), expected type 'int'");
 
     obj = 'null';
-    try {
+    error = t.throws(() => {
         validateType(types, 'MyTypedef', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"null\" (type 'string'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"null\" (type 'string'), expected type 'int'");
 });
 
 
@@ -1191,17 +1023,12 @@ test('validateType, typedef type error', (t) => {
             }
         }
     };
-    let errorMessage = null;
-
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'int'");
 });
 
 
@@ -1215,16 +1042,13 @@ test('validateType, typedef attr eq', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', 5);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', 7);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [== 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [== 5]");
 });
 
 
@@ -1238,18 +1062,15 @@ test('validateType, typedef attr nullable', (t) => {
             }
         }
     };
-    let errorMessage = null;
     t.is(validateType(types, 'MyTypedef', 5), 5);
     t.is(validateType(types, 'MyTypedef', null), null);
     t.is(validateType(types, 'MyTypedef', 'null'), null);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', 'abc');
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'int'");
 });
 
 
@@ -1263,24 +1084,19 @@ test('validateType, typedef attr lt', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', 3);
-    try {
+
+    let error = t.throws(() => {
         validateType(types, 'MyTypedef', 5);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 5 (type 'number'), expected type 'MyTypedef' [< 5]");
-    try {
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 5 (type 'number'), expected type 'MyTypedef' [< 5]");
+
+    error = t.throws(() => {
         validateType(types, 'MyTypedef', 7);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [< 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [< 5]");
 });
 
 
@@ -1294,16 +1110,13 @@ test('validateType, typedef attr lte', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', 5);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', 7);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [<= 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [<= 5]");
 });
 
 
@@ -1317,24 +1130,19 @@ test('validateType, typedef attr gt', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', 7);
-    try {
+
+    let error = t.throws(() => {
         validateType(types, 'MyTypedef', 3);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 3 (type 'number'), expected type 'MyTypedef' [> 5]");
-    try {
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 3 (type 'number'), expected type 'MyTypedef' [> 5]");
+
+    error = t.throws(() => {
         validateType(types, 'MyTypedef', 5);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 5 (type 'number'), expected type 'MyTypedef' [> 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 5 (type 'number'), expected type 'MyTypedef' [> 5]");
 });
 
 
@@ -1348,16 +1156,13 @@ test('validateType, typedef attr gte', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', 5);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', 3);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 3 (type 'number'), expected type 'MyTypedef' [>= 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value 3 (type 'number'), expected type 'MyTypedef' [>= 5]");
 });
 
 
@@ -1371,16 +1176,13 @@ test('validateType, typedef attr lenEq', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', [1, 2, 3]);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len == 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len == 5]");
 });
 
 
@@ -1394,16 +1196,13 @@ test('validateType, typedef attr lenEq object', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5});
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', {'a': 1, 'b': 2, 'c': 3});
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value {\"a\":1,\"b\":2,\"c\":3} (type 'object'), expected type 'MyTypedef' [len == 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value {\"a\":1,\"b\":2,\"c\":3} (type 'object'), expected type 'MyTypedef' [len == 5]");
 });
 
 
@@ -1417,16 +1216,13 @@ test('validateType, typedef attr lenLT', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', [1, 2, 3]);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len < 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len < 5]");
 });
 
 
@@ -1440,16 +1236,13 @@ test('validateType, typedef attr lenLTE', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', [1, 2, 3, 4, 5, 6, 7]);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value [1,2,3,4,5,6,7] (type 'object'), expected type 'MyTypedef' [len <= 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value [1,2,3,4,5,6,7] (type 'object'), expected type 'MyTypedef' [len <= 5]");
 });
 
 
@@ -1463,16 +1256,13 @@ test('validateType, typedef attr lenGT', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5, 6, 7]);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len > 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len > 5]");
 });
 
 
@@ -1486,16 +1276,13 @@ test('validateType, typedef attr lenGTE', (t) => {
             }
         }
     };
-    let errorMessage = null;
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
-    try {
+
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', [1, 2, 3]);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len >= 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len >= 5]");
 });
 
 
@@ -1644,16 +1431,12 @@ test('validateType, struct string error', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateType(types, 'Empty', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'Empty'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'Empty'");
 });
 
 
@@ -1670,7 +1453,6 @@ test('validateType, struct union', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = {'a': 7};
     t.deepEqual(validateType(types, 'MyUnion', obj), obj);
@@ -1679,24 +1461,18 @@ test('validateType, struct union', (t) => {
     t.deepEqual(validateType(types, 'MyUnion', obj), obj);
 
     obj = {};
-    try {
+    let error = t.throws(() => {
         validateType(types, 'MyUnion', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value {} (type 'object'), expected type 'MyUnion'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value {} (type 'object'), expected type 'MyUnion'");
 
     obj = {'c': 7};
-    try {
+    error = t.throws(() => {
         validateType(types, 'MyUnion', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown member 'c'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown member 'c'");
 });
 
 
@@ -1732,20 +1508,16 @@ test('validateType, struct base', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = {'a': 7, 'b': 11};
     t.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Required member 'b' missing");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Required member 'b' missing");
 });
 
 
@@ -1762,7 +1534,6 @@ test('validateType, struct optional', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = {'a': 7, 'b': 'abc', 'c': 7.1};
     t.deepEqual(validateType(types, 'MyStruct', obj), obj);
@@ -1771,14 +1542,11 @@ test('validateType, struct optional', (t) => {
     t.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Required member 'c' missing");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Required member 'c' missing");
 });
 
 
@@ -1796,7 +1564,6 @@ test('validateType, struct nullable', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = {'a': 7, 'b': 8, 'c': 'abc', 'd': 7.1};
     t.deepEqual(validateType(types, 'MyStruct', obj), obj);
@@ -1811,34 +1578,25 @@ test('validateType, struct nullable', (t) => {
     t.deepEqual(validateType(types, 'MyStruct', obj), {'a': 7, 'b': null, 'c': null, 'd': 7.1});
 
     obj = {'a': null, 'b': null, 'c': null, 'd': 7.1};
-    try {
+    let error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'a');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object') for member 'a', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'a');
+    t.is(error.message, "Invalid value null (type 'object') for member 'a', expected type 'int'");
 
     obj = {'a': 7, 'b': null, 'c': null, 'd': null};
-    try {
+    error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'd');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object') for member 'd', expected type 'float'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'd');
+    t.is(error.message, "Invalid value null (type 'object') for member 'd', expected type 'float'");
 
     obj = {'a': 7, 'c': null, 'd': 7.1};
-    try {
+    error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Required member 'b' missing");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Required member 'b' missing");
 });
 
 
@@ -1854,20 +1612,16 @@ test('validateType, struct nullable attr', (t) => {
             }
         }
     };
-    let errorMessage = null;
 
     let obj = {'a': 7, 'b': 4};
     t.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7, 'b': 5};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'b');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 5 (type 'number') for member 'b', expected type 'int' [< 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'b');
+    t.is(error.message, "Invalid value 5 (type 'number') for member 'b', expected type 'int' [< 5]");
 
     obj = {'a': 7, 'b': null};
     t.deepEqual(validateType(types, 'MyStruct', obj), obj);
@@ -1901,16 +1655,12 @@ test('validateType, struct member attr invalid', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {'a': 7};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'a');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value 7 (type 'number') for member 'a', expected type 'int' [< 5]");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'a');
+    t.is(error.message, "Invalid value 7 (type 'number') for member 'a', expected type 'int' [< 5]");
 });
 
 
@@ -1925,16 +1675,12 @@ test('validateType, struct error invalid value', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = 'abc';
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string'), expected type 'MyStruct'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'MyStruct'");
 });
 
 
@@ -1949,16 +1695,12 @@ test('validateType, struct error optional null value', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {'a': null};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'a');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value null (type 'object') for member 'a', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'a');
+    t.is(error.message, "Invalid value null (type 'object') for member 'a', expected type 'int'");
 });
 
 
@@ -1973,16 +1715,12 @@ test('validateType, struct error member validation', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {'a': 'abc'};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'a');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string') for member 'a', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'a');
+    t.is(error.message, "Invalid value \"abc\" (type 'string') for member 'a', expected type 'int'");
 });
 
 
@@ -2005,16 +1743,12 @@ test('validateType, struct error nested member validation', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {'a': {'b': 'abc'}};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, 'a.b');
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value \"abc\" (type 'string') for member 'a.b', expected type 'int'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, 'a.b');
+    t.is(error.message, "Invalid value \"abc\" (type 'string') for member 'a.b', expected type 'int'");
 });
 
 
@@ -2029,16 +1763,12 @@ test('validateType, struct error unknown member', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {'a': 7, 'b': 8};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown member 'b'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown member 'b'");
 });
 
 
@@ -2059,16 +1789,12 @@ test('validateType, struct error unknown member nested', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = [{'a': 5}, {'a': 7, 'b': 'abc'}];
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyTypedef', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown member '1.b'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown member '1.b'");
 });
 
 
@@ -2080,16 +1806,12 @@ test('validateType, struct error unknown member empty', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {'b': 8};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown member 'b'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown member 'b'");
 });
 
 
@@ -2104,17 +1826,13 @@ test('validateType, struct error unknown member long', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {'a': 7};
     obj['b'.repeat(2000)] = 8;
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `Unknown member '${'b'.repeat(100)}'`);
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `Unknown member '${'b'.repeat(100)}'`);
 });
 
 
@@ -2129,16 +1847,12 @@ test('validateType, struct error missing member', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyStruct', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Required member 'a' missing");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Required member 'a' missing");
 });
 
 
@@ -2150,16 +1864,12 @@ test('validateType, action', (t) => {
             }
         }
     };
-    let errorMessage = null;
     const obj = {};
-    try {
+    const error = t.throws(() => {
         validateType(types, 'MyAction', obj);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid value {} (type 'object'), expected type 'MyAction'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value {} (type 'object'), expected type 'MyAction'");
 });
 
 
@@ -2197,6 +1907,7 @@ test('validateType, invalid model', (t) => {
 // validateTypeModel tests
 //
 
+
 test('validateTypeModel', (t) => {
     const validatedTypeModel = validateTypeModel(typeModel);
     t.deepEqual(typeModel, validatedTypeModel);
@@ -2210,15 +1921,11 @@ test('validateTypeModel, type validation error', (t) => {
             'struct': {}
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Required member 'MyStruct.struct.name' missing");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Required member 'MyStruct.struct.name' missing");
 });
 
 
@@ -2242,15 +1949,11 @@ test('validateTypeModel, struct inconsistent type name', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Inconsistent type name 'MyStruct2' for 'MyStruct'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Inconsistent type name 'MyStruct2' for 'MyStruct'");
 });
 
 
@@ -2265,15 +1968,11 @@ test('validateTypeModel, struct unknown member type', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown type 'UnknownType' from 'MyStruct' member 'a'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown type 'UnknownType' from 'MyStruct' member 'a'");
 });
 
 
@@ -2290,15 +1989,11 @@ test('validateTypeModel, struct duplicate member name', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Redefinition of 'MyStruct' member 'a'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Redefinition of 'MyStruct' member 'a'");
 });
 
 
@@ -2328,15 +2023,11 @@ test('validateTypeModel, struct member attributes invalid', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid attribute 'len <= 10' from 'MyStruct' member 'a'
 Invalid attribute 'len > 0' from 'MyStruct' member 'a'`);
 });
@@ -2387,15 +2078,11 @@ test('validateTypeModel, struct base unknown', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid struct base type 'Unknown'\
 `);
 });
@@ -2416,15 +2103,11 @@ test('validateTypeModel, struct base typedef unknown', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid struct base type 'MyTypedef'
 Unknown type 'Unknown' from 'MyTypedef'\
 `);
@@ -2446,15 +2129,11 @@ test('validateTypeModel, struct base non-user', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid struct base type 'MyInt'\
 `);
 });
@@ -2474,15 +2153,11 @@ test('validateTypeModel, struct base enum', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid struct base type 'MyEnum'\
 `);
 });
@@ -2503,15 +2178,11 @@ test('validateTypeModel, struct base circular', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Circular base type detected for type 'MyStruct'
 Circular base type detected for type 'MyStruct2'\
 `);
@@ -2533,15 +2204,11 @@ test('validateTypeModel, struct base union', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid struct base type 'MyUnion'\
 `);
 });
@@ -2562,15 +2229,11 @@ test('validateTypeModel, struct base union struct', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid struct base type 'MyStruct'\
 `);
 });
@@ -2596,15 +2259,11 @@ test('validateTypeModel, enum inconsistent type name', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Inconsistent type name 'MyEnum2' for 'MyEnum'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Inconsistent type name 'MyEnum2' for 'MyEnum'");
 });
 
 
@@ -2621,15 +2280,11 @@ test('validateTypeModel,  enum duplicate value', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Redefinition of 'MyEnum' value 'A'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Redefinition of 'MyEnum' value 'A'");
 });
 
 
@@ -2678,15 +2333,11 @@ test('validateTypeModel, enum base unknown', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid enum base type 'Unknown'\
 `);
 });
@@ -2707,15 +2358,11 @@ test('validateTypeModel, enum base non-user', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid enum base type 'MyInt'\
 `);
 });
@@ -2735,15 +2382,11 @@ test('validateTypeModel, enum base struct', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Invalid enum base type 'MyStruct'\
 `);
 });
@@ -2764,15 +2407,11 @@ test('validateTypeModel, enum base circular', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Circular base type detected for type 'MyEnum'
 Circular base type detected for type 'MyEnum2'\
 `);
@@ -2814,15 +2453,11 @@ test('validateTypeModel, array invalid attribute', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid attribute 'len > 0' from 'MyTypedef'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid attribute 'len > 0' from 'MyTypedef'");
 });
 
 
@@ -2835,15 +2470,11 @@ test('validateTypeModel, array unknown type', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown type 'Unknown' from 'MyTypedef'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown type 'Unknown' from 'MyTypedef'");
 });
 
 
@@ -2917,15 +2548,11 @@ test('validateTypeModel, dict invalid attribute', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid attribute 'len > 0' from 'MyTypedef'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid attribute 'len > 0' from 'MyTypedef'");
 });
 
 
@@ -2938,15 +2565,11 @@ test('validateTypeModel, dict invalid key attribute', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid attribute '> 0' from 'MyTypedef'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid attribute '> 0' from 'MyTypedef'");
 });
 
 
@@ -2959,15 +2582,11 @@ test('validateTypeModel, dict unknown type', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown type 'Unknown' from 'MyTypedef'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown type 'Unknown' from 'MyTypedef'");
 });
 
 
@@ -2980,15 +2599,11 @@ test('validateTypeModel, dict unknown key type', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Unknown type 'Unknown' from 'MyTypedef'
 Invalid dictionary key type from 'MyTypedef'`);
 });
@@ -3009,15 +2624,11 @@ test('validateTypeModel, typedef invalid attribute', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid attribute '< 0' from 'MyTypedef'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid attribute '< 0' from 'MyTypedef'");
 });
 
 
@@ -3069,15 +2680,11 @@ test('validateTypeModel, typedef inconsistent type name', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Inconsistent type name 'MyTypedef2' for 'MyTypedef'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Inconsistent type name 'MyTypedef2' for 'MyTypedef'");
 });
 
 
@@ -3096,15 +2703,11 @@ test('validateTypeModel, typedef unknown type', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown type 'MyTypedef3' from 'MyTypedef2'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown type 'MyTypedef3' from 'MyTypedef2'");
 });
 
 
@@ -3134,15 +2737,11 @@ test('validateTypeModel, action inconsistent type name', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Inconsistent type name 'MyAction2' for 'MyAction'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Inconsistent type name 'MyAction2' for 'MyAction'");
 });
 
 
@@ -3155,15 +2754,11 @@ test('validateTypeModel, action unknown type', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Unknown type 'Unknown' from 'MyAction'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Unknown type 'Unknown' from 'MyAction'");
 });
 
 
@@ -3181,15 +2776,11 @@ test('validateTypeModel, action action', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, "Invalid reference to action 'MyAction2' from 'MyAction'");
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid reference to action 'MyAction2' from 'MyAction'");
 });
 
 
@@ -3221,15 +2812,11 @@ test('validateTypeModel, action duplicate member', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Redefinition of 'MyAction_input' member 'c'
 Redefinition of 'MyAction_query' member 'c'\
 `);
@@ -3272,15 +2859,11 @@ test('validateTypeModel, action duplicate member inherited', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Redefinition of 'MyAction_input' member 'c'
 Redefinition of 'MyAction_query' member 'c'\
 `);
@@ -3324,15 +2907,11 @@ test('validateTypeModel, action duplicate member circular', (t) => {
             }
         }
     };
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         validateTypeModel(types);
-    } catch (error) {
-        t.true(error instanceof ValidationError);
-        t.is(error.memberFqn, null);
-        errorMessage = error.message;
-    }
-    t.is(errorMessage, `\
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, `\
 Circular base type detected for type 'MyAction_input'
 Circular base type detected for type 'MyBase'\
 `);

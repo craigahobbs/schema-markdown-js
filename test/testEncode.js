@@ -11,6 +11,7 @@ import test from 'ava';
 // decodeQueryString tests
 //
 
+
 test('decodeQueryString, complex dict', (t) => {
     t.deepEqual(
         decodeQueryString('_a=7&a=7&b.c=%2Bx%20y%20%2B%20z&b.d.0=2&b.d.1=-4&b.d.2=6'),
@@ -148,24 +149,18 @@ test('decodeQueryString, empty string key with no equal', (t) => {
 
 
 test('decodeQueryString, two empty string key/values', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('&');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid key/value pair ''");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid key/value pair ''");
 });
 
 
 test('decodeQueryString, multiple empty string key/values', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('&&');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid key/value pair ''");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid key/value pair ''");
 });
 
 
@@ -186,151 +181,113 @@ test('decodeQueryString, anchor tag', (t) => {
 
 
 test('decodeQueryString, key with no equal', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a=7&b&c=11');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid key/value pair 'b'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid key/value pair 'b'");
 });
 
 
 test('decodeQueryString, key with no equal - long key/value', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString(`a=7&${'b'.repeat(2000)}&c=11`);
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, `Invalid key/value pair '${'b'.repeat(100)}'`);
+    }, {'instanceOf': Error});
+    t.is(error.message, `Invalid key/value pair '${'b'.repeat(100)}'`);
 });
 
 
 test('decodeQueryString, two empty string keys with no equal', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a&b');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid key/value pair 'a'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid key/value pair 'a'");
 });
 
 
 test('decodeQueryString, multiple empty string keys with no equal', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a&b&c');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid key/value pair 'a'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid key/value pair 'a'");
 });
 
 
 test('decodeQueryString, duplicate keys', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('abc=21&ab=19&abc=17');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Duplicate key 'abc'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Duplicate key 'abc'");
 });
 
 
 test('decodeQueryString, duplicate keys - long key/value', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString(`${'a'.repeat(2000)}=21&ab=19&${'a'.repeat(2000)}=17`);
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, `Duplicate key '${'a'.repeat(100)}'`);
+    }, {'instanceOf': Error});
+    t.is(error.message, `Duplicate key '${'a'.repeat(100)}'`);
 });
 
 
 test('decodeQueryString, duplicate index', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a.0=0&a.1=1&a.0=2');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Duplicate key 'a.0'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Duplicate key 'a.0'");
 });
 
 
 test('decodeQueryString, index too large', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a.0=0&a.1=1&a.3=3');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid array index '3' in key 'a.3'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid array index '3' in key 'a.3'");
 });
 
 
 test('decodeQueryString, index too large - long key/value', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString(`${'a'.repeat(2000)}.0=0&${'a'.repeat(2000)}.1=1&${'a'.repeat(2000)}.3=3`);
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, `Invalid array index '3' in key '${'a'.repeat(100)}'`);
+    }, {'instanceOf': Error});
+    t.is(error.message, `Invalid array index '3' in key '${'a'.repeat(100)}'`);
 });
 
 
 test('decodeQueryString, negative index', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a.0=0&a.1=1&a.-3=3');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid array index '-3' in key 'a.-3'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid array index '-3' in key 'a.-3'");
 });
 
 
 test('decodeQueryString, invalid index', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a.0=0&a.1asdf=1');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid array index '1asdf' in key 'a.1asdf'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid array index '1asdf' in key 'a.1asdf'");
 });
 
 
 test('decodeQueryString, first list, then dict', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString('a.0=0&a.b=0');
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, "Invalid array index 'b' in key 'a.b'");
+    }, {'instanceOf': Error});
+    t.is(error.message, "Invalid array index 'b' in key 'a.b'");
 });
 
 
 test('decodeQueryString, first list, then dict - long key/value', (t) => {
-    let errorMessage = null;
-    try {
+    const error = t.throws(() => {
         decodeQueryString(`${'a'.repeat(2000)}.0=0&${'a'.repeat(2000)}.b=0`);
-    } catch ({message}) {
-        errorMessage = message;
-    }
-    t.is(errorMessage, `Invalid array index 'b' in key '${'a'.repeat(100)}'`);
+    }, {'instanceOf': Error});
+    t.is(error.message, `Invalid array index 'b' in key '${'a'.repeat(100)}'`);
 });
 
 
 //
 // encodeQueryString tests
 //
+
 
 test('encodeQueryString', (t) => {
     t.is(
