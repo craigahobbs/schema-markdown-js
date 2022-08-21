@@ -34,51 +34,48 @@
 import {validateTypeModelErrors} from './schemaUtil.js';
 
 
-/* eslint-disable prefer-template */
-
-
 // Built-in types
-const BUILTIN_TYPES = new Set(['bool', 'date', 'datetime', 'float', 'int', 'object', 'string', 'uuid']);
+const builtinTypes = new Set(['bool', 'date', 'datetime', 'float', 'int', 'object', 'string', 'uuid']);
 
 
 // Schema Markdown regex
-const RE_PART_ID = '(?:[A-Za-z]\\w*)';
-const RE_PART_ATTR_GROUP =
+const rPartId = '(?:[A-Za-z]\\w*)';
+const rPartAttrGroup =
       '(?:(?&lt;nullable>nullable)' +
       '|(?&lt;op>&lt;=|&lt;|>|>=|==)\\s*(?&lt;opnum>-?\\d+(?:\\.\\d+)?)' +
       '|(?&lt;ltype>len)\\s*(?&lt;lop>&lt;=|&lt;|>|>=|==)\\s*(?&lt;lopnum>\\d+))';
-const RE_PART_ATTR = RE_PART_ATTR_GROUP.replace(/\(\?&lt;[^>]+>/g, '(?:');
-const RE_PART_ATTRS = '(?:' + RE_PART_ATTR + '(?:\\s*,\\s*' + RE_PART_ATTR + ')*)';
-const RE_ATTR_GROUP = new RegExp(RE_PART_ATTR_GROUP);
-const RE_FIND_ATTRS = new RegExp(RE_PART_ATTR + '(?:\\s*,\\s*|\\s*$)', 'g');
-const RE_LINE_CONT = /\\\s*$/;
-const RE_COMMENT = /^\s*(?:#-.*|#(?&lt;doc>.*))?$/;
-const RE_GROUP = /^group(?:\s+"(?&lt;group>.+?)")?\s*$/;
-const RE_ACTION = new RegExp('^action\\s+(?&lt;id>' + RE_PART_ID + ')');
-const RE_PART_BASE_IDS = '(?:\\s*\\(\\s*(?&lt;base_ids>' + RE_PART_ID + '(?:\\s*,\\s*' + RE_PART_ID + ')*)\\s*\\)\\s*)';
-const RE_BASE_IDS_SPLIT = /\s*,\s*/;
-const RE_DEFINITION = new RegExp('^(?&lt;type>struct|union|enum)\\s+(?&lt;id>' + RE_PART_ID + ')' + RE_PART_BASE_IDS + '?\\s*$');
-const RE_SECTION = new RegExp('^\\s+(?&lt;type>path|query|input|output|errors)' + RE_PART_BASE_IDS + '?\\s*$');
-const RE_SECTION_PLAIN = /^\s+(?&lt;type>urls)\s*$/;
-const RE_PART_TYPEDEF =
-      '(?&lt;type>' + RE_PART_ID + ')' +
-      '(?:\\s*\\(\\s*(?&lt;attrs>' + RE_PART_ATTRS + ')\\s*\\))?' +
+const rPartAttr = rPartAttrGroup.replace(/\(\?&lt;[^>]+>/g, '(?:');
+const rPartAttrs = `(?:${rPartAttr}(?:\\s*,\\s*${rPartAttr})*)`;
+const rAttrGroup = new RegExp(rPartAttrGroup);
+const rFindAttrs = new RegExp(`${rPartAttr}(?:\\s*,\\s*|\\s*$)`, 'g');
+const rLineCont = /\\\s*$/;
+const rComment = /^\s*(?:#-.*|#(?&lt;doc>.*))?$/;
+const rGroup = /^group(?:\s+"(?&lt;group>.+?)")?\s*$/;
+const rAction = new RegExp(`^action\\s+(?&lt;id>${rPartId})`);
+const rPartBaseIds = `(?:\\s*\\(\\s*(?&lt;baseIds>${rPartId}(?:\\s*,\\s*${rPartId})*)\\s*\\)\\s*)`;
+const rBaseIdsSplit = /\s*,\s*/;
+const rDefinition = new RegExp(`^(?&lt;type>struct|union|enum)\\s+(?&lt;id>${rPartId})${rPartBaseIds}?\\s*$`);
+const rSection = new RegExp(`^\\s+(?&lt;type>path|query|input|output|errors)${rPartBaseIds}?\\s*$`);
+const rSectionPlain = /^\s+(?&lt;type>urls)\s*$/;
+const rPartTypedef =
+      `(?&lt;type>${rPartId})` +
+      `(?:\\s*\\(\\s*(?&lt;attrs>${rPartAttrs})\\s*\\))?` +
       '(?:' +
-      '(?:\\s*\\[\\s*(?&lt;array>' + RE_PART_ATTRS + '?)\\s*\\])?' +
+      `(?:\\s*\\[\\s*(?&lt;array>${rPartAttrs}?)\\s*\\])?` +
       '|' +
       '(?:' +
-      '\\s*:\\s*(?&lt;dictValueType>' + RE_PART_ID + ')' +
-      '(?:\\s*\\(\\s*(?&lt;dictValueAttrs>' + RE_PART_ATTRS + ')\\s*\\))?' +
+      `\\s*:\\s*(?&lt;dictValueType>${rPartId})` +
+      `(?:\\s*\\(\\s*(?&lt;dictValueAttrs>${rPartAttrs})\\s*\\))?` +
       ')?' +
-      '(?:\\s*\\{\\s*(?&lt;dict>' + RE_PART_ATTRS + '?)\\s*\\})?' +
+      `(?:\\s*\\{\\s*(?&lt;dict>${rPartAttrs}?)\\s*\\})?` +
       ')' +
-      '\\s+(?&lt;id>' + RE_PART_ID + ')';
-const RE_TYPEDEF = new RegExp('^typedef\\s+' + RE_PART_TYPEDEF + '\\s*$');
-const RE_MEMBER = new RegExp('^\\s+(?&lt;optional>optional\\s+)?' + RE_PART_TYPEDEF + '\\s*$');
-const RE_VALUE = new RegExp('^\\s+(?&lt;id>' + RE_PART_ID + ')\\s*$');
-const RE_VALUE_QUOTED = /^\s+"(?&lt;id>.*?)"\s*$/;
-const RE_URL = /^\s+(?&lt;method>[A-Za-z]+|\*)(?:\s+(?&lt;path>\/[^\s]*))?/;
-const RE_LINE_SPLIT = /\r?\n/;
+      `\\s+(?&lt;id>${rPartId})`;
+const rTypedef = new RegExp(`^typedef\\s+${rPartTypedef}\\s*$`);
+const rMember = new RegExp(`^\\s+(?&lt;optional>optional\\s+)?${rPartTypedef}\\s*$`);
+const rValue = new RegExp(`^\\s+(?&lt;id>${rPartId})\\s*$`);
+const rValueQuoted = /^\s+"(?&lt;id>.*?)"\s*$/;
+const rURL = /^\s+(?&lt;method>[A-Za-z]+|\*)(?:\s+(?&lt;path>\/[^\s]*))?/;
+const rLineSplit = /\r?\n/;
 
 
 /**
@@ -122,10 +119,10 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
     // Line-split all script text
     const lines = [];
     if (typeof text === 'string') {
-        lines.push(...text.split(RE_LINE_SPLIT));
+        lines.push(...text.split(rLineSplit));
     } else {
         for (const textPart of text) {
-            lines.push(...textPart.split(RE_LINE_SPLIT));
+            lines.push(...textPart.split(rLineSplit));
         }
     }
 
@@ -137,7 +134,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             linenum += 1;
 
             // Line continuation?
-            const linePartNoContinuation = linePart.replace(RE_LINE_CONT, '');
+            const linePartNoContinuation = linePart.replace(rLineCont, '');
             if (lineContinuation.length || linePartNoContinuation !== linePart) {
                 lineContinuation.push(linePartNoContinuation);
             }
@@ -154,45 +151,45 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
 
             // Match syntax
             let matchName = 'comment';
-            let match = line.match(RE_COMMENT);
+            let match = line.match(rComment);
             if (match === null) {
                 matchName = 'group';
-                match = line.match(RE_GROUP);
+                match = line.match(rGroup);
             }
             if (match === null) {
                 matchName = 'action';
-                match = line.match(RE_ACTION);
+                match = line.match(rAction);
             }
             if (match === null) {
                 matchName = 'definition';
-                match = line.match(RE_DEFINITION);
+                match = line.match(rDefinition);
             }
             if (match === null &amp;&amp; action !== null) {
                 matchName = 'section';
-                match = line.match(RE_SECTION);
+                match = line.match(rSection);
             }
             if (match === null &amp;&amp; action !== null) {
-                matchName = 'section_plain';
-                match = line.match(RE_SECTION_PLAIN);
+                matchName = 'sectionPlain';
+                match = line.match(rSectionPlain);
             }
             if (match === null &amp;&amp; userType !== null &amp;&amp; 'enum' in userType) {
                 matchName = 'value';
-                match = line.match(RE_VALUE);
+                match = line.match(rValue);
                 if (match === null) {
-                    match = line.match(RE_VALUE_QUOTED);
+                    match = line.match(rValueQuoted);
                 }
             }
             if (match === null &amp;&amp; userType !== null &amp;&amp; 'struct' in userType) {
                 matchName = 'member';
-                match = line.match(RE_MEMBER);
+                match = line.match(rMember);
             }
             if (match === null &amp;&amp; urls !== null) {
                 matchName = 'urls';
-                match = line.match(RE_URL);
+                match = line.match(rURL);
             }
             if (match === null) {
                 matchName = 'typedef';
-                match = line.match(RE_TYPEDEF);
+                match = line.match(rTypedef);
             }
             if (match === null) {
                 matchName = null;
@@ -242,10 +239,10 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             } else if (matchName === 'definition') {
                 const definitionString = match.groups.type;
                 const definitionId = match.groups.id;
-                const definitionBaseIds = match.groups.base_ids;
+                const definitionBaseIds = match.groups.baseIds;
 
                 // Type already defined?
-                if (BUILTIN_TYPES.has(definitionId) || definitionId in types) {
+                if (builtinTypes.has(definitionId) || definitionId in types) {
                     addError(`Redefinition of type '${definitionId}'`, filename, linenum);
                 }
 
@@ -270,12 +267,12 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                         struct.union = true;
                     }
                     if (typeof definitionBaseIds !== 'undefined') {
-                        struct.bases = definitionBaseIds.split(RE_BASE_IDS_SPLIT);
+                        struct.bases = definitionBaseIds.split(rBaseIdsSplit);
                     }
 
                 // Enum definition
                 } else {
-                    // definition_string == 'enum':
+                    // definitionString == 'enum':
                     // Create the new enum type
                     const enum_ = {'name': definitionId};
                     userType = {'enum': enum_};
@@ -287,7 +284,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                         enum_.docGroup = docGroup;
                     }
                     if (typeof definitionBaseIds !== 'undefined') {
-                        enum_.bases = definitionBaseIds.split(RE_BASE_IDS_SPLIT);
+                        enum_.bases = definitionBaseIds.split(rBaseIdsSplit);
                     }
                 }
 
@@ -297,7 +294,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             // Action section?
             } else if (matchName === 'section') {
                 const sectionString = match.groups.type;
-                const sectionBaseIds = match.groups.base_ids;
+                const sectionBaseIds = match.groups.baseIds;
 
                 // Action section redefinition?
                 if (sectionString in action) {
@@ -315,14 +312,14 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                     userType = {'enum': enum_};
                     types[sectionTypeName] = userType;
                     if (typeof sectionBaseIds !== 'undefined') {
-                        enum_.bases = sectionBaseIds.split(RE_BASE_IDS_SPLIT);
+                        enum_.bases = sectionBaseIds.split(rBaseIdsSplit);
                     }
                 } else {
                     const struct = {'name': sectionTypeName};
                     userType = {'struct': struct};
                     types[sectionTypeName] = userType;
                     if (typeof sectionBaseIds !== 'undefined') {
-                        struct.bases = sectionBaseIds.split(RE_BASE_IDS_SPLIT);
+                        struct.bases = sectionBaseIds.split(rBaseIdsSplit);
                     }
                 }
 
@@ -330,7 +327,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                 filepos[sectionTypeName] = linenum;
 
             // Plain action section?
-            } else if (matchName === 'section_plain') {
+            } else if (matchName === 'sectionPlain') {
                 const sectionString = match.groups.type;
 
                 // Action section redefinition?
@@ -422,7 +419,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                 const definitionId = match.groups.id;
 
                 // Type already defined?
-                if (BUILTIN_TYPES.has(definitionId) || definitionId in types) {
+                if (builtinTypes.has(definitionId) || definitionId in types) {
                     addError(`Redefinition of type '${definitionId}'`, filename, linenum);
                 }
 
@@ -544,7 +541,7 @@ function parseTypedef(matchTypedef) {
 
 // Helper function to create a type model
 function createType(typeName) {
-    if (BUILTIN_TYPES.has(typeName)) {
+    if (builtinTypes.has(typeName)) {
         return {'builtin': typeName};
     }
     return {'user': typeName};
@@ -555,11 +552,11 @@ function createType(typeName) {
 function parseAttr(attrsString) {
     let attrs = null;
     if (typeof attrsString !== 'undefined') {
-        for (const [attrString] of attrsString.matchAll(RE_FIND_ATTRS)) {
+        for (const [attrString] of attrsString.matchAll(rFindAttrs)) {
             if (attrs === null) {
                 attrs = {};
             }
-            const matchAttr = attrString.match(RE_ATTR_GROUP);
+            const matchAttr = attrString.match(rAttrGroup);
             const attrOp = matchAttr.groups.op;
             const attrLengthOp = matchAttr.groups.lop;
 
