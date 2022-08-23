@@ -38,10 +38,10 @@ import {validateTypeModelErrors} from './schemaUtil.js';
 /**
  * Get a user type's referenced type model
  *
- * @param {Object} types - The map of user type name to user type model
+ * @param {Object} types - The [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
  * @param {string} typeName - The type name
  * @param {Object} [referencedTypes=null] - Optional map of referenced user type name to user type model
- * @returns {Object}
+ * @returns {Object} The referenced [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
  */
 export function getReferencedTypes(types, typeName, referencedTypes = {}) {
     return getReferencedTypesHelper(types, {'user': typeName}, referencedTypes);
@@ -132,7 +132,7 @@ export class ValidationError extends Error {
     /**
      * Schema Markdown type model validation error constructor
      *
-     * @param {string} [memberFqn=null] - Optional fully-qualified member name
+     * @param {string} [memberFqn=null] - The fully-qualified member name
      */
     constructor(message, memberFqn = null) {
         super(message);
@@ -145,10 +145,10 @@ export class ValidationError extends Error {
  * Type-validate a value using a user type model. Container values are duplicated since some member types are
  * transformed during validation.
  *
- * @param {Object} types - The map of user type name to user type model
+ * @param {Object} types - The [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
  * @param {string} typeName - The type name
  * @param {Object} value - The value object to validate
- * @param {string} [memberFqn=null] - Optional fully-qualified member name
+ * @param {?string} [memberFqn=null] - The fully-qualified member name
  * @returns {Object} The validated, transformed value object
  * @throws [ValidationError]{@link module:lib/schema.ValidationError}
  */
@@ -476,9 +476,10 @@ function validateAttr(type, attr, value, memberFqn) {
 /**
  * Get the struct's members (inherited members first)
  *
- * @param {Object} types - The map of user type name to user type model
- * @param {Object} struct - The struct model
- * @returns {Array&lt;Object>} The array of struct member models
+ * @param {Object} types - The [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
+ * @param {Object} struct - The [struct model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Struct'}
+ * @returns {Array&lt;Object>} The array of
+ *     [struct member models]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='StructMember'}
  */
 export function getStructMembers(types, struct) {
     // No base structs?
@@ -508,9 +509,10 @@ export function getStructMembers(types, struct) {
 /**
  * Get the enum's values (inherited values first)
  *
- * @param {Object} types - The map of user type name to user type model
- * @param {Object} enum_ - The enum model
- * @returns {Array&lt;Object>} The array of enum value models
+ * @param {Object} types - The [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
+ * @param {Object} enum_ - The [enum model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Enum'}
+ * @returns {Array&lt;Object>} The array of
+ *     [enum value models]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='EnumValue'}
  */
 export function getEnumValues(types, enum_) {
     // No base enums?
@@ -540,8 +542,8 @@ export function getEnumValues(types, enum_) {
 /**
  * Validate a type model's types object
  *
- * @param {Object} types - The map of user type name to user type model
- * @returns {Object} The validated, transformed types object
+ * @param {Object} types - The [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
+ * @returns {Object} The validated [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
  * @throws [ValidationError]{@link module:lib/schema.ValidationError}
  */
 export function validateTypeModel(types) {

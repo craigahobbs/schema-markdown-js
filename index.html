@@ -46,74 +46,76 @@
         <article><h1>schema-markdown</h1>
 <p><a href="https://www.npmjs.com/package/schema-markdown"><img src="https://img.shields.io/npm/v/schema-markdown" alt="npm"></a>
 <a href="https://github.com/craigahobbs/schema-markdown-js/blob/main/LICENSE"><img src="https://img.shields.io/github/license/craigahobbs/schema-markdown-js" alt="GitHub"></a></p>
-<p><strong>Schema Markdown</strong> is a human-friendly schema definition language and schema validator. Here are
-its features at a glance:</p>
-<ul>
-<li>Schema-validate JSON objects</li>
-<li>Human-friendly schema definition</li>
-<li>Validates member value and length contraints</li>
-<li>Validation <em>type-massages</em> string member values</li>
-<li>Pure JavaScript</li>
-</ul>
+<p><strong>schema-markdown</strong> is a schema definition and validation library.</p>
 <h2>Links</h2>
 <ul>
-<li><a href="https://craigahobbs.github.io/schema-markdown/schema-markdown.html">Schema Markdown Language Reference</a></li>
-<li><a href="https://craigahobbs.github.io/schema-markdown-js/">Documentation on GitHub Pages</a></li>
-<li><a href="https://www.npmjs.com/package/schema-markdown">Package on npm</a></li>
-<li><a href="https://github.com/craigahobbs/schema-markdown-js">Source code on GitHub</a></li>
+<li><a href="https://craigahobbs.github.io/schema-markdown-js/language/">The Schema Markdown Language</a></li>
+<li><a href="https://craigahobbs.github.io/schema-markdown-js/">API Documentation</a></li>
+<li><a href="https://github.com/craigahobbs/schema-markdown-js">Source code</a></li>
 </ul>
-<h2>Usage</h2>
-<p>To schema-validate an object, first parse its <em>Schema Markdown</em> using the
-<a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.parseSchemaMarkdown.html">parseSchemaMarkdown</a>
-function:</p>
+<h2>Define a Schema</h2>
+<p>Schemas are defined using the
+<a href="https://craigahobbs.github.io/schema-markdown-js/language/">Schema Markdown</a>
+language which is parsed by the
+<a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.html#.parseSchemaMarkdown">parseSchemaMarkdown</a>
+function. For example:</p>
 <pre class="prettyprint source lang-javascript"><code>import {parseSchemaMarkdown} from 'schema-markdown/parser.js';
-import {validateType} from 'schema-markdown/schema.js';
 
-const types = parseSchemaMarkdown(`\
+export const modelTypes = parseSchemaMarkdown(`\
+# An aggregate numerical operation
+struct Aggregation
+
+    # The aggregation function - default is &quot;Sum&quot;
+    optional AggregationFunction aggregation
+
+    # The numbers to aggregate on
+    int[len > 0] numbers
+
 # An aggregation function
-enum Aggregation
+enum AggregationFunction
     Average
     Sum
-
-# An aggregate numerical operation
-struct Operation
-    # The aggregation function - default is &quot;Sum&quot;
-    optional Aggregation aggregation
-
-    # The numbers to operate on
-    int[len > 0] numbers
 `);
 </code></pre>
-<p>Then, validate an object using the
+<h2>Validate using a Schema</h2>
+<p>To validate an object using the schema, use the
 <a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_schema.html#.validateType">validateType</a>
-function:</p>
-<pre class="prettyprint source lang-javascript"><code>const obj = validateType(types, 'Operation', {
-    'numbers': [1, 2, '3', 4]
-});
+function. For example:</p>
+<pre class="prettyprint source lang-javascript"><code>import {validateType} from 'schema-markdown/schema.js';
+
+const obj = validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, '3', 4]});
 console.assert(obj.numbers[2] === 3);
 </code></pre>
-<p>Notice that the numerical input '3' above is <em>type-massaged</em> to the integer 3 by validation.
-Validation fails if the object does not match the schema:</p>
+<p>Notice that the numerical input '3' above is <em>type-massaged</em> to the integer 3 by validation.</p>
+<p>Validation fails if the object does not match the schema:</p>
 <pre class="prettyprint source lang-javascript"><code>try {
-    validateType(types, 'Operation', {
-        'numbers': [1, 2, 'asdf', 4]
-    });
+    validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, 'asdf', 4]});
 } catch ({message}) {
     console.assert(message === &quot;Invalid value \&quot;asdf\&quot; (type 'string') for member 'numbers.2', expected type 'int'&quot;, message);
 }
 </code></pre>
-<p>Validation also fails if a member contraint is violated:</p>
+<p>Validation also fails if a member constraint is violated:</p>
 <pre class="prettyprint source lang-javascript"><code>try {
-    validateType(types, 'Operation', {
-        'numbers': []
-    });
+    validateType(modelTypes, 'Aggregation', {'numbers': []});
 } catch ({message}) {
     console.assert(message === &quot;Invalid value [] (type 'object') for member 'numbers', expected type 'array' [len > 0]&quot;, message);
 }
 </code></pre>
+<h2>Document a Schema</h2>
+<p>To document the schema, download the
+<a href="https://github.com/craigahobbs/schema-markdown-doc#the-schema-markdown-documentation-viewer">documentation application</a>
+stub and save the type model as JSON:</p>
+<pre class="prettyprint source"><code>curl -O https://craigahobbs.github.io/schema-markdown-doc/extra/index.html
+node --input-type=module \
+    -e 'import {modelTypes} from &quot;model.js&quot;; console.log(JSON.stringify(modelTypes))' \
+    > model.json
+</code></pre>
+<p>To host locally, start a local static web server:</p>
+<pre class="prettyprint source"><code>python3 -m http.server
+</code></pre>
 <h2>Development</h2>
-<p>schema-markdown is developed using <a href="https://github.com/craigahobbs/javascript-build#readme">javascript-build</a>
-and it was started using <a href="https://github.com/craigahobbs/javascript-template#readme">javascript-template</a>:</p>
+<p>This package is developed using <a href="https://github.com/craigahobbs/javascript-build#readme">javascript-build</a>.
+It was started using <a href="https://github.com/craigahobbs/javascript-template#readme">javascript-template</a> as follows:</p>
 <pre class="prettyprint source"><code>template-specialize javascript-template/template/ schema-markdown-js/ -k package schema-markdown -k name 'Craig A. Hobbs' -k email 'craigahobbs@gmail.com' -k github 'craigahobbs' -k noapp 1
 </code></pre></article>
     </section>
