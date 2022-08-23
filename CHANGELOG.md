@@ -1,3 +1,7 @@
+## 1.2.1 (2022-08-22)
+
+- [8c981d1](https://github.com/craigahobbs/schema-markdown-js/commit/8c981d1) - update readme, add language reference
+
 ## 1.2.0 (2022-08-19)
 
 - [528b19f](https://github.com/craigahobbs/schema-markdown-js/commit/528b19f) - refactor SchemaMarkdownParser class as parseSchemaMarkdown function
