@@ -2,7 +2,7 @@
     "type": "module",
     "name": "schema-markdown",
     "version": "1.2.0",
-    "description": "Human-friendly schema definition language and schema validator",
+    "description": "A schema definition and validation library",
     "keywords": [
         "schema",
         "definition",

@@ -708,7 +708,7 @@ struct MyStruct3
 `, {'types': types});
     }, {'instanceOf': SchemaMarkdownParserError});
     t.deepEqual(error.errors, [
-        ':1: error: Invalid struct base type \'MyStruct2\''
+        ":1: error: Invalid struct base type 'MyStruct2'"
     ]);
 });
 
