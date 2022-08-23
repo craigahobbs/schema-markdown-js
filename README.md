@@ -16,8 +16,8 @@
 ## Define a Schema
 
 Schemas are defined using the
-[Schema Markdown](https://craigahobbs.github.io/schema-markdown-js/language/)
-language which is parsed by the
+[Schema Markdown language](https://craigahobbs.github.io/schema-markdown-js/language/),
+which is parsed by the
 [parseSchemaMarkdown](https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.html#.parseSchemaMarkdown)
 function. For example:
 
