@@ -284,7 +284,7 @@ function validateTypeHelper(types, type, value, memberFqn) {
         const dictKeyAttr = 'keyAttr' in dict ? dict.keyAttr : null;
         if (value === '') {
             valueNew = {};
-        } else if (typeof value !== 'object') {
+        } else if (value === null || typeof value !== 'object') {
             throwMemberError(type, value, memberFqn);
         }
 
@@ -361,7 +361,7 @@ function validateTypeHelper(types, type, value, memberFqn) {
             // Valid value type?
             if (value === '') {
                 valueNew = {};
-            } else if (typeof value !== 'object') {
+            } else if (value === null || typeof value !== 'object') {
                 throwMemberError({'user': struct.name}, value, memberFqn);
             }
 
