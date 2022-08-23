@@ -702,6 +702,15 @@ test('validateType, dict', (t) => {
 });
 
 
+test('validateType, dict null', (t) => {
+    const obj = null;
+    const error = t.throws(() => {
+        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+    }, {'instanceOf': ValidationError});
+    t.is(error.message, "Invalid value null (type 'object'), expected type 'dict'");
+});
+
+
 test('validateType, dict nullable', (t) => {
     const obj = {'a': 1, 'b': null, 'c': 3};
     t.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj), obj);
@@ -1407,6 +1416,21 @@ test('validateType, struct map', (t) => {
     t.is(Array.from(obj2.get('b').keys()).length, 1);
     t.is(obj2.get('b') instanceof Map, true);
     t.is(obj2.get('b').get('c'), 'abc');
+});
+
+
+test('validateType, struct null', (t) => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct'
+            }
+        }
+    };
+    const error = t.throws(() => {
+        validateType(types, 'MyStruct', null);
+    }, {'instanceOf': ValidationError});
+    t.is(error.message, "Invalid value null (type 'object'), expected type 'MyStruct'");
 });
 
 
