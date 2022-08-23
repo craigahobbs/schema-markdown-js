@@ -1,3 +1,7 @@
+## 1.2.2 (2022-08-23)
+
+- [866f354](https://github.com/craigahobbs/schema-markdown-js/commit/866f354) - update docs
+
 ## 1.2.1 (2022-08-22)
 
 - [8c981d1](https://github.com/craigahobbs/schema-markdown-js/commit/8c981d1) - update readme, add language reference
