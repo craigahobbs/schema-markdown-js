@@ -1,3 +1,6 @@
+[JavaScript](https://github.com/craigahobbs/schema-markdown-js#readme) |
+[Python](https://github.com/craigahobbs/schema-markdown#readme)
+
 # The Schema Markdown Language
 
 Schema Markdown is a human-friendly schema definition language. It is used to define structure
