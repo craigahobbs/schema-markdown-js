@@ -1,3 +1,5 @@
+# Changelog
+
 ## 1.2.3 (2022-08-23)
 
 - [49075f1](https://github.com/craigahobbs/schema-markdown-js/commit/49075f1) - fix a couple null validation cases
