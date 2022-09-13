@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/schema-markdown)](https://www.npmjs.com/package/schema-markdown)
 [![GitHub](https://img.shields.io/github/license/craigahobbs/schema-markdown-js)](https://github.com/craigahobbs/schema-markdown-js/blob/main/LICENSE)
 
-**schema-markdown** is a schema definition and validation library.
+schema-markdown is a schema definition and validation library.
 
 
 ## Links
