@@ -13,47 +13,50 @@
 ;;     (url-copy-file "https://craigahobbs.github.io/schema-markdown-js/language/schema-markdown-mode.el" mode-file t)
 ;;     (package-install-file mode-file)
 ;;     (delete-file mode-file)))
-;; (add-to-list 'auto-mode-alist '("\\.smd?\\'" . schema-markdown-mode))
 
 ;;; Code:
 (require 'generic-x)
 
 ;;;###autoload
-(define-generic-mode 'schema-markdown-mode
-      '("#")
-      '(
-        "action"
-        "enum"
-        "errors"
-        "group"
-        "input"
-        "nullable"
-        "optional"
-        "output"
-        "path"
-        "query"
-        "struct"
-        "typedef"
-        "union"
-        "urls"
-        )
-      (list
-       (cons
-        (regexp-opt
-         '(
-           "bool"
-           "date"
-           "datetime"
-           "float"
-           "int"
-           "object"
-           "string"
-           "uuid"
-           ) 'words) 'font-lock-type-face)
-        )
-      '(".smd\\'")
-      nil
-      "Major mode for editing Schema Markdown")
+(defun define-schema-markdown-mode()
+  (define-generic-mode 'schema-markdown-mode
+    '(?#)
+    '(
+      "action"
+      "enum"
+      "errors"
+      "group"
+      "input"
+      "nullable"
+      "optional"
+      "output"
+      "path"
+      "query"
+      "struct"
+      "typedef"
+      "union"
+      "urls"
+      )
+    (list
+     (cons
+      (regexp-opt
+       '(
+         "bool"
+         "date"
+         "datetime"
+         "float"
+         "int"
+         "object"
+         "string"
+         "uuid"
+         ) 'words) 'font-lock-type-face)
+     )
+    '("\\.smd\\'")
+    nil
+    "Major mode for editing Schema Markdown"))
+
+;;;###autoload
+(define-schema-markdown-mode)
 
 (provide 'schema-markdown-mode)
 ;;; schema-markdown-mode.el ends here
