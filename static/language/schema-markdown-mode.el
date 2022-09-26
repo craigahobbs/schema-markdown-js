@@ -51,7 +51,7 @@
          "uuid"
          ) 'words) 'font-lock-type-face)
      )
-    '(".smd\\'")
+    '("\\.smd\\'")
     nil
     "Major mode for editing Schema Markdown"))
 
