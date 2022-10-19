@@ -321,6 +321,16 @@ test('validateType, int float', (t) => {
 });
 
 
+test('validateType, int float string', (t) => {
+    const obj = '7.1';
+    const error = t.throws(() => {
+        validateTypeHelper({'builtin': 'int'}, obj);
+    }, {'instanceOf': ValidationError});
+    t.is(error.memberFqn, null);
+    t.is(error.message, "Invalid value \"7.1\" (type 'string'), expected type 'int'");
+});
+
+
 test('validateType, int error', (t) => {
     const obj = 'abc';
     const error = t.throws(() => {
