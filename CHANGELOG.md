@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.4 (2022-10-19)
+
+- [49104e9](https://github.com/craigahobbs/schema-markdown-js/commit/49104e9) - add int float string test
+
 ## 1.2.3 (2022-08-23)
 
 - [49075f1](https://github.com/craigahobbs/schema-markdown-js/commit/49075f1) - fix a couple null validation cases
