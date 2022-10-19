@@ -196,9 +196,10 @@ function validateTypeHelper(types, type, value, memberFqn) {
             // Not a number?
             } else if (typeof value !== 'number') {
                 throwMemberError(type, value, memberFqn);
+            }
 
             // Non-int number?
-            } else if (builtin === 'int' &amp;&amp; Math.trunc(value) !== value) {
+            if (builtin === 'int' &amp;&amp; Math.trunc(valueNew) !== valueNew) {
                 throwMemberError(type, value, memberFqn);
             }
 
