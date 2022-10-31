@@ -74,7 +74,7 @@ const rTypedef = new RegExp(`^typedef\\s+${rPartTypedef}\\s*$`);
 const rMember = new RegExp(`^\\s+(?&lt;optional>optional\\s+)?${rPartTypedef}\\s*$`);
 const rValue = new RegExp(`^\\s+(?&lt;id>${rPartId})\\s*$`);
 const rValueQuoted = /^\s+"(?&lt;id>.*?)"\s*$/;
-const rURL = /^\s+(?&lt;method>[A-Za-z]+|\*)(?:\s+(?&lt;path>\/[^\s]*))?/;
+const rURL = /^\s+(?&lt;method>[A-Za-z]+|\*)(?:\s+(?&lt;path>\/\S*))?/;
 const rLineSplit = /\r?\n/;
 
 
