@@ -59,7 +59,7 @@
 which is parsed by the
 <a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.html#.parseSchemaMarkdown">parseSchemaMarkdown</a>
 function. For example:</p>
-<pre class="prettyprint source lang-javascript"><code>import {parseSchemaMarkdown} from 'schema-markdown/parser.js';
+<pre class="prettyprint source lang-javascript"><code>import {parseSchemaMarkdown} from 'schema-markdown/lib/parser.js';
 
 export const modelTypes = parseSchemaMarkdown(`\
 # An aggregate numerical operation
@@ -81,7 +81,7 @@ enum AggregationFunction
 <p>To validate an object using the schema, use the
 <a href="https://craigahobbs.github.io/schema-markdown-js/module-lib_schema.html#.validateType">validateType</a>
 function. For example:</p>
-<pre class="prettyprint source lang-javascript"><code>import {validateType} from 'schema-markdown/schema.js';
+<pre class="prettyprint source lang-javascript"><code>import {validateType} from 'schema-markdown/lib/schema.js';
 
 const obj = validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, '3', 4]});
 console.assert(obj.numbers[2] === 3);
