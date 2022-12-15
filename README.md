@@ -21,7 +21,7 @@ which is parsed by the
 [parseSchemaMarkdown](https://craigahobbs.github.io/schema-markdown-js/module-lib_parser.html#.parseSchemaMarkdown)
 function. For example:
 
-``` javascript
+~~~ javascript
 import {parseSchemaMarkdown} from 'schema-markdown/parser.js';
 
 export const modelTypes = parseSchemaMarkdown(`\
@@ -39,7 +39,7 @@ enum AggregationFunction
     Average
     Sum
 `);
-```
+~~~
 
 
 ## Validate using a Schema
@@ -48,34 +48,34 @@ To validate an object using the schema, use the
 [validateType](https://craigahobbs.github.io/schema-markdown-js/module-lib_schema.html#.validateType)
 function. For example:
 
-``` javascript
+~~~ javascript
 import {validateType} from 'schema-markdown/schema.js';
 
 const obj = validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, '3', 4]});
 console.assert(obj.numbers[2] === 3);
-```
+~~~
 
 Notice that the numerical input '3' above is *type-massaged* to the integer 3 by validation.
 
 Validation fails if the object does not match the schema:
 
-``` javascript
+~~~ javascript
 try {
     validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, 'asdf', 4]});
 } catch ({message}) {
     console.assert(message === "Invalid value \"asdf\" (type 'string') for member 'numbers.2', expected type 'int'", message);
 }
-```
+~~~
 
 Validation also fails if a member constraint is violated:
 
-``` javascript
+~~~ javascript
 try {
     validateType(modelTypes, 'Aggregation', {'numbers': []});
 } catch ({message}) {
     console.assert(message === "Invalid value [] (type 'object') for member 'numbers', expected type 'array' [len > 0]", message);
 }
-```
+~~~
 
 
 ## Document a Schema
@@ -93,9 +93,9 @@ node --input-type=module \
 
 To host locally, start a local static web server:
 
-```
+~~~
 python3 -m http.server
-```
+~~~
 
 
 ## Development
@@ -103,6 +103,6 @@ python3 -m http.server
 This package is developed using [javascript-build](https://github.com/craigahobbs/javascript-build#readme).
 It was started using [javascript-template](https://github.com/craigahobbs/javascript-template#readme) as follows:
 
-```
+~~~
 template-specialize javascript-template/template/ schema-markdown-js/ -k package schema-markdown -k name 'Craig A. Hobbs' -k email 'craigahobbs@gmail.com' -k github 'craigahobbs' -k noapp 1
-```
+~~~
