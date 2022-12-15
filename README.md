@@ -22,7 +22,7 @@ which is parsed by the
 function. For example:
 
 ~~~ javascript
-import {parseSchemaMarkdown} from 'schema-markdown/parser.js';
+import {parseSchemaMarkdown} from 'schema-markdown/lib/parser.js';
 
 export const modelTypes = parseSchemaMarkdown(`\
 # An aggregate numerical operation
@@ -49,7 +49,7 @@ To validate an object using the schema, use the
 function. For example:
 
 ~~~ javascript
-import {validateType} from 'schema-markdown/schema.js';
+import {validateType} from 'schema-markdown/lib/schema.js';
 
 const obj = validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, '3', 4]});
 console.assert(obj.numbers[2] === 3);
