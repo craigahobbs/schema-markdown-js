@@ -156,6 +156,43 @@ export function decodeQueryString(paramStr) {
 
     return result[0] !== null ? result[0] : {};
 }
+
+
+/**
+ * JSON-stringify an object with sorted keys
+ *
+ * @param {Object} obj - The object to stringify
+ * @returns {string}
+ */
+export function jsonStringifySortKeys(value, space) {
+    // JSON-stringify non-objects without creating a key set
+    if (value === null || typeof value !== 'object') {
+        return JSON.stringify(value, null, space);
+    }
+
+    // JSON-stringify with sorted keys
+    const keySet = new Set();
+    getObjectKeys(value, keySet);
+    const sortedKeys = Array.from(keySet.values()).sort();
+    return JSON.stringify(value, sortedKeys, space);
+}
+
+
+// Helper function to get an object keys (deep)
+function getObjectKeys(value, keySet) {
+    if (value !== null &amp;&amp; typeof value === 'object') {
+        if (Array.isArray(value)) {
+            for (const subValue of value) {
+                getObjectKeys(subValue, keySet);
+            }
+        } else {
+            for (const [subKey, subValue] of Object.entries(value)) {
+                keySet.add(subKey);
+                getObjectKeys(subValue, keySet);
+            }
+        }
+    }
+}
 </code></pre>
         </article>
     </section>
