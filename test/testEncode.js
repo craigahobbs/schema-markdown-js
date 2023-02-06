@@ -3,7 +3,7 @@
 
 /* eslint-disable id-length */
 
-import {decodeQueryString, encodeQueryString} from '../lib/encode.js';
+import {decodeQueryString, encodeQueryString, jsonStringifySortKeys} from '../lib/encode.js';
 import test from 'ava';
 
 
@@ -356,4 +356,31 @@ test('encodeQueryString, empty object', (t) => {
 
 test('encodeQueryString, empty object/object', (t) => {
     t.is(encodeQueryString({'a': {}}), 'a=');
+});
+
+
+//
+// jsonStringifySortKeys tests
+//
+
+
+test('jsonStringifySortKeys', (t) => {
+    t.is(
+        jsonStringifySortKeys({
+            'b': [
+                {'a': 1, 'b': 2},
+                {'b': 3, 'a': 4}
+            ],
+            'a': null,
+            'c': 'hello!'
+        }),
+        '{"a":null,"b":[{"a":1,"b":2},{"a":4,"b":3}],"c":"hello!"}'
+    );
+});
+
+
+test('jsonStringifySortKeys, non-object', (t) => {
+    t.is(jsonStringifySortKeys(null), 'null');
+    t.is(jsonStringifySortKeys(1), '1');
+    t.is(jsonStringifySortKeys('hello'), '"hello"');
 });
