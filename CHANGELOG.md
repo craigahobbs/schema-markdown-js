@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.5 (2023-02-06)
+
+- [1c73701](https://github.com/craigahobbs/schema-markdown-js/commit/1c73701) - add jsonStringifySortKeys function
+
 ## 1.2.4 (2022-10-19)
 
 - [49104e9](https://github.com/craigahobbs/schema-markdown-js/commit/49104e9) - add int float string test
