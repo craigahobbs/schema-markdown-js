@@ -113,7 +113,7 @@
     
 
     
-    <h4 class="name" id=".parseSchemaMarkdown"><span class="type-signature">(static) </span>parseSchemaMarkdown<span class="signature">(text)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".parseSchemaMarkdown"><span class="type-signature">(static) </span>parseSchemaMarkdown<span class="signature">(text, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -199,7 +199,7 @@
 
         <tr>
             
-                <td class="name"><code>options.types</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
@@ -226,7 +226,69 @@
             
                 <td class="default">
                 
-                    ''
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">The options object
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>types</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
                 
                 </td>
             
@@ -238,7 +300,7 @@
 
         <tr>
             
-                <td class="name"><code>options.filename</code></td>
+                <td class="name"><code>filename</code></td>
             
 
             <td class="type">
@@ -277,7 +339,7 @@
 
         <tr>
             
-                <td class="name"><code>options.validate</code></td>
+                <td class="name"><code>validate</code></td>
             
 
             <td class="type">
@@ -310,6 +372,13 @@
             
 
             <td class="description last">If true, validate after parsing</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -350,7 +419,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line63">line 63</a>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line64">line 64</a>
     </li></ul></dd>
     
 
