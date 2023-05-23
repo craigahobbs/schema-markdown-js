@@ -1,10 +1,9 @@
 // Licensed under the MIT License
 // https://github.com/craigahobbs/schema-markdown-js/blob/main/LICENSE
 
-/* eslint-disable id-length */
-
-import {ValidationError, getReferencedTypes, validateType, validateTypeModel} from '../lib/schema.js';
-import test from 'ava';
+import {getReferencedTypes, validateType, validateTypeModel} from '../lib/schema.js';
+import {strict as assert} from 'node:assert';
+import test from 'node:test';
 import {typeModel} from '../lib/typeModel.js';
 
 
@@ -13,7 +12,7 @@ import {typeModel} from '../lib/typeModel.js';
 //
 
 
-test('getReferencedTypes', (t) => {
+test('getReferencedTypes', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -106,11 +105,11 @@ test('getReferencedTypes', (t) => {
 
     const referencedTypes = getReferencedTypes(types, 'MyAction');
     validateTypeModel(referencedTypes);
-    t.deepEqual(referencedTypes, expectedTypes);
+    assert.deepEqual(referencedTypes, expectedTypes);
 });
 
 
-test('getReferencedTypes, empty action', (t) => {
+test('getReferencedTypes, empty action', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -130,11 +129,11 @@ test('getReferencedTypes, empty action', (t) => {
 
     const referencedTypes = getReferencedTypes(types, 'MyAction');
     validateTypeModel(referencedTypes);
-    t.deepEqual(referencedTypes, expectedTypes);
+    assert.deepEqual(referencedTypes, expectedTypes);
 });
 
 
-test('getReferencedTypes, circular', (t) => {
+test('getReferencedTypes, circular', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -165,11 +164,11 @@ test('getReferencedTypes, circular', (t) => {
 
     const referencedTypes = getReferencedTypes(types, 'MyStruct');
     validateTypeModel(referencedTypes);
-    t.deepEqual(referencedTypes, expectedTypes);
+    assert.deepEqual(referencedTypes, expectedTypes);
 });
 
 
-test('getReferencedTypes, struct base', (t) => {
+test('getReferencedTypes, struct base', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -207,11 +206,11 @@ test('getReferencedTypes, struct base', (t) => {
 
     const referencedTypes = getReferencedTypes(types, 'MyStruct');
     validateTypeModel(referencedTypes);
-    t.deepEqual(referencedTypes, expectedTypes);
+    assert.deepEqual(referencedTypes, expectedTypes);
 });
 
 
-test('getReferencedTypes, enum base', (t) => {
+test('getReferencedTypes, enum base', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -243,7 +242,7 @@ test('getReferencedTypes, enum base', (t) => {
 
     const referencedTypes = getReferencedTypes(types, 'MyEnum');
     validateTypeModel(referencedTypes);
-    t.deepEqual(referencedTypes, expectedTypes);
+    assert.deepEqual(referencedTypes, expectedTypes);
 });
 
 
@@ -264,581 +263,767 @@ function validateTypeHelper(type, obj) {
 }
 
 
-test('validateType, unknown', (t) => {
-    const error = t.throws(() => {
-        validateType({}, 'Unknown', null);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown type 'Unknown'");
+test('validateType, unknown', () => {
+    assert.throws(
+        () => {
+            validateType({}, 'Unknown', null);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown type 'Unknown'"
+        }
+    );
 });
 
 
-test('validateType, string', (t) => {
+test('validateType, string', () => {
     const obj = 'abc';
-    t.is(validateTypeHelper({'builtin': 'string'}, obj), obj);
+    assert.equal(validateTypeHelper({'builtin': 'string'}, obj), obj);
 });
 
 
-test('validateType, string error', (t) => {
+test('validateType, string error', () => {
     const obj = 7;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'string'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'string'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'string'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 7 (type 'number'), expected type 'string'"
+        }
+    );
 });
 
 
-test('validateType, string error undefined', (t) => {
+test('validateType, string error undefined', () => {
     const obj = undefined;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'string'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value undefined (type 'undefined'), expected type 'string'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'string'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value undefined (type 'undefined'), expected type 'string'"
+        }
+    );
 });
 
 
-test('validateType, int', (t) => {
+test('validateType, int', () => {
     const obj = 7;
-    t.is(validateTypeHelper({'builtin': 'int'}, obj), obj);
+    assert.equal(validateTypeHelper({'builtin': 'int'}, obj), obj);
 });
 
 
-test('validateType, int string', (t) => {
+test('validateType, int string', () => {
     const obj = '7';
-    t.is(validateTypeHelper({'builtin': 'int'}, obj), 7);
+    assert.equal(validateTypeHelper({'builtin': 'int'}, obj), 7);
 });
 
 
-test('validateType, int float', (t) => {
+test('validateType, int float', () => {
     const obj = 7.1;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'int'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 7.1 (type 'number'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'int'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 7.1 (type 'number'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, int float string', (t) => {
+test('validateType, int float string', () => {
     const obj = '7.1';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'int'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"7.1\" (type 'string'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'int'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"7.1\" (type 'string'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, int error', (t) => {
+test('validateType, int error', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'int'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'int'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, int error float', (t) => {
+test('validateType, int error float', () => {
     const obj = 7.5;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'int'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 7.5 (type 'number'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'int'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 7.5 (type 'number'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, int error bool', (t) => {
+test('validateType, int error bool', () => {
     const obj = true;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'int'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value true (type 'boolean'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'int'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value true (type 'boolean'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, float', (t) => {
+test('validateType, float', () => {
     const obj = 7.5;
-    t.is(validateTypeHelper({'builtin': 'float'}, obj), obj);
+    assert.equal(validateTypeHelper({'builtin': 'float'}, obj), obj);
 });
 
 
-test('validateType, float int', (t) => {
+test('validateType, float int', () => {
     const obj = 7;
-    t.is(validateTypeHelper({'builtin': 'float'}, obj), 7.0);
+    assert.equal(validateTypeHelper({'builtin': 'float'}, obj), 7.0);
 });
 
 
-test('validateType, float string', (t) => {
+test('validateType, float string', () => {
     const obj = '7.5';
-    t.is(validateTypeHelper({'builtin': 'float'}, obj), 7.5);
+    assert.equal(validateTypeHelper({'builtin': 'float'}, obj), 7.5);
 });
 
 
-test('validateType, float error', (t) => {
+test('validateType, float error', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'float'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'float'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'float'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'float'"
+        }
+    );
 });
 
 
-test('validateType, float error nan', (t) => {
+test('validateType, float error nan', () => {
     const obj = 'nan';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'float'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"nan\" (type 'string'), expected type 'float'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'float'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"nan\" (type 'string'), expected type 'float'"
+        }
+    );
 });
 
 
-test('validateType, float error inf', (t) => {
+test('validateType, float error inf', () => {
     const obj = 'inf';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'float'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"inf\" (type 'string'), expected type 'float'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'float'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"inf\" (type 'string'), expected type 'float'"
+        }
+    );
 });
 
 
-test('validateType, float error bool', (t) => {
+test('validateType, float error bool', () => {
     const obj = true;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'float'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value true (type 'boolean'), expected type 'float'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'float'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value true (type 'boolean'), expected type 'float'"
+        }
+    );
 });
 
 
-test('validateType, bool', (t) => {
+test('validateType, bool', () => {
     const obj = false;
-    t.is(validateTypeHelper({'builtin': 'bool'}, obj), obj);
+    assert.equal(validateTypeHelper({'builtin': 'bool'}, obj), obj);
 });
 
 
-test('validateType, bool true', (t) => {
+test('validateType, bool true', () => {
     const obj = 'true';
-    t.is(validateTypeHelper({'builtin': 'bool'}, obj), true);
+    assert.equal(validateTypeHelper({'builtin': 'bool'}, obj), true);
 });
 
 
-test('validateType, bool false', (t) => {
+test('validateType, bool false', () => {
     const obj = 'false';
-    t.is(validateTypeHelper({'builtin': 'bool'}, obj), false);
+    assert.equal(validateTypeHelper({'builtin': 'bool'}, obj), false);
 });
 
 
-test('validateType, bool error', (t) => {
+test('validateType, bool error', () => {
     const obj = 0;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'bool'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'bool'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'bool'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 0 (type 'number'), expected type 'bool'"
+        }
+    );
 });
 
 
-test('validateType, bool error string', (t) => {
+test('validateType, bool error string', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'bool'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'bool'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'bool'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'bool'"
+        }
+    );
 });
 
 
-test('validateType, date', (t) => {
+test('validateType, date', () => {
     const obj = new Date(Date.UTC(2020, 5, 26));
-    t.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
 });
 
 
-test('validateType, date datetime', (t) => {
+test('validateType, date datetime', () => {
     const obj = new Date(Date.UTC(2020, 5, 26, 18, 8));
-    t.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
 });
 
 
-test('validateType, date string', (t) => {
+test('validateType, date string', () => {
     const obj = '2020-06-26';
-    t.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
 });
 
 
-test('validateType, date string datetime', (t) => {
+test('validateType, date string datetime', () => {
     const obj = '2020-06-26T13:11:00-07:00';
-    t.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
 });
 
 
-test('validateType, date string error', (t) => {
+test('validateType, date string error', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'date'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'date'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'date'"
+        }
+    );
 });
 
 
-test('validateType, date error', (t) => {
+test('validateType, date error', () => {
     const obj = 0;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'date'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'date'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 0 (type 'number'), expected type 'date'"
+        }
+    );
 });
 
 
-test('validateType, date error excluded', (t) => {
+test('validateType, date error excluded', () => {
     const obj = 'December 17, 1995 03:24:00';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'date'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'date'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'date'"
+        }
+    );
 });
 
 
-test('validateType, datetime', (t) => {
+test('validateType, datetime', () => {
     const obj = new Date(2020, 5, 26, 18, 8);
-    t.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), obj);
 });
 
 
-test('validateType, datetime date', (t) => {
+test('validateType, datetime date', () => {
     const obj = new Date(2020, 5, 26);
-    t.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), obj);
 });
 
 
-test('validateType, datetime string', (t) => {
+test('validateType, datetime string', () => {
     const obj = '2020-06-26T13:11:00-07:00';
-    t.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(Date.UTC(2020, 5, 26, 20, 11)));
+    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(Date.UTC(2020, 5, 26, 20, 11)));
 });
 
 
-test('validateType, datetime string date', (t) => {
+test('validateType, datetime string date', () => {
     const obj = '2020-06-26';
-    t.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(2020, 5, 26));
+    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(2020, 5, 26));
 });
 
 
-test('validateType, datetime string error', (t) => {
+test('validateType, datetime string error', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'datetime'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'datetime'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'datetime'"
+        }
+    );
 });
 
 
-test('validateType, datetime error', (t) => {
+test('validateType, datetime error', () => {
     const obj = 0;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'datetime'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'datetime'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 0 (type 'number'), expected type 'datetime'"
+        }
+    );
 });
 
 
-test('validateType, datetime error excluded', (t) => {
+test('validateType, datetime error excluded', () => {
     const obj = 'December 17, 1995 03:24:00';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'datetime'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'datetime'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'datetime'"
+        }
+    );
 });
 
 
-test('validateType, uuid', (t) => {
+test('validateType, uuid', () => {
     const obj = 'AED91C7B-DCFD-49B3-A483-DBC9EA2031A3';
-    t.deepEqual(validateTypeHelper({'builtin': 'uuid'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'uuid'}, obj), obj);
 });
 
 
-test('validateType, uuid lowercase', (t) => {
+test('validateType, uuid lowercase', () => {
     const obj = 'aed91c7b-dcfd-49b3-a483-dbc9ea2031a3';
-    t.deepEqual(validateTypeHelper({'builtin': 'uuid'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'uuid'}, obj), obj);
 });
 
 
-test('validateType, uuid error', (t) => {
+test('validateType, uuid error', () => {
     const obj = 0;
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'uuid'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 0 (type 'number'), expected type 'uuid'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'uuid'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 0 (type 'number'), expected type 'uuid'"
+        }
+    );
 });
 
 
-test('validateType, uuid error string', (t) => {
+test('validateType, uuid error string', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'builtin': 'uuid'}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'uuid'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'uuid'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'uuid'"
+        }
+    );
 });
 
 
-test('validateType, object', (t) => {
+test('validateType, object', () => {
     const obj = {};
-    t.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
 });
 
 
-test('validateType, object string', (t) => {
+test('validateType, object string', () => {
     const obj = 'abc';
-    t.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
 });
 
 
-test('validateType, object int', (t) => {
+test('validateType, object int', () => {
     const obj = 7;
-    t.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
 });
 
 
-test('validateType, object bool', (t) => {
+test('validateType, object bool', () => {
     const obj = true;
-    t.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
 });
 
 
-test('validateType, array', (t) => {
+test('validateType, array', () => {
     const obj = [1, 2, 3];
-    t.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj), obj);
 });
 
 
-test('validateType, array nullable', (t) => {
+test('validateType, array nullable', () => {
     const obj = [1, null, 3];
-    t.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj), obj);
 
-    const error = t.throws(() => {
-        validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, '1');
-    t.is(error.message, "Invalid value null (type 'object') for member '1', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '1',
+            'message': "Invalid value null (type 'object') for member '1', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, array nullable as string', (t) => {
+test('validateType, array nullable as string', () => {
     const obj = ['1', 'null', '3'];
-    t.deepEqual(
+    assert.deepEqual(
         validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj),
         [1, null, 3]
     );
 
-    const error = t.throws(() => {
-        validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, '1');
-    t.is(error.message, "Invalid value \"null\" (type 'string') for member '1', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '1',
+            'message': "Invalid value \"null\" (type 'string') for member '1', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, array empty string', (t) => {
+test('validateType, array empty string', () => {
     const obj = '';
-    t.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj), []);
+    assert.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj), []);
 });
 
 
-test('validateType, array attributes', (t) => {
+test('validateType, array attributes', () => {
     const obj = [1, 2, 3];
-    t.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj), obj);
 });
 
 
-test('validateType, array error', (t) => {
+test('validateType, array error', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'array'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'array'"
+        }
+    );
 });
 
 
-test('validateType, array error value', (t) => {
+test('validateType, array error value', () => {
     const obj = [1, 'abc', 3];
-    const error = t.throws(() => {
-        validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, '1');
-    t.is(error.message, "Invalid value \"abc\" (type 'string') for member '1', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'array': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '1',
+            'message': "Invalid value \"abc\" (type 'string') for member '1', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, array error value nested', (t) => {
+test('validateType, array error value nested', () => {
     const obj = [[1, 2], [1, 'abc', 3]];
-    const error = t.throws(() => {
-        validateTypeHelper({'array': {'type': {'array': {'type': {'builtin': 'int'}}}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, '1.1');
-    t.is(error.message, "Invalid value \"abc\" (type 'string') for member '1.1', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'array': {'type': {'array': {'type': {'builtin': 'int'}}}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '1.1',
+            'message': "Invalid value \"abc\" (type 'string') for member '1.1', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, array attribute error', (t) => {
+test('validateType, array attribute error', () => {
     const obj = [1, 2, 5];
-    const error = t.throws(() => {
-        validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, '2');
-    t.is(error.message, "Invalid value 5 (type 'number') for member '2', expected type 'int' [< 5]");
+    assert.throws(
+        () => {
+            validateTypeHelper({'array': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '2',
+            'message': "Invalid value 5 (type 'number') for member '2', expected type 'int' [< 5]"
+        }
+    );
 });
 
 
-test('validateType, dict', (t) => {
+test('validateType, dict', () => {
     const obj = {'a': 1, 'b': 2, 'c': 3};
-    t.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj), obj);
 });
 
 
-test('validateType, dict null', (t) => {
+test('validateType, dict null', () => {
     const obj = null;
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.message, "Invalid value null (type 'object'), expected type 'dict'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value null (type 'object'), expected type 'dict'"
+        }
+    );
 });
 
 
-test('validateType, dict nullable', (t) => {
+test('validateType, dict nullable', () => {
     const obj = {'a': 1, 'b': null, 'c': 3};
-    t.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj), obj);
 
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'b');
-    t.is(error.message, "Invalid value null (type 'object') for member 'b', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'b',
+            'message': "Invalid value null (type 'object') for member 'b', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, dict nullable as string', (t) => {
+test('validateType, dict nullable as string', () => {
     const obj = {'a': '1', 'b': 'null', 'c': '3'};
-    t.deepEqual(
+    assert.deepEqual(
         validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'nullable': true}}}, obj),
         {'a': 1, 'b': null, 'c': 3}
     );
 
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'b');
-    t.is(error.message, "Invalid value \"null\" (type 'string') for member 'b', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'b',
+            'message': "Invalid value \"null\" (type 'string') for member 'b', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, dict key nullable', (t) => {
+test('validateType, dict key nullable', () => {
     const obj = new Map();
     obj.set('a', 1);
     obj.set(null, 2);
     obj.set('c', 3);
     const obj2 = validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'keyAttr': {'nullable': true}}}, obj);
-    t.is(Array.from(obj2.keys()).length, 3);
-    t.is(obj2.get('a'), 1);
-    t.is(obj2.get(null), 2);
-    t.is(obj2.get('c'), 3);
+    assert.equal(Array.from(obj2.keys()).length, 3);
+    assert.equal(obj2.get('a'), 1);
+    assert.equal(obj2.get(null), 2);
+    assert.equal(obj2.get('c'), 3);
 
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value null (type 'object'), expected type 'string'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value null (type 'object'), expected type 'string'"
+        }
+    );
 });
 
 
-test('validateType, dict key nullable as string', (t) => {
+test('validateType, dict key nullable as string', () => {
     const obj = new Map();
     obj.set('a', 1);
     obj.set(null, 2);
     obj.set('c', 3);
     const obj2 = validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'keyAttr': {'nullable': true}}}, obj);
-    t.is(Array.from(obj2.keys()).length, 3);
-    t.is(obj2.get('a'), 1);
-    t.is(obj2.get(null), 2);
-    t.is(obj2.get('c'), 3);
+    assert.equal(Array.from(obj2.keys()).length, 3);
+    assert.equal(obj2.get('a'), 1);
+    assert.equal(obj2.get(null), 2);
+    assert.equal(obj2.get('c'), 3);
 
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value null (type 'object'), expected type 'string'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value null (type 'object'), expected type 'string'"
+        }
+    );
 });
 
 
-test('validateType, dict empty string', (t) => {
+test('validateType, dict empty string', () => {
     const obj = '';
-    t.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj), {});
+    assert.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj), {});
 });
 
 
-test('validateType, dict attributes', (t) => {
+test('validateType, dict attributes', () => {
     const obj = {'a': 1, 'b': 2, 'c': 3};
-    t.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj), obj);
 });
 
 
-test('validateType, dict error', (t) => {
+test('validateType, dict error', () => {
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'dict'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'dict'"
+        }
+    );
 });
 
 
-test('validateType, dict error value', (t) => {
+test('validateType, dict error value', () => {
     const obj = {'a': 1, 'b': 'abc', 'c': 3};
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'b');
-    t.is(error.message, "Invalid value \"abc\" (type 'string') for member 'b', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'b',
+            'message': "Invalid value \"abc\" (type 'string') for member 'b', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, dict error value nested', (t) => {
+test('validateType, dict error value nested', () => {
     const obj = [{'a': 1}, {'a': 1, 'b': 'abc', 'c': 3}];
-    const error = t.throws(() => {
-        validateTypeHelper({'array': {'type': {'dict': {'type': {'builtin': 'int'}}}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, '1.b');
-    t.is(error.message, "Invalid value \"abc\" (type 'string') for member '1.b', expected type 'int'");
+    assert.throws(
+        () => {
+            validateTypeHelper({'array': {'type': {'dict': {'type': {'builtin': 'int'}}}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '1.b',
+            'message': "Invalid value \"abc\" (type 'string') for member '1.b', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, dict attribute error', (t) => {
+test('validateType, dict attribute error', () => {
     const obj = {'a': 1, 'b': 2, 'c': 5};
-    const error = t.throws(() => {
-        validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'c');
-    t.is(error.message, "Invalid value 5 (type 'number') for member 'c', expected type 'int' [< 5]");
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'attr': {'lt': 5}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'c',
+            'message': "Invalid value 5 (type 'number') for member 'c', expected type 'int' [< 5]"
+        }
+    );
 });
 
 
-test('validateType, dict key type', (t) => {
+test('validateType, dict key type', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -858,18 +1043,23 @@ test('validateType, dict key type', (t) => {
     };
 
     let obj = {'A': 1, 'B': 2};
-    t.deepEqual(validateType(types, 'MyTypedef', obj), obj);
+    assert.deepEqual(validateType(types, 'MyTypedef', obj), obj);
 
     obj = {'A': 1, 'C': 2};
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"C\" (type 'string'), expected type 'MyEnum'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"C\" (type 'string'), expected type 'MyEnum'"
+        }
+    );
 });
 
 
-test('validateType, dict key attr', (t) => {
+test('validateType, dict key attr', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -880,18 +1070,23 @@ test('validateType, dict key attr', (t) => {
     };
 
     let obj = {'abc': 1, 'abcdefghi': 2};
-    t.deepEqual(validateType(types, 'MyTypedef', obj), obj);
+    assert.deepEqual(validateType(types, 'MyTypedef', obj), obj);
 
     obj = {'abc': 1, 'abcdefghij': 2};
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abcdefghij\" (type 'string'), expected type 'string' [len < 10]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abcdefghij\" (type 'string'), expected type 'string' [len < 10]"
+        }
+    );
 });
 
 
-test('validateType, enum', (t) => {
+test('validateType, enum', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -905,18 +1100,23 @@ test('validateType, enum', (t) => {
     };
 
     let obj = 'a';
-    t.is(validateType(types, 'MyEnum', obj), obj);
+    assert.equal(validateType(types, 'MyEnum', obj), obj);
 
     obj = 'c';
-    const error = t.throws(() => {
-        validateType(types, 'MyEnum', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"c\" (type 'string'), expected type 'MyEnum'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyEnum', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"c\" (type 'string'), expected type 'MyEnum'"
+        }
+    );
 });
 
 
-test('validateType, enum empty', (t) => {
+test('validateType, enum empty', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -926,15 +1126,20 @@ test('validateType, enum empty', (t) => {
     };
 
     const obj = 'a';
-    const error = t.throws(() => {
-        validateType(types, 'MyEnum', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"a\" (type 'string'), expected type 'MyEnum'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyEnum', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"a\" (type 'string'), expected type 'MyEnum'"
+        }
+    );
 });
 
 
-test('validateType, enum base', (t) => {
+test('validateType, enum base', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -968,21 +1173,26 @@ test('validateType, enum base', (t) => {
     };
 
     let obj = 'a';
-    t.is(validateType(types, 'MyEnum', obj), obj);
+    assert.equal(validateType(types, 'MyEnum', obj), obj);
 
     obj = 'b';
-    t.is(validateType(types, 'MyEnum', obj), obj);
+    assert.equal(validateType(types, 'MyEnum', obj), obj);
 
     obj = 'c';
-    const error = t.throws(() => {
-        validateType(types, 'MyEnum', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"c\" (type 'string'), expected type 'MyEnum'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyEnum', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"c\" (type 'string'), expected type 'MyEnum'"
+        }
+    );
 });
 
 
-test('validateType, typedef', (t) => {
+test('validateType, typedef', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -994,32 +1204,47 @@ test('validateType, typedef', (t) => {
     };
 
     let obj = 5;
-    t.is(validateType(types, 'MyTypedef', obj), obj);
+    assert.equal(validateType(types, 'MyTypedef', obj), obj);
 
     obj = 4;
-    let error = t.throws(() => {
-        validateType(types, 'MyTypedef', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 4 (type 'number'), expected type 'MyTypedef' [>= 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 4 (type 'number'), expected type 'MyTypedef' [>= 5]"
+        }
+    );
 
     obj = null;
-    error = t.throws(() => {
-        validateType(types, 'MyTypedef', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value null (type 'object'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value null (type 'object'), expected type 'int'"
+        }
+    );
 
     obj = 'null';
-    error = t.throws(() => {
-        validateType(types, 'MyTypedef', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"null\" (type 'string'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"null\" (type 'string'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, typedef no attr', (t) => {
+test('validateType, typedef no attr', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1029,11 +1254,11 @@ test('validateType, typedef no attr', (t) => {
         }
     };
     const obj = 5;
-    t.is(validateType(types, 'MyTypedef', obj), obj);
+    assert.equal(validateType(types, 'MyTypedef', obj), obj);
 });
 
 
-test('validateType, typedef type error', (t) => {
+test('validateType, typedef type error', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1043,15 +1268,20 @@ test('validateType, typedef type error', (t) => {
         }
     };
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, typedef attr eq', (t) => {
+test('validateType, typedef attr eq', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1063,15 +1293,20 @@ test('validateType, typedef attr eq', (t) => {
     };
     validateType(types, 'MyTypedef', 5);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', 7);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [== 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 7);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 7 (type 'number'), expected type 'MyTypedef' [== 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr nullable', (t) => {
+test('validateType, typedef attr nullable', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1081,19 +1316,24 @@ test('validateType, typedef attr nullable', (t) => {
             }
         }
     };
-    t.is(validateType(types, 'MyTypedef', 5), 5);
-    t.is(validateType(types, 'MyTypedef', null), null);
-    t.is(validateType(types, 'MyTypedef', 'null'), null);
+    assert.equal(validateType(types, 'MyTypedef', 5), 5);
+    assert.equal(validateType(types, 'MyTypedef', null), null);
+    assert.equal(validateType(types, 'MyTypedef', 'null'), null);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', 'abc');
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 'abc');
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lt', (t) => {
+test('validateType, typedef attr lt', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1105,21 +1345,31 @@ test('validateType, typedef attr lt', (t) => {
     };
     validateType(types, 'MyTypedef', 3);
 
-    let error = t.throws(() => {
-        validateType(types, 'MyTypedef', 5);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 5 (type 'number'), expected type 'MyTypedef' [< 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 5);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 5 (type 'number'), expected type 'MyTypedef' [< 5]"
+        }
+    );
 
-    error = t.throws(() => {
-        validateType(types, 'MyTypedef', 7);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [< 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 7);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 7 (type 'number'), expected type 'MyTypedef' [< 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lte', (t) => {
+test('validateType, typedef attr lte', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1131,15 +1381,20 @@ test('validateType, typedef attr lte', (t) => {
     };
     validateType(types, 'MyTypedef', 5);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', 7);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 7 (type 'number'), expected type 'MyTypedef' [<= 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 7);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 7 (type 'number'), expected type 'MyTypedef' [<= 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr gt', (t) => {
+test('validateType, typedef attr gt', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1151,21 +1406,31 @@ test('validateType, typedef attr gt', (t) => {
     };
     validateType(types, 'MyTypedef', 7);
 
-    let error = t.throws(() => {
-        validateType(types, 'MyTypedef', 3);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 3 (type 'number'), expected type 'MyTypedef' [> 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 3);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 3 (type 'number'), expected type 'MyTypedef' [> 5]"
+        }
+    );
 
-    error = t.throws(() => {
-        validateType(types, 'MyTypedef', 5);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 5 (type 'number'), expected type 'MyTypedef' [> 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 5);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 5 (type 'number'), expected type 'MyTypedef' [> 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr gte', (t) => {
+test('validateType, typedef attr gte', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1177,15 +1442,20 @@ test('validateType, typedef attr gte', (t) => {
     };
     validateType(types, 'MyTypedef', 5);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', 3);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value 3 (type 'number'), expected type 'MyTypedef' [>= 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 3);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value 3 (type 'number'), expected type 'MyTypedef' [>= 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lenEq', (t) => {
+test('validateType, typedef attr lenEq', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1197,15 +1467,20 @@ test('validateType, typedef attr lenEq', (t) => {
     };
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', [1, 2, 3]);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len == 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', [1, 2, 3]);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len == 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lenEq object', (t) => {
+test('validateType, typedef attr lenEq object', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1217,15 +1492,20 @@ test('validateType, typedef attr lenEq object', (t) => {
     };
     validateType(types, 'MyTypedef', {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5});
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', {'a': 1, 'b': 2, 'c': 3});
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value {\"a\":1,\"b\":2,\"c\":3} (type 'object'), expected type 'MyTypedef' [len == 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', {'a': 1, 'b': 2, 'c': 3});
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value {\"a\":1,\"b\":2,\"c\":3} (type 'object'), expected type 'MyTypedef' [len == 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lenLT', (t) => {
+test('validateType, typedef attr lenLT', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1237,15 +1517,20 @@ test('validateType, typedef attr lenLT', (t) => {
     };
     validateType(types, 'MyTypedef', [1, 2, 3]);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len < 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len < 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lenLTE', (t) => {
+test('validateType, typedef attr lenLTE', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1257,15 +1542,20 @@ test('validateType, typedef attr lenLTE', (t) => {
     };
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', [1, 2, 3, 4, 5, 6, 7]);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value [1,2,3,4,5,6,7] (type 'object'), expected type 'MyTypedef' [len <= 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', [1, 2, 3, 4, 5, 6, 7]);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value [1,2,3,4,5,6,7] (type 'object'), expected type 'MyTypedef' [len <= 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lenGT', (t) => {
+test('validateType, typedef attr lenGT', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1277,15 +1567,20 @@ test('validateType, typedef attr lenGT', (t) => {
     };
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5, 6, 7]);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len > 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len > 5]"
+        }
+    );
 });
 
 
-test('validateType, typedef attr lenGTE', (t) => {
+test('validateType, typedef attr lenGTE', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -1297,15 +1592,20 @@ test('validateType, typedef attr lenGTE', (t) => {
     };
     validateType(types, 'MyTypedef', [1, 2, 3, 4, 5]);
 
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', [1, 2, 3]);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len >= 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', [1, 2, 3]);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len >= 5]"
+        }
+    );
 });
 
 
-test('validateType, struct', (t) => {
+test('validateType, struct', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1372,7 +1672,7 @@ test('validateType, struct', (t) => {
         ...obj,
         'e': new Date(2020, 5, 13)
     };
-    t.deepEqual(validateType(types, 'MyStruct', obj), objValidated);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), objValidated);
 
     obj = {
         'a': 'abc',
@@ -1390,11 +1690,11 @@ test('validateType, struct', (t) => {
         'j': 'A',
         'k': '1'
     };
-    t.deepEqual(validateType(types, 'MyStruct', obj), objValidated);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), objValidated);
 });
 
 
-test('validateType, struct map', (t) => {
+test('validateType, struct map', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1420,16 +1720,16 @@ test('validateType, struct map', (t) => {
     obj.set('b', objB);
     objB.set('c', 'abc');
     const obj2 = validateType(types, 'MyStruct', obj);
-    t.is(obj2 instanceof Map, true);
-    t.is(Array.from(obj2.keys()).length, 2);
-    t.is(obj2.get('a'), 5);
-    t.is(Array.from(obj2.get('b').keys()).length, 1);
-    t.is(obj2.get('b') instanceof Map, true);
-    t.is(obj2.get('b').get('c'), 'abc');
+    assert.equal(obj2 instanceof Map, true);
+    assert.equal(Array.from(obj2.keys()).length, 2);
+    assert.equal(obj2.get('a'), 5);
+    assert.equal(Array.from(obj2.get('b').keys()).length, 1);
+    assert.equal(obj2.get('b') instanceof Map, true);
+    assert.equal(obj2.get('b').get('c'), 'abc');
 });
 
 
-test('validateType, struct null', (t) => {
+test('validateType, struct null', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1437,14 +1737,20 @@ test('validateType, struct null', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', null);
-    }, {'instanceOf': ValidationError});
-    t.is(error.message, "Invalid value null (type 'object'), expected type 'MyStruct'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', null);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value null (type 'object'), expected type 'MyStruct'"
+        }
+    );
 });
 
 
-test('validateType, struct empty string', (t) => {
+test('validateType, struct empty string', () => {
     const types = {
         'Empty': {
             'struct': {
@@ -1453,11 +1759,11 @@ test('validateType, struct empty string', (t) => {
         }
     };
     const obj = '';
-    t.deepEqual(validateType(types, 'Empty', obj), {});
+    assert.deepEqual(validateType(types, 'Empty', obj), {});
 });
 
 
-test('validateType, struct string error', (t) => {
+test('validateType, struct string error', () => {
     const types = {
         'Empty': {
             'struct': {
@@ -1466,15 +1772,20 @@ test('validateType, struct string error', (t) => {
         }
     };
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateType(types, 'Empty', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'Empty'");
+    assert.throws(
+        () => {
+            validateType(types, 'Empty', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'Empty'"
+        }
+    );
 });
 
 
-test('validateType, struct union', (t) => {
+test('validateType, struct union', () => {
     const types = {
         'MyUnion': {
             'struct': {
@@ -1489,28 +1800,38 @@ test('validateType, struct union', (t) => {
     };
 
     let obj = {'a': 7};
-    t.deepEqual(validateType(types, 'MyUnion', obj), obj);
+    assert.deepEqual(validateType(types, 'MyUnion', obj), obj);
 
     obj = {'b': 'abc'};
-    t.deepEqual(validateType(types, 'MyUnion', obj), obj);
+    assert.deepEqual(validateType(types, 'MyUnion', obj), obj);
 
     obj = {};
-    let error = t.throws(() => {
-        validateType(types, 'MyUnion', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value {} (type 'object'), expected type 'MyUnion'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyUnion', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value {} (type 'object'), expected type 'MyUnion'"
+        }
+    );
 
     obj = {'c': 7};
-    error = t.throws(() => {
-        validateType(types, 'MyUnion', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown member 'c'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyUnion', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown member 'c'"
+        }
+    );
 });
 
 
-test('validateType, struct base', (t) => {
+test('validateType, struct base', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1544,18 +1865,23 @@ test('validateType, struct base', (t) => {
     };
 
     let obj = {'a': 7, 'b': 11};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Required member 'b' missing");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Required member 'b' missing"
+        }
+    );
 });
 
 
-test('validateType, struct optional', (t) => {
+test('validateType, struct optional', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1570,21 +1896,26 @@ test('validateType, struct optional', (t) => {
     };
 
     let obj = {'a': 7, 'b': 'abc', 'c': 7.1};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7, 'c': 7.1};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Required member 'c' missing");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Required member 'c' missing"
+        }
+    );
 });
 
 
-test('validateType, struct nullable', (t) => {
+test('validateType, struct nullable', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1600,41 +1931,56 @@ test('validateType, struct nullable', (t) => {
     };
 
     let obj = {'a': 7, 'b': 8, 'c': 'abc', 'd': 7.1};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7, 'b': null, 'c': null, 'd': 7.1};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7, 'b': null, 'c': 'null', 'd': 7.1};
-    t.deepEqual(validateType(types, 'MyStruct', obj), {'a': 7, 'b': null, 'c': null, 'd': 7.1});
+    assert.deepEqual(validateType(types, 'MyStruct', obj), {'a': 7, 'b': null, 'c': null, 'd': 7.1});
 
     obj = {'a': 7, 'b': 'null', 'c': null, 'd': 7.1};
-    t.deepEqual(validateType(types, 'MyStruct', obj), {'a': 7, 'b': null, 'c': null, 'd': 7.1});
+    assert.deepEqual(validateType(types, 'MyStruct', obj), {'a': 7, 'b': null, 'c': null, 'd': 7.1});
 
     obj = {'a': null, 'b': null, 'c': null, 'd': 7.1};
-    let error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'a');
-    t.is(error.message, "Invalid value null (type 'object') for member 'a', expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'a',
+            'message': "Invalid value null (type 'object') for member 'a', expected type 'int'"
+        }
+    );
 
     obj = {'a': 7, 'b': null, 'c': null, 'd': null};
-    error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'd');
-    t.is(error.message, "Invalid value null (type 'object') for member 'd', expected type 'float'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'd',
+            'message': "Invalid value null (type 'object') for member 'd', expected type 'float'"
+        }
+    );
 
     obj = {'a': 7, 'c': null, 'd': 7.1};
-    error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Required member 'b' missing");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Required member 'b' missing"
+        }
+    );
 });
 
 
-test('validateType, struct nullable attr', (t) => {
+test('validateType, struct nullable attr', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1648,21 +1994,26 @@ test('validateType, struct nullable attr', (t) => {
     };
 
     let obj = {'a': 7, 'b': 4};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 
     obj = {'a': 7, 'b': 5};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'b');
-    t.is(error.message, "Invalid value 5 (type 'number') for member 'b', expected type 'int' [< 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'b',
+            'message': "Invalid value 5 (type 'number') for member 'b', expected type 'int' [< 5]"
+        }
+    );
 
     obj = {'a': 7, 'b': null};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 });
 
 
-test('validateType, struct member attr', (t) => {
+test('validateType, struct member attr', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1674,11 +2025,11 @@ test('validateType, struct member attr', (t) => {
         }
     };
     const obj = {'a': 4};
-    t.deepEqual(validateType(types, 'MyStruct', obj), obj);
+    assert.deepEqual(validateType(types, 'MyStruct', obj), obj);
 });
 
 
-test('validateType, struct member attr invalid', (t) => {
+test('validateType, struct member attr invalid', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1690,15 +2041,20 @@ test('validateType, struct member attr invalid', (t) => {
         }
     };
     const obj = {'a': 7};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'a');
-    t.is(error.message, "Invalid value 7 (type 'number') for member 'a', expected type 'int' [< 5]");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'a',
+            'message': "Invalid value 7 (type 'number') for member 'a', expected type 'int' [< 5]"
+        }
+    );
 });
 
 
-test('validateType, struct error invalid value', (t) => {
+test('validateType, struct error invalid value', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1710,15 +2066,20 @@ test('validateType, struct error invalid value', (t) => {
         }
     };
     const obj = 'abc';
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value \"abc\" (type 'string'), expected type 'MyStruct'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value \"abc\" (type 'string'), expected type 'MyStruct'"
+        }
+    );
 });
 
 
-test('validateType, struct error optional null value', (t) => {
+test('validateType, struct error optional null value', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1730,15 +2091,20 @@ test('validateType, struct error optional null value', (t) => {
         }
     };
     const obj = {'a': null};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'a');
-    t.is(error.message, "Invalid value null (type 'object') for member 'a', expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'a',
+            'message': "Invalid value null (type 'object') for member 'a', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, struct error member validation', (t) => {
+test('validateType, struct error member validation', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1750,15 +2116,20 @@ test('validateType, struct error member validation', (t) => {
         }
     };
     const obj = {'a': 'abc'};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'a');
-    t.is(error.message, "Invalid value \"abc\" (type 'string') for member 'a', expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'a',
+            'message': "Invalid value \"abc\" (type 'string') for member 'a', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, struct error nested member validation', (t) => {
+test('validateType, struct error nested member validation', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1778,15 +2149,20 @@ test('validateType, struct error nested member validation', (t) => {
         }
     };
     const obj = {'a': {'b': 'abc'}};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, 'a.b');
-    t.is(error.message, "Invalid value \"abc\" (type 'string') for member 'a.b', expected type 'int'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'a.b',
+            'message': "Invalid value \"abc\" (type 'string') for member 'a.b', expected type 'int'"
+        }
+    );
 });
 
 
-test('validateType, struct error unknown member', (t) => {
+test('validateType, struct error unknown member', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1798,15 +2174,20 @@ test('validateType, struct error unknown member', (t) => {
         }
     };
     const obj = {'a': 7, 'b': 8};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown member 'b'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown member 'b'"
+        }
+    );
 });
 
 
-test('validateType, struct error unknown member nested', (t) => {
+test('validateType, struct error unknown member nested', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1824,15 +2205,20 @@ test('validateType, struct error unknown member nested', (t) => {
         }
     };
     const obj = [{'a': 5}, {'a': 7, 'b': 'abc'}];
-    const error = t.throws(() => {
-        validateType(types, 'MyTypedef', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown member '1.b'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown member '1.b'"
+        }
+    );
 });
 
 
-test('validateType, struct error unknown member empty', (t) => {
+test('validateType, struct error unknown member empty', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1841,15 +2227,20 @@ test('validateType, struct error unknown member empty', (t) => {
         }
     };
     const obj = {'b': 8};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown member 'b'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown member 'b'"
+        }
+    );
 });
 
 
-test('validateType, struct error unknown member long', (t) => {
+test('validateType, struct error unknown member long', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1862,15 +2253,20 @@ test('validateType, struct error unknown member long', (t) => {
     };
     const obj = {'a': 7};
     obj['b'.repeat(2000)] = 8;
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `Unknown member '${'b'.repeat(100)}'`);
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `Unknown member '${'b'.repeat(100)}'`
+        }
+    );
 });
 
 
-test('validateType, struct error missing member', (t) => {
+test('validateType, struct error missing member', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1882,15 +2278,20 @@ test('validateType, struct error missing member', (t) => {
         }
     };
     const obj = {};
-    const error = t.throws(() => {
-        validateType(types, 'MyStruct', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Required member 'a' missing");
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Required member 'a' missing"
+        }
+    );
 });
 
 
-test('validateType, action', (t) => {
+test('validateType, action', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -1899,15 +2300,20 @@ test('validateType, action', (t) => {
         }
     };
     const obj = {};
-    const error = t.throws(() => {
-        validateType(types, 'MyAction', obj);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid value {} (type 'object'), expected type 'MyAction'");
+    assert.throws(
+        () => {
+            validateType(types, 'MyAction', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid value {} (type 'object'), expected type 'MyAction'"
+        }
+    );
 });
 
 
-test('validateType, invalid model', (t) => {
+test('validateType, invalid model', () => {
     const types = {
         'MyBadBuiltin': {
             'typedef': {
@@ -1931,9 +2337,9 @@ test('validateType, invalid model', (t) => {
             'bad_user_key': {}
         }
     };
-    t.is(validateType(types, 'MyBadBuiltin', 'abc'), 'abc');
-    t.is(validateType(types, 'MyBadType', 'abc'), 'abc');
-    t.is(validateType(types, 'MyBadUser', 'abc'), 'abc');
+    assert.equal(validateType(types, 'MyBadBuiltin', 'abc'), 'abc');
+    assert.equal(validateType(types, 'MyBadType', 'abc'), 'abc');
+    assert.equal(validateType(types, 'MyBadUser', 'abc'), 'abc');
 });
 
 
@@ -1942,28 +2348,33 @@ test('validateType, invalid model', (t) => {
 //
 
 
-test('validateTypeModel', (t) => {
+test('validateTypeModel', () => {
     const validatedTypeModel = validateTypeModel(typeModel);
-    t.deepEqual(typeModel, validatedTypeModel);
-    t.not(typeModel, validatedTypeModel);
+    assert.deepEqual(typeModel, validatedTypeModel);
+    assert.notEqual(typeModel, validatedTypeModel);
 });
 
 
-test('validateTypeModel, type validation error', (t) => {
+test('validateTypeModel, type validation error', () => {
     const types = {
         'MyStruct': {
             'struct': {}
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Required member 'MyStruct.struct.name' missing");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Required member 'MyStruct.struct.name' missing"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct empty', (t) => {
+test('validateTypeModel, struct empty', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1971,11 +2382,11 @@ test('validateTypeModel, struct empty', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, struct inconsistent type name', (t) => {
+test('validateTypeModel, struct inconsistent type name', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -1983,15 +2394,20 @@ test('validateTypeModel, struct inconsistent type name', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Inconsistent type name 'MyStruct2' for 'MyStruct'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Inconsistent type name 'MyStruct2' for 'MyStruct'"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct unknown member type', (t) => {
+test('validateTypeModel, struct unknown member type', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2002,15 +2418,20 @@ test('validateTypeModel, struct unknown member type', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown type 'UnknownType' from 'MyStruct' member 'a'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown type 'UnknownType' from 'MyStruct' member 'a'"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct duplicate member name', (t) => {
+test('validateTypeModel, struct duplicate member name', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2023,15 +2444,20 @@ test('validateTypeModel, struct duplicate member name', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Redefinition of 'MyStruct' member 'a'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Redefinition of 'MyStruct' member 'a'"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct member attributes', (t) => {
+test('validateTypeModel, struct member attributes', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2042,11 +2468,11 @@ test('validateTypeModel, struct member attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, struct member attributes invalid', (t) => {
+test('validateTypeModel, struct member attributes invalid', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2057,17 +2483,22 @@ test('validateTypeModel, struct member attributes invalid', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Invalid attribute 'len <= 10' from 'MyStruct' member 'a'
-Invalid attribute 'len > 0' from 'MyStruct' member 'a'`);
+Invalid attribute 'len > 0' from 'MyStruct' member 'a'`
+        }
+    );
 });
 
 
-test('validateTypeModel, struct base', (t) => {
+test('validateTypeModel, struct base', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2093,11 +2524,11 @@ test('validateTypeModel, struct base', (t) => {
             }
         }
     };
-    t.deepEqual(validateTypeModel(types), types);
+    assert.deepEqual(validateTypeModel(types), types);
 });
 
 
-test('validateTypeModel, struct base unknown', (t) => {
+test('validateTypeModel, struct base unknown', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2112,17 +2543,20 @@ test('validateTypeModel, struct base unknown', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid struct base type 'Unknown'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid struct base type 'Unknown'"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct base typedef unknown', (t) => {
+test('validateTypeModel, struct base typedef unknown', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2137,18 +2571,22 @@ test('validateTypeModel, struct base typedef unknown', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Invalid struct base type 'MyTypedef'
-Unknown type 'Unknown' from 'MyTypedef'\
-`);
+Unknown type 'Unknown' from 'MyTypedef'`
+        }
+    );
 });
 
 
-test('validateTypeModel, struct base non-user', (t) => {
+test('validateTypeModel, struct base non-user', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2163,17 +2601,20 @@ test('validateTypeModel, struct base non-user', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid struct base type 'MyInt'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid struct base type 'MyInt'"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct base enum', (t) => {
+test('validateTypeModel, struct base enum', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2187,17 +2628,20 @@ test('validateTypeModel, struct base enum', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid struct base type 'MyEnum'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid struct base type 'MyEnum'"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct base circular', (t) => {
+test('validateTypeModel, struct base circular', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2212,18 +2656,22 @@ test('validateTypeModel, struct base circular', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Circular base type detected for type 'MyStruct'
-Circular base type detected for type 'MyStruct2'\
-`);
+Circular base type detected for type 'MyStruct2'`
+        }
+    );
 });
 
 
-test('validateTypeModel, struct base union', (t) => {
+test('validateTypeModel, struct base union', () => {
     const types = {
         'MyStruct': {
             'struct': {
@@ -2238,17 +2686,20 @@ test('validateTypeModel, struct base union', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid struct base type 'MyUnion'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid struct base type 'MyUnion'"
+        }
+    );
 });
 
 
-test('validateTypeModel, struct base union struct', (t) => {
+test('validateTypeModel, struct base union struct', () => {
     const types = {
         'MyUnion': {
             'struct': {
@@ -2263,17 +2714,20 @@ test('validateTypeModel, struct base union struct', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid struct base type 'MyStruct'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid struct base type 'MyStruct'"
+        }
+    );
 });
 
 
-test('validateTypeModel, enum empty', (t) => {
+test('validateTypeModel, enum empty', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2281,11 +2735,11 @@ test('validateTypeModel, enum empty', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, enum inconsistent type name', (t) => {
+test('validateTypeModel, enum inconsistent type name', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2293,15 +2747,20 @@ test('validateTypeModel, enum inconsistent type name', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Inconsistent type name 'MyEnum2' for 'MyEnum'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Inconsistent type name 'MyEnum2' for 'MyEnum'"
+        }
+    );
 });
 
 
-test('validateTypeModel,  enum duplicate value', (t) => {
+test('validateTypeModel,  enum duplicate value', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2314,15 +2773,20 @@ test('validateTypeModel,  enum duplicate value', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Redefinition of 'MyEnum' value 'A'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Redefinition of 'MyEnum' value 'A'"
+        }
+    );
 });
 
 
-test('validateTypeModel, enum base', (t) => {
+test('validateTypeModel, enum base', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2348,11 +2812,11 @@ test('validateTypeModel, enum base', (t) => {
             }
         }
     };
-    t.deepEqual(validateTypeModel(types), types);
+    assert.deepEqual(validateTypeModel(types), types);
 });
 
 
-test('validateTypeModel, enum base unknown', (t) => {
+test('validateTypeModel, enum base unknown', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2367,17 +2831,20 @@ test('validateTypeModel, enum base unknown', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid enum base type 'Unknown'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid enum base type 'Unknown'"
+        }
+    );
 });
 
 
-test('validateTypeModel, enum base non-user', (t) => {
+test('validateTypeModel, enum base non-user', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2392,17 +2859,20 @@ test('validateTypeModel, enum base non-user', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid enum base type 'MyInt'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid enum base type 'MyInt'"
+        }
+    );
 });
 
 
-test('validateTypeModel, enum base struct', (t) => {
+test('validateTypeModel, enum base struct', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2416,17 +2886,20 @@ test('validateTypeModel, enum base struct', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
-Invalid enum base type 'MyStruct'\
-`);
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid enum base type 'MyStruct'"
+        }
+    );
 });
 
 
-test('validateTypeModel, enum base circular', (t) => {
+test('validateTypeModel, enum base circular', () => {
     const types = {
         'MyEnum': {
             'enum': {
@@ -2441,18 +2914,22 @@ test('validateTypeModel, enum base circular', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Circular base type detected for type 'MyEnum'
-Circular base type detected for type 'MyEnum2'\
-`);
+Circular base type detected for type 'MyEnum2'`
+        }
+    );
 });
 
 
-test('validateTypeModel, array', (t) => {
+test('validateTypeModel, array', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2461,11 +2938,11 @@ test('validateTypeModel, array', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, array attributes', (t) => {
+test('validateTypeModel, array attributes', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2474,11 +2951,11 @@ test('validateTypeModel, array attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, array invalid attribute', (t) => {
+test('validateTypeModel, array invalid attribute', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2487,15 +2964,20 @@ test('validateTypeModel, array invalid attribute', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid attribute 'len > 0' from 'MyTypedef'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid attribute 'len > 0' from 'MyTypedef'"
+        }
+    );
 });
 
 
-test('validateTypeModel, array unknown type', (t) => {
+test('validateTypeModel, array unknown type', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2504,15 +2986,20 @@ test('validateTypeModel, array unknown type', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown type 'Unknown' from 'MyTypedef'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown type 'Unknown' from 'MyTypedef'"
+        }
+    );
 });
 
 
-test('validateTypeModel, dict', (t) => {
+test('validateTypeModel, dict', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2521,11 +3008,11 @@ test('validateTypeModel, dict', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, dict key type', (t) => {
+test('validateTypeModel, dict key type', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2543,11 +3030,11 @@ test('validateTypeModel, dict key type', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, dict attributes', (t) => {
+test('validateTypeModel, dict attributes', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2556,11 +3043,11 @@ test('validateTypeModel, dict attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, dict key attributes', (t) => {
+test('validateTypeModel, dict key attributes', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2569,11 +3056,11 @@ test('validateTypeModel, dict key attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, dict invalid attribute', (t) => {
+test('validateTypeModel, dict invalid attribute', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2582,15 +3069,20 @@ test('validateTypeModel, dict invalid attribute', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid attribute 'len > 0' from 'MyTypedef'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid attribute 'len > 0' from 'MyTypedef'"
+        }
+    );
 });
 
 
-test('validateTypeModel, dict invalid key attribute', (t) => {
+test('validateTypeModel, dict invalid key attribute', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2599,15 +3091,20 @@ test('validateTypeModel, dict invalid key attribute', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid attribute '> 0' from 'MyTypedef'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid attribute '> 0' from 'MyTypedef'"
+        }
+    );
 });
 
 
-test('validateTypeModel, dict unknown type', (t) => {
+test('validateTypeModel, dict unknown type', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2616,15 +3113,20 @@ test('validateTypeModel, dict unknown type', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown type 'Unknown' from 'MyTypedef'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown type 'Unknown' from 'MyTypedef'"
+        }
+    );
 });
 
 
-test('validateTypeModel, dict unknown key type', (t) => {
+test('validateTypeModel, dict unknown key type', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2633,17 +3135,22 @@ test('validateTypeModel, dict unknown key type', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Unknown type 'Unknown' from 'MyTypedef'
-Invalid dictionary key type from 'MyTypedef'`);
+Invalid dictionary key type from 'MyTypedef'`
+        }
+    );
 });
 
 
-test('validateTypeModel, typedef invalid attribute', (t) => {
+test('validateTypeModel, typedef invalid attribute', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2658,15 +3165,20 @@ test('validateTypeModel, typedef invalid attribute', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid attribute '< 0' from 'MyTypedef'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid attribute '< 0' from 'MyTypedef'"
+        }
+    );
 });
 
 
-test('validateTypeModel, typedef nullable', (t) => {
+test('validateTypeModel, typedef nullable', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2681,11 +3193,11 @@ test('validateTypeModel, typedef nullable', (t) => {
             }
         }
     };
-    t.deepEqual(validateTypeModel(types), types);
+    assert.deepEqual(validateTypeModel(types), types);
 });
 
 
-test('validateTypeModel, typedef attributes', (t) => {
+test('validateTypeModel, typedef attributes', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2701,11 +3213,11 @@ test('validateTypeModel, typedef attributes', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, typedef inconsistent type name', (t) => {
+test('validateTypeModel, typedef inconsistent type name', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2714,15 +3226,20 @@ test('validateTypeModel, typedef inconsistent type name', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Inconsistent type name 'MyTypedef2' for 'MyTypedef'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Inconsistent type name 'MyTypedef2' for 'MyTypedef'"
+        }
+    );
 });
 
 
-test('validateTypeModel, typedef unknown type', (t) => {
+test('validateTypeModel, typedef unknown type', () => {
     const types = {
         'MyTypedef': {
             'typedef': {
@@ -2737,15 +3254,20 @@ test('validateTypeModel, typedef unknown type', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown type 'MyTypedef3' from 'MyTypedef2'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown type 'MyTypedef3' from 'MyTypedef2'"
+        }
+    );
 });
 
 
-test('validateTypeModel, action empty struct', (t) => {
+test('validateTypeModel, action empty struct', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -2759,11 +3281,11 @@ test('validateTypeModel, action empty struct', (t) => {
             }
         }
     };
-    t.deepEqual(types, validateTypeModel(types));
+    assert.deepEqual(types, validateTypeModel(types));
 });
 
 
-test('validateTypeModel, action inconsistent type name', (t) => {
+test('validateTypeModel, action inconsistent type name', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -2771,15 +3293,20 @@ test('validateTypeModel, action inconsistent type name', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Inconsistent type name 'MyAction2' for 'MyAction'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Inconsistent type name 'MyAction2' for 'MyAction'"
+        }
+    );
 });
 
 
-test('validateTypeModel, action unknown type', (t) => {
+test('validateTypeModel, action unknown type', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -2788,15 +3315,20 @@ test('validateTypeModel, action unknown type', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Unknown type 'Unknown' from 'MyAction'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Unknown type 'Unknown' from 'MyAction'"
+        }
+    );
 });
 
 
-test('validateTypeModel, action action', (t) => {
+test('validateTypeModel, action action', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -2810,15 +3342,20 @@ test('validateTypeModel, action action', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, "Invalid reference to action 'MyAction2' from 'MyAction'");
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': "Invalid reference to action 'MyAction2' from 'MyAction'"
+        }
+    );
 });
 
 
-test('validateTypeModel, action duplicate member', (t) => {
+test('validateTypeModel, action duplicate member', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -2846,18 +3383,22 @@ test('validateTypeModel, action duplicate member', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Redefinition of 'MyAction_input' member 'c'
-Redefinition of 'MyAction_query' member 'c'\
-`);
+Redefinition of 'MyAction_query' member 'c'`
+        }
+    );
 });
 
 
-test('validateTypeModel, action duplicate member inherited', (t) => {
+test('validateTypeModel, action duplicate member inherited', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -2893,18 +3434,22 @@ test('validateTypeModel, action duplicate member inherited', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Redefinition of 'MyAction_input' member 'c'
-Redefinition of 'MyAction_query' member 'c'\
-`);
+Redefinition of 'MyAction_query' member 'c'`
+        }
+    );
 });
 
 
-test('validateTypeModel, action duplicate member circular', (t) => {
+test('validateTypeModel, action duplicate member circular', () => {
     const types = {
         'MyAction': {
             'action': {
@@ -2941,12 +3486,16 @@ test('validateTypeModel, action duplicate member circular', (t) => {
             }
         }
     };
-    const error = t.throws(() => {
-        validateTypeModel(types);
-    }, {'instanceOf': ValidationError});
-    t.is(error.memberFqn, null);
-    t.is(error.message, `\
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
 Circular base type detected for type 'MyAction_input'
-Circular base type detected for type 'MyBase'\
-`);
+Circular base type detected for type 'MyBase'`
+        }
+    );
 });
