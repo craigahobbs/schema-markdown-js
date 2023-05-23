@@ -404,7 +404,8 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
 
             // Duplicate URL?
             if (urls.some((url) => url.method === actionUrl.method &amp;&amp; url.path === actionUrl.path)) {
-                addError(`Duplicate URL: ${method} ${'path' in actionUrl ? actionUrl.path : ''}`, filename, linenum);
+                const paddedPath = 'path' in actionUrl ? ` ${actionUrl.path}` : '';
+                addError(`Duplicate URL: ${method}${paddedPath}`, filename, linenum);
             }
 
             // Add the URL
@@ -609,6 +610,7 @@ export class SchemaMarkdownParserError extends Error {
      */
     constructor(errors) {
         super(errors.join('\n'));
+        this.name = this.constructor.name;
         this.errors = errors;
     }
 }
