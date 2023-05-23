@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.7 (2023-05-23)
+
+- [d478c76](https://github.com/craigahobbs/schema-markdown-js/commit/d478c76) - update package.json
+
 ## 1.2.6 (2023-05-23)
 
 - [922cf94](https://github.com/craigahobbs/schema-markdown-js/commit/922cf94) - remove use of AVA
