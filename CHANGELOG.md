@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.6 (2023-05-23)
+
+- [922cf94](https://github.com/craigahobbs/schema-markdown-js/commit/922cf94) - remove use of AVA
+
+- [fc45953](https://github.com/craigahobbs/schema-markdown-js/commit/fc45953) - fix parseSchemaMarkdown docs
+
 ## 1.2.5 (2023-02-06)
 
 - [1c73701](https://github.com/craigahobbs/schema-markdown-js/commit/1c73701) - add jsonStringifySortKeys function
