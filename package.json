@@ -21,10 +21,9 @@
         "lib/**/*"
     ],
     "scripts": {
-        "test": "ava -v test/"
+        "test": "node --test test/"
     },
     "devDependencies": {
-        "ava": "~5.2",
         "c8": "~7.13",
         "eslint": "~8.40",
         "jsdoc": "~4.0",
