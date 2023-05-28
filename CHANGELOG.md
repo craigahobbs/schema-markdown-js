@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.8 (2023-05-28)
+
+- [b1b64d6](https://github.com/craigahobbs/schema-markdown-js/commit/b1b64d6) - markdown-model 1.8.2
+
+- [91c40e3](https://github.com/craigahobbs/schema-markdown-js/commit/91c40e3) - update SchemaMarkdownParserError and ValidationError docs
+
+- [1a78d62](https://github.com/craigahobbs/schema-markdown-js/commit/1a78d62) - update ValidationError docs
+
 ## 1.2.7 (2023-05-23)
 
 - [d478c76](https://github.com/craigahobbs/schema-markdown-js/commit/d478c76) - update package.json
