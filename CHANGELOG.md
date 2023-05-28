@@ -2,7 +2,7 @@
 
 ## 1.2.8 (2023-05-28)
 
-- [b1b64d6](https://github.com/craigahobbs/schema-markdown-js/commit/b1b64d6) - markdown-model 1.8.2
+- [1cf5c1b](https://github.com/craigahobbs/schema-markdown-js/commit/1cf5c1b) - remove jsdom dev dependency
 
 - [91c40e3](https://github.com/craigahobbs/schema-markdown-js/commit/91c40e3) - update SchemaMarkdownParserError and ValidationError docs
 
