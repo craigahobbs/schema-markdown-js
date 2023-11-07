@@ -527,7 +527,7 @@ test('validateType, bool error string', () => {
 
 
 test('validateType, date', () => {
-    const obj = new Date(Date.UTC(2020, 5, 26));
+    const obj = new Date(2020, 5, 26);
     assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
 });
 
@@ -1657,7 +1657,7 @@ test('validateType, struct', () => {
         'b': 7,
         'c': 7.1,
         'd': true,
-        'e': new Date('2020-06-13'),
+        'e': new Date(2020, 5, 13),
         'f': new Date('2020-06-13T13:25:00-07:00'),
         'g': 'a3597528-a253-4c76-bc2d-8da0026cc838',
         'h': {'foo': 'bar'},
