@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.9 (2023-11-07)
+
+- [3ec29d5](https://github.com/craigahobbs/schema-markdown-js/commit/3ec29d5) - fix date string parsing
+
 ## 1.2.8 (2023-05-28)
 
 - [1cf5c1b](https://github.com/craigahobbs/schema-markdown-js/commit/1cf5c1b) - remove jsdom dev dependency
