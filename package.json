@@ -24,7 +24,7 @@
         "test": "node --test test/"
     },
     "devDependencies": {
-        "c8": "~8.0",
+        "c8": "~9.1",
         "eslint": "~8.56",
         "jsdoc": "~4.0"
     }
