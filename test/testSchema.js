@@ -533,7 +533,7 @@ test('validateType, date', () => {
 
 
 test('validateType, date datetime', () => {
-    const obj = new Date(Date.UTC(2020, 5, 26, 18, 8));
+    const obj = new Date(2020, 5, 26, 18, 8);
     assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
 });
 
