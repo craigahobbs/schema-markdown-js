@@ -545,8 +545,18 @@ test('validateType, date string', () => {
 
 
 test('validateType, date string datetime', () => {
-    const obj = '2020-06-26T13:11:00-07:00';
-    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
+    const dt = new Date(2020, 5, 26);
+    const tzOffset = dt.getTimezoneOffset();
+    /* c8 ignore next */
+    const tzSign = tzOffset < 0 ? '+' : '-';
+    const tzHour = Math.floor(Math.abs(tzOffset) / 60);
+    /* c8 ignore next */
+    const tzHourStr = `${tzHour < 10 ? '0' : ''}${tzHour}`;
+    const tzMinute = Math.abs(tzOffset) - tzHour * 60;
+    /* c8 ignore next */
+    const tzMinuteStr = `${tzMinute < 10 ? '0' : ''}${tzMinute}`;
+    const obj = `2020-06-26T13:11:00${tzSign}${tzHourStr}:${tzMinuteStr}`;
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), dt);
 });
 
 
