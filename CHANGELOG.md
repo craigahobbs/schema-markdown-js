@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.11 (2024-11-08)
+
+- [27ac6fa](https://github.com/craigahobbs/schema-markdown-js/commit/27ac6fa) - fix doc typo
+
 ## 1.2.10 (2024-11-08)
 
 - [195090e](https://github.com/craigahobbs/schema-markdown-js/commit/195090e) - add `any` builtin type and deprecate `object` builtin type
