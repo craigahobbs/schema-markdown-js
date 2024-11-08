@@ -50,11 +50,11 @@ Schema Markdown contains the following built-in types:
 
 - **int** - an integer number
 
-- **object** - a generic, unvalidated object (use sparingly)
-
 - **string** - a string
 
 - **uuid** - a UUID
+
+- **any** - a value of any type (use sparingly)
 
 
 ## Structure Types

@@ -39,7 +39,8 @@ struct MyStruct2
     optional uuid i
     optional MyEnum : MyStruct{} j
     optional date(nullable) k
-    optional object l
+    optional any l
+    optional object m
 
 # This is a union
 union MyUnion
@@ -218,7 +219,8 @@ action MyAction4 \\
                         'type': {'dict': {'keyType': {'user': 'MyEnum'}, 'type': {'user': 'MyStruct'}}}
                     },
                     {'name': 'k', 'optional': true, 'type': {'builtin': 'date'}, 'attr': {'nullable': true}},
-                    {'name': 'l', 'optional': true, 'type': {'builtin': 'object'}}
+                    {'name': 'l', 'optional': true, 'type': {'builtin': 'any'}},
+                    {'name': 'm', 'optional': true, 'type': {'builtin': 'any'}}
                 ]
             }
         },

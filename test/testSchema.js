@@ -716,27 +716,27 @@ test('validateType, uuid error string', () => {
 });
 
 
-test('validateType, object', () => {
+test('validateType, any', () => {
     const obj = {};
-    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'any'}, obj), obj);
 });
 
 
-test('validateType, object string', () => {
+test('validateType, any string', () => {
     const obj = 'abc';
-    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'any'}, obj), obj);
 });
 
 
-test('validateType, object int', () => {
+test('validateType, any int', () => {
     const obj = 7;
-    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'any'}, obj), obj);
 });
 
 
-test('validateType, object bool', () => {
+test('validateType, any bool', () => {
     const obj = true;
-    assert.deepEqual(validateTypeHelper({'builtin': 'object'}, obj), obj);
+    assert.deepEqual(validateTypeHelper({'builtin': 'any'}, obj), obj);
 });
 
 
@@ -1628,7 +1628,7 @@ test('validateType, struct', () => {
                     {'name': 'e', 'type': {'builtin': 'date'}},
                     {'name': 'f', 'type': {'builtin': 'datetime'}},
                     {'name': 'g', 'type': {'builtin': 'uuid'}},
-                    {'name': 'h', 'type': {'builtin': 'object'}},
+                    {'name': 'h', 'type': {'builtin': 'any'}},
                     {'name': 'i', 'type': {'user': 'MyStruct2'}},
                     {'name': 'j', 'type': {'user': 'MyEnum'}},
                     {'name': 'k', 'type': {'user': 'MyTypedef'}}
