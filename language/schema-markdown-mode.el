@@ -1,6 +1,6 @@
 ;;; schema-markdown-mode.el --- Major mode for editing Schema Markdown files
 
-;; Version: 0.2
+;; Version: 0.3
 
 ;;; Commentary:
 
@@ -26,7 +26,7 @@
 
 (defconst schema-markdown-types
   (regexp-opt
-   '("bool" "date" "datetime" "float" "int" "object" "string" "uuid")
+   '("any" "bool" "date" "datetime" "float" "int" "string" "uuid")
    'words)
   )
 

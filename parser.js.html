@@ -35,7 +35,8 @@ import {validateTypeModelErrors} from './schemaUtil.js';
 
 
 // Built-in types
-const builtinTypes = new Set(['bool', 'date', 'datetime', 'float', 'int', 'object', 'string', 'uuid']);
+const builtinTypes = new Set(['any', 'bool', 'date', 'datetime', 'float', 'int', 'string', 'uuid']);
+const builtinDeprecated = {'object': 'any'};
 
 
 // Schema Markdown regex
@@ -241,7 +242,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             const definitionBaseIds = match.groups.baseIds;
 
             // Type already defined?
-            if (builtinTypes.has(definitionId) || definitionId in types) {
+            if (builtinTypes.has(definitionId) || definitionId in builtinDeprecated || definitionId in types) {
                 addError(`Redefinition of type '${definitionId}'`, filename, linenum);
             }
 
@@ -419,7 +420,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             const definitionId = match.groups.id;
 
             // Type already defined?
-            if (builtinTypes.has(definitionId) || definitionId in types) {
+            if (builtinTypes.has(definitionId) || definitionId in builtinDeprecated || definitionId in types) {
                 addError(`Redefinition of type '${definitionId}'`, filename, linenum);
             }
 
@@ -542,6 +543,9 @@ function parseTypedef(matchTypedef) {
 
 // Helper function to create a type model
 function createType(typeName) {
+    if (typeName in builtinDeprecated) {
+        return {'builtin': builtinDeprecated[typeName]};
+    }
     if (builtinTypes.has(typeName)) {
         return {'builtin': typeName};
     }
