@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.10 (2024-11-08)
+
+- [195090e](https://github.com/craigahobbs/schema-markdown-js/commit/195090e) - add `any` builtin type and deprecate `object` builtin type
+
 ## 1.2.9 (2023-11-07)
 
 - [3ec29d5](https://github.com/craigahobbs/schema-markdown-js/commit/3ec29d5) - fix date string parsing
