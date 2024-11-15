@@ -1,6 +1,6 @@
 ;;; schema-markdown-mode.el --- Major mode for editing Schema Markdown files
 
-;; Version: 0.3
+;; Version: 0.4
 
 ;;; Commentary:
 
@@ -43,6 +43,28 @@
    )
   )
 
+(defun schema-markdown-indent-line (&optional after-newline)
+  "Indent current line according to Schema Markdown rules."
+  (interactive)
+  (let* ((cur (current-indentation))
+         (prev (save-excursion
+                 (forward-line -1)
+                 (while (and (not (bobp)) (looking-at "^\\s-*$")) (forward-line -1))
+                 (current-indentation))))
+    (indent-line-to
+     (cond ((< (point) (+ (line-beginning-position) (current-indentation))) cur)
+           ((= cur 0) (if (and (= prev 0) (not after-newline)) tab-width prev))
+           ((> cur prev) (max 0 (- prev tab-width)))
+           ((> cur (- prev tab-width)) (+ prev tab-width))
+           (t (max 0 (- cur tab-width)))))))
+
+(defun schema-markdown-newline-and-indent ()
+  "Insert newline and indent the new line."
+  (interactive)
+  (delete-horizontal-space t)
+  (newline)
+  (schema-markdown-indent-line t))
+
 (defun schema-markdown-open-language-documentation ()
   "Open Schema Markdown language documentation"
   (interactive)
@@ -69,10 +91,15 @@
   (setq-local comment-start "#")
   (setq-local comment-start-skip "#+\\s-*")
 
+  ;; Set indentation function
+  (setq-local indent-line-function 'schema-markdown-indent-line)
+
   ;; Apply font-lock rules for syntax highlighting
   (setq-local font-lock-defaults '(schema-markdown-font-lock-keywords))
 
-  ;; Bind the key for browsing documentation
+  ;; Define key bindings
+  (define-key schema-markdown-mode-map (kbd "TAB") 'schema-markdown-indent-line)
+  (define-key schema-markdown-mode-map (kbd "RET") 'schema-markdown-newline-and-indent)
   (define-key schema-markdown-mode-map (kbd "C-c C-l") 'schema-markdown-open-language-documentation)
   )
 
