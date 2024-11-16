@@ -1,6 +1,6 @@
 ;;; schema-markdown-mode.el --- Major mode for editing Schema Markdown files
 
-;; Version: 0.4
+;; Version: 0.4.1
 
 ;;; Commentary:
 
@@ -20,7 +20,7 @@
 (defconst schema-markdown-keywords
   (regexp-opt
    '("action" "enum" "errors" "group" "input" "nullable" "optional" "output"
-      "path" "query" "struct" "typedef" "union" "urls")
+     "path" "query" "struct" "typedef" "union" "urls")
    'words)
   )
 
@@ -75,16 +75,16 @@
 (define-derived-mode schema-markdown-mode prog-mode "Schema Markdown"
   "Major mode for editing Schema Markdown files"
 
-  ; Ensure double quotes are treated as string delimiters
+  ;; Ensure double quotes are treated as string delimiters
   (modify-syntax-entry ?\" "\"" schema-markdown-mode-syntax-table)
 
-  ; Ensure backslashes are treated as escape characters
+  ;; Ensure backslashes are treated as escape characters
   (modify-syntax-entry ?\\ "\\" schema-markdown-mode-syntax-table)
 
-  ; Specify that comments start with '#'
+  ;; Specify that comments start with '#'
   (modify-syntax-entry ?# "<" schema-markdown-mode-syntax-table)
 
-  ; Specify that comments end with a newline
+  ;; Specify that comments end with a newline
   (modify-syntax-entry ?\n ">" schema-markdown-mode-syntax-table)
 
   ;; Set comment-related variables
