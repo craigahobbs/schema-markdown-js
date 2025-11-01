@@ -25,7 +25,7 @@
     },
     "devDependencies": {
         "c8": "~10.1",
-        "eslint": "~9.36",
+        "eslint": "~9.39",
         "jsdoc": "~4.0"
     }
 }
