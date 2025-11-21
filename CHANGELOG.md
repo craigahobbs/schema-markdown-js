@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.12 (2025-11-21)
+
+- [8bb677e](https://github.com/craigahobbs/schema-markdown-js/commit/8bb677e) - update readme
+
+- [7325b4f](https://github.com/craigahobbs/schema-markdown-js/commit/7325b4f) - update schema documentation instructions
+
 ## 1.2.11 (2024-11-08)
 
 - [27ac6fa](https://github.com/craigahobbs/schema-markdown-js/commit/27ac6fa) - fix doc typo
