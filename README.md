@@ -78,22 +78,55 @@ try {
 ~~~
 
 
-## Document a Schema
+## Schema Documentation
 
-To document the schema, download the
-[documentation application](https://github.com/craigahobbs/schema-markdown-doc#the-schema-markdown-documentation-viewer)
-stub and save the type model as JSON:
+You can document a schema with BareScript's
+[schemaDoc application](https://craigahobbs.github.io/bare-script/library/#var.vGroup='schemaDoc.bare')
+running on the
+[MarkdownUp application](https://craigahobbs.github.io/markdown-up/).
 
+If your
+[type model JSON file](https://craigahobbs.github.io/bare-script/model/#var.vURL=''&var.vName='Types')
+or
+[Schema Markdown file](https://craigahobbs.github.io/schema-markdown-js/language/)
+is publicly visible, you can use the BareScript model application with the `var.vURL` query argument:
+
+<https://craigahobbs.github.io/bare-script/model/#var.vURL='https://craigahobbs.github.io/bare-script/library/model.json'>
+
+**Note:** Schema Markdown files use the `.smd` file extension.
+
+
+### Self-Hosting Schema Documentation
+
+You can host the schemaDoc application yourself by downloading the
+[MarkdownUp Application HTML stub](https://craigahobbs.github.io/markdown-up/#host-markdown-web-pages).
+
+~~~sh
+curl -O https://craigahobbs.github.io/markdown-up/extra/index.html
 ~~~
-curl -O https://craigahobbs.github.io/schema-markdown-doc/extra/index.html
-node --input-type=module \
-    -e 'import {modelTypes} from "model.js"; console.log(JSON.stringify(modelTypes))' \
-    > model.json
+
+Replace the MarkdownUp application creation line:
+
+~~~javascript
+        const app = new MarkdownUp(window);
 ~~~
 
-To host locally, start a local static web server:
+With the following:
 
-~~~
+```javascript
+        const app = new MarkdownUp(window, {
+            'markdownText': `\
+~~~markdown-script
+include <schemaDoc.bare>
+
+schemaDocMain('model.json', 'My Model')
+`
+        });
+```
+
+To view locally, start a local static web server:
+
+~~~ sh
 python3 -m http.server
 ~~~
 
