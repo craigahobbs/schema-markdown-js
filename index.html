@@ -101,17 +101,39 @@ console.assert(obj.numbers[2] === 3);
     console.assert(message === &quot;Invalid value [] (type 'object') for member 'numbers', expected type 'array' [len > 0]&quot;, message);
 }
 </code></pre>
-<h2>Document a Schema</h2>
-<p>To document the schema, download the
-<a href="https://github.com/craigahobbs/schema-markdown-doc#the-schema-markdown-documentation-viewer">documentation application</a>
-stub and save the type model as JSON:</p>
-<pre class="prettyprint source"><code>curl -O https://craigahobbs.github.io/schema-markdown-doc/extra/index.html
-node --input-type=module \
-    -e 'import {modelTypes} from &quot;model.js&quot;; console.log(JSON.stringify(modelTypes))' \
-    > model.json
+<h2>Schema Documentation</h2>
+<p>You can document a schema with BareScript's
+<a href="https://craigahobbs.github.io/bare-script/library/#var.vGroup='schemaDoc.bare'">schemaDoc application</a>
+running on the
+<a href="https://craigahobbs.github.io/markdown-up/">MarkdownUp application</a>.</p>
+<p>If your
+<a href="https://craigahobbs.github.io/bare-script/model/#var.vURL=''&amp;var.vName='Types'">type model JSON file</a>
+or
+<a href="https://craigahobbs.github.io/schema-markdown-js/language/">Schema Markdown file</a>
+is publicly visible, you can use the BareScript model application with the <code>var.vURL</code> query argument:</p>
+<p><a href="https:%5C/%5C/craigahobbs.github.io/bare-script/model/#var.vURL='https:%5C/%5C/craigahobbs.github.io/bare-script/library/model.json'">https://craigahobbs.github.io/bare-script/model/#var.vURL='https://craigahobbs.github.io/bare-script/library/model.json'</a></p>
+<p><strong>Note:</strong> Schema Markdown files use the <code>.smd</code> file extension.</p>
+<h3>Self-Hosting Schema Documentation</h3>
+<p>You can host the schemaDoc application yourself by downloading the
+<a href="https://craigahobbs.github.io/markdown-up/#host-markdown-web-pages">MarkdownUp Application HTML stub</a>.</p>
+<pre class="prettyprint source lang-sh"><code>curl -O https://craigahobbs.github.io/markdown-up/extra/index.html
 </code></pre>
-<p>To host locally, start a local static web server:</p>
-<pre class="prettyprint source"><code>python3 -m http.server
+<p>Replace the MarkdownUp application creation line:</p>
+<pre class="prettyprint source lang-javascript"><code>        const app = new MarkdownUp(window);
+</code></pre>
+<p>With the following:</p>
+<pre class="prettyprint source lang-javascript"><code>        const app = new MarkdownUp(window, {
+            'markdownText': `\
+~~~markdown-script
+include &lt;schemaDoc.bare>
+
+schemaDocMain('model.json', 'My Model')
+~~~
+`
+        });
+</code></pre>
+<p>To view locally, start a local static web server:</p>
+<pre class="prettyprint source lang-sh"><code>python3 -m http.server
 </code></pre>
 <h2>Development</h2>
 <p>This package is developed using <a href="https://github.com/craigahobbs/javascript-build#readme">javascript-build</a>.

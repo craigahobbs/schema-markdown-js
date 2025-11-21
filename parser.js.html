@@ -84,10 +84,11 @@ const rLineSplit = /\r?\n/;
  *
  * @param {string|string[]} text - The Schema Markdown text
  * @param {Object} [options = {}] - The options object
- * @param {Object} [options.types={}] - The [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
+ * @param {Object} [options.types={}] - The
+ *     [type model]{@link https://craigahobbs.github.io/bare-script/model/#var.vURL=''&amp;var.vName='Types'}
  * @param {string} [options.filename=''] - The name of file being parsed (for error messages)
  * @param {boolean} [options.validate=true] - If true, validate after parsing
- * @returns {Object} The [type model]{@link https://craigahobbs.github.io/schema-markdown-doc/doc/#var.vName='Types'}
+ * @returns {Object} The [type model]{@link https://craigahobbs.github.io/bare-script/model/#var.vURL=''&amp;var.vName='Types'}
  * @throws [SchemaMarkdownParserError]{@link module:lib/parser.SchemaMarkdownParserError}
  */
 export function parseSchemaMarkdown(text, {types = {}, filename = '', validate = true} = {}) {
