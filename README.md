@@ -120,6 +120,7 @@ With the following:
 include <schemaDoc.bare>
 
 schemaDocMain('model.json', 'My Model')
+~~~
 `
         });
 ```
