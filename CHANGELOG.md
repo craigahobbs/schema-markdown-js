@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.13 (2026-04-25)
+
+- [768c825](https://github.com/craigahobbs/schema-markdown-js/commit/768c825) - update self-hosting schema docs instructions
+
 ## 1.2.12 (2025-11-21)
 
 - [8bb677e](https://github.com/craigahobbs/schema-markdown-js/commit/8bb677e) - update readme

@@ -1,7 +1,7 @@
 {
     "type": "module",
     "name": "schema-markdown",
-    "version": "1.2.12",
+    "version": "1.2.13",
     "description": "A schema definition and validation library",
     "keywords": [
         "schema",
