@@ -114,15 +114,20 @@ is publicly visible, you can use the BareScript model application with the <code
 <p><a href="https:%5C/%5C/craigahobbs.github.io/bare-script/model/#var.vURL='https:%5C/%5C/craigahobbs.github.io/bare-script/library/model.json'">https://craigahobbs.github.io/bare-script/model/#var.vURL='https://craigahobbs.github.io/bare-script/library/model.json'</a></p>
 <p><strong>Note:</strong> Schema Markdown files use the <code>.smd</code> file extension.</p>
 <h3>Self-Hosting Schema Documentation</h3>
-<p>You can host the schemaDoc application yourself by downloading the
-<a href="https://craigahobbs.github.io/markdown-up/#host-markdown-web-pages">MarkdownUp Application HTML stub</a>.</p>
-<pre class="prettyprint source lang-sh"><code>curl -O https://craigahobbs.github.io/markdown-up/extra/index.html
-</code></pre>
-<p>Replace the MarkdownUp application creation line:</p>
-<pre class="prettyprint source lang-javascript"><code>        const app = new MarkdownUp(window);
-</code></pre>
-<p>With the following:</p>
-<pre class="prettyprint source lang-javascript"><code>        const app = new MarkdownUp(window, {
+<p>You can host the schemaDoc application yourself by adding a schemaDoc HTML stub:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!DOCTYPE html>
+&lt;html lang=&quot;en&quot;>
+    &lt;head>
+        &lt;title>MarkdownUp&lt;/title>
+        &lt;meta charset=&quot;utf-8&quot;>
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;>
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;https://craigahobbs.github.io/markdown-up/app.css&quot;>
+        &lt;link rel=&quot;preload&quot; href=&quot;https://craigahobbs.github.io/markdown-up/bare-script/static/markdown.css&quot; as=&quot;style&quot;>
+        &lt;link rel=&quot;modulepreload&quot; href=&quot;https://craigahobbs.github.io/markdown-up/lib/appImports.js&quot; as=&quot;script&quot;>
+    &lt;/head>
+    &lt;script type=&quot;module&quot;>
+        import {MarkdownUp} from 'https://craigahobbs.github.io/markdown-up/lib/appImports.js';
+        const app = new MarkdownUp(window, {
             'markdownText': `\
 ~~~markdown-script
 include &lt;schemaDoc.bare>
@@ -131,6 +136,9 @@ schemaDocMain('model.json', 'My Model')
 ~~~
 `
         });
+        app.run();
+    &lt;/script>
+&lt;/html>
 </code></pre>
 <p>To view locally, start a local static web server:</p>
 <pre class="prettyprint source lang-sh"><code>python3 -m http.server
