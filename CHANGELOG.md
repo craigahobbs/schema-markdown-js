@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.3.0 (2026-07-13)
+
+- [17d3c06](https://github.com/craigahobbs/schema-markdown-js/commit/17d3c06)
+
+  **Breaking changes:**
+
+  - `date` accepts only date-only strings (no longer accepts `datetime` strings)
+  - `datetime` requires a timezone
+  - reject invalid calendar dates (e.g. February 30)
+  - reject arrays for `dict` and `struct` values
+  - report a syntax error for trailing text after an `action` definition
+
+  **Other changes:**
+
+  - accept any hex version and variant nibbles in `uuid` strings
+  - accept `datetime` strings without seconds and with any fractional precision
+  - reformat validation error messages (double-quoted names, JSON-formatted values)
+  - improve unit tests
+
 ## 1.2.13 (2026-04-25)
 
 - [768c825](https://github.com/craigahobbs/schema-markdown-js/commit/768c825) - update self-hosting schema docs instructions
