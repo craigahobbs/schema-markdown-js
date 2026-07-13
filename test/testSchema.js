@@ -271,7 +271,7 @@ test('validateType, unknown', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown type 'Unknown'"
+            'message': 'Unknown type "Unknown"'
         }
     );
 });
@@ -292,7 +292,7 @@ test('validateType, string error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 7 (type 'number'), expected type 'string'"
+            'message': 'Invalid value 7 (type "number"), expected type "string"'
         }
     );
 });
@@ -307,7 +307,7 @@ test('validateType, string error undefined', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value undefined (type 'undefined'), expected type 'string'"
+            'message': 'Invalid value undefined (type "undefined"), expected type "string"'
         }
     );
 });
@@ -334,7 +334,7 @@ test('validateType, int float', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 7.1 (type 'number'), expected type 'int'"
+            'message': 'Invalid value 7.1 (type "number"), expected type "int"'
         }
     );
 });
@@ -349,7 +349,7 @@ test('validateType, int float string', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"7.1\" (type 'string'), expected type 'int'"
+            'message': 'Invalid value "7.1" (type "string"), expected type "int"'
         }
     );
 });
@@ -364,7 +364,7 @@ test('validateType, int error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'int'"
+            'message': 'Invalid value "abc" (type "string"), expected type "int"'
         }
     );
 });
@@ -379,7 +379,7 @@ test('validateType, int error float', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 7.5 (type 'number'), expected type 'int'"
+            'message': 'Invalid value 7.5 (type "number"), expected type "int"'
         }
     );
 });
@@ -394,7 +394,7 @@ test('validateType, int error bool', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value true (type 'boolean'), expected type 'int'"
+            'message': 'Invalid value true (type "boolean"), expected type "int"'
         }
     );
 });
@@ -427,7 +427,7 @@ test('validateType, float error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'float'"
+            'message': 'Invalid value "abc" (type "string"), expected type "float"'
         }
     );
 });
@@ -442,7 +442,7 @@ test('validateType, float error nan', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"nan\" (type 'string'), expected type 'float'"
+            'message': 'Invalid value "nan" (type "string"), expected type "float"'
         }
     );
 });
@@ -457,7 +457,7 @@ test('validateType, float error inf', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"inf\" (type 'string'), expected type 'float'"
+            'message': 'Invalid value "inf" (type "string"), expected type "float"'
         }
     );
 });
@@ -472,7 +472,7 @@ test('validateType, float error bool', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value true (type 'boolean'), expected type 'float'"
+            'message': 'Invalid value true (type "boolean"), expected type "float"'
         }
     );
 });
@@ -505,7 +505,7 @@ test('validateType, bool error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 0 (type 'number'), expected type 'bool'"
+            'message': 'Invalid value 0 (type "number"), expected type "bool"'
         }
     );
 });
@@ -520,7 +520,7 @@ test('validateType, bool error string', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'bool'"
+            'message': 'Invalid value "abc" (type "string"), expected type "bool"'
         }
     );
 });
@@ -533,8 +533,17 @@ test('validateType, date', () => {
 
 
 test('validateType, date datetime', () => {
-    const obj = new Date(2020, 5, 26, 18, 8);
-    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), new Date(2020, 5, 26));
+    const obj = new Date(Date.UTC(2020, 5, 26, 18, 8));
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-06-26T18:08:00.000Z" (type "object"), expected type "date"'
+        }
+    );
 });
 
 
@@ -545,18 +554,17 @@ test('validateType, date string', () => {
 
 
 test('validateType, date string datetime', () => {
-    const dt = new Date(2020, 5, 26);
-    const tzOffset = dt.getTimezoneOffset();
-    /* c8 ignore next */
-    const tzSign = tzOffset < 0 ? '+' : '-';
-    const tzHour = Math.floor(Math.abs(tzOffset) / 60);
-    /* c8 ignore next */
-    const tzHourStr = `${tzHour < 10 ? '0' : ''}${tzHour}`;
-    const tzMinute = Math.abs(tzOffset) - tzHour * 60;
-    /* c8 ignore next */
-    const tzMinuteStr = `${tzMinute < 10 ? '0' : ''}${tzMinute}`;
-    const obj = `2020-06-26T13:11:00${tzSign}${tzHourStr}:${tzMinuteStr}`;
-    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, obj), dt);
+    const obj = '2013-05-26T13:11:00-07:00';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2013-05-26T13:11:00-07:00" (type "string"), expected type "date"'
+        }
+    );
 });
 
 
@@ -569,7 +577,37 @@ test('validateType, date string error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'date'"
+            'message': 'Invalid value "abc" (type "string"), expected type "date"'
+        }
+    );
+});
+
+
+test('validateType, date string invalid date', () => {
+    const obj = '2020-13-01';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-13-01" (type "string"), expected type "date"'
+        }
+    );
+});
+
+
+test('validateType, date string invalid day', () => {
+    const obj = '2020-02-30';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-02-30" (type "string"), expected type "date"'
         }
     );
 });
@@ -584,7 +622,7 @@ test('validateType, date error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 0 (type 'number'), expected type 'date'"
+            'message': 'Invalid value 0 (type "number"), expected type "date"'
         }
     );
 });
@@ -599,7 +637,7 @@ test('validateType, date error excluded', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'date'"
+            'message': 'Invalid value "December 17, 1995 03:24:00" (type "string"), expected type "date"'
         }
     );
 });
@@ -624,8 +662,17 @@ test('validateType, datetime string', () => {
 
 
 test('validateType, datetime string date', () => {
-    const obj = '2020-06-26';
-    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(2020, 5, 26));
+    const obj = '2013-05-26';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2013-05-26" (type "string"), expected type "datetime"'
+        }
+    );
 });
 
 
@@ -638,7 +685,86 @@ test('validateType, datetime string error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'datetime'"
+            'message': 'Invalid value "abc" (type "string"), expected type "datetime"'
+        }
+    );
+});
+
+
+test('validateType, datetime string invalid date', () => {
+    // Matches the datetime pattern but is not a real date/time
+    const obj = '2020-01-01T99:99:99Z';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-01-01T99:99:99Z" (type "string"), expected type "datetime"'
+        }
+    );
+});
+
+
+test('validateType, datetime string invalid day', () => {
+    const obj = '2020-02-30T00:00:00Z';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-02-30T00:00:00Z" (type "string"), expected type "datetime"'
+        }
+    );
+});
+
+
+test('validateType, datetime string timezone z', () => {
+    const obj = '2020-01-01T12:00:00Z';
+    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(Date.UTC(2020, 0, 1, 12, 0, 0)));
+});
+
+
+test('validateType, datetime string timezone no colon', () => {
+    const obj = '2020-06-13T13:25:00-0700';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-06-13T13:25:00-0700" (type "string"), expected type "datetime"'
+        }
+    );
+});
+
+
+test('validateType, datetime string no seconds', () => {
+    const obj = '2020-01-01T12:00Z';
+    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(Date.UTC(2020, 0, 1, 12, 0)));
+});
+
+
+test('validateType, datetime string fraction', () => {
+    const obj = '2020-01-01T12:00:00.123456789Z';
+    assert.deepEqual(validateTypeHelper({'builtin': 'datetime'}, obj), new Date(Date.UTC(2020, 0, 1, 12, 0, 0, 123)));
+});
+
+
+test('validateType, datetime string fraction comma', () => {
+    const obj = '2020-01-01T12:00:00,5';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-01-01T12:00:00,5" (type "string"), expected type "datetime"'
         }
     );
 });
@@ -653,7 +779,7 @@ test('validateType, datetime error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 0 (type 'number'), expected type 'datetime'"
+            'message': 'Invalid value 0 (type "number"), expected type "datetime"'
         }
     );
 });
@@ -668,7 +794,7 @@ test('validateType, datetime error excluded', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"December 17, 1995 03:24:00\" (type 'string'), expected type 'datetime'"
+            'message': 'Invalid value "December 17, 1995 03:24:00" (type "string"), expected type "datetime"'
         }
     );
 });
@@ -686,6 +812,58 @@ test('validateType, uuid lowercase', () => {
 });
 
 
+test('validateType, uuid version nibble', () => {
+    // Accept any hex version/variant nibbles
+    const obj = '00000000-0000-6000-8000-000000000000';
+    assert.deepEqual(validateTypeHelper({'builtin': 'uuid'}, obj), obj);
+});
+
+
+test('validateType, datetime string space separator', () => {
+    const obj = '2020-01-01 12:00:00';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-01-01 12:00:00" (type "string"), expected type "datetime"'
+        }
+    );
+});
+
+
+test('validateType, datetime string no timezone', () => {
+    const obj = '2020-01-01T12:00:00';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'datetime'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-01-01T12:00:00" (type "string"), expected type "datetime"'
+        }
+    );
+});
+
+
+test('validateType, date string datetime no timezone', () => {
+    const obj = '2020-01-01T12:00:00';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'date'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "2020-01-01T12:00:00" (type "string"), expected type "date"'
+        }
+    );
+});
+
+
 test('validateType, uuid error', () => {
     const obj = 0;
     assert.throws(
@@ -695,7 +873,7 @@ test('validateType, uuid error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 0 (type 'number'), expected type 'uuid'"
+            'message': 'Invalid value 0 (type "number"), expected type "uuid"'
         }
     );
 });
@@ -710,7 +888,52 @@ test('validateType, uuid error string', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'uuid'"
+            'message': 'Invalid value "abc" (type "string"), expected type "uuid"'
+        }
+    );
+});
+
+
+test('validateType, uuid error string non-canonical', () => {
+    const obj = 'aed91c7bdcfd49b3a483dbc9ea2031a3';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'uuid'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "aed91c7bdcfd49b3a483dbc9ea2031a3" (type "string"), expected type "uuid"'
+        }
+    );
+});
+
+
+test('validateType, uuid error string non-ascii', () => {
+    const obj = 'aed91c7b-dcfd-49b3-a483-dbc9ea2031aé';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'uuid'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "aed91c7b-dcfd-49b3-a483-dbc9ea2031aé" (type "string"), expected type "uuid"'
+        }
+    );
+});
+
+
+test('validateType, uuid error string escape', () => {
+    const obj = 'a"b\\c';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'uuid'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "a\\"b\\\\c" (type "string"), expected type "uuid"'
         }
     );
 });
@@ -757,7 +980,7 @@ test('validateType, array nullable', () => {
         {
             'name': 'ValidationError',
             'memberFqn': '1',
-            'message': "Invalid value null (type 'object') for member '1', expected type 'int'"
+            'message': 'Invalid value null (type "object") for member "1", expected type "int"'
         }
     );
 });
@@ -777,7 +1000,7 @@ test('validateType, array nullable as string', () => {
         {
             'name': 'ValidationError',
             'memberFqn': '1',
-            'message': "Invalid value \"null\" (type 'string') for member '1', expected type 'int'"
+            'message': 'Invalid value "null" (type "string") for member "1", expected type "int"'
         }
     );
 });
@@ -804,7 +1027,7 @@ test('validateType, array error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'array'"
+            'message': 'Invalid value "abc" (type "string"), expected type "array"'
         }
     );
 });
@@ -819,7 +1042,7 @@ test('validateType, array error value', () => {
         {
             'name': 'ValidationError',
             'memberFqn': '1',
-            'message': "Invalid value \"abc\" (type 'string') for member '1', expected type 'int'"
+            'message': 'Invalid value "abc" (type "string") for member "1", expected type "int"'
         }
     );
 });
@@ -834,7 +1057,7 @@ test('validateType, array error value nested', () => {
         {
             'name': 'ValidationError',
             'memberFqn': '1.1',
-            'message': "Invalid value \"abc\" (type 'string') for member '1.1', expected type 'int'"
+            'message': 'Invalid value "abc" (type "string") for member "1.1", expected type "int"'
         }
     );
 });
@@ -849,7 +1072,7 @@ test('validateType, array attribute error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': '2',
-            'message': "Invalid value 5 (type 'number') for member '2', expected type 'int' [< 5]"
+            'message': 'Invalid value 5 (type "number") for member "2", expected type "int" [< 5]'
         }
     );
 });
@@ -870,7 +1093,7 @@ test('validateType, dict null', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value null (type 'object'), expected type 'dict'"
+            'message': 'Invalid value null (type "object"), expected type "dict"'
         }
     );
 });
@@ -887,7 +1110,7 @@ test('validateType, dict nullable', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'b',
-            'message': "Invalid value null (type 'object') for member 'b', expected type 'int'"
+            'message': 'Invalid value null (type "object") for member "b", expected type "int"'
         }
     );
 });
@@ -907,7 +1130,7 @@ test('validateType, dict nullable as string', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'b',
-            'message': "Invalid value \"null\" (type 'string') for member 'b', expected type 'int'"
+            'message': 'Invalid value "null" (type "string") for member "b", expected type "int"'
         }
     );
 });
@@ -931,7 +1154,7 @@ test('validateType, dict key nullable', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value null (type 'object'), expected type 'string'"
+            'message': 'Invalid value null (type "object"), expected type "string"'
         }
     );
 });
@@ -955,7 +1178,7 @@ test('validateType, dict key nullable as string', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value null (type 'object'), expected type 'string'"
+            'message': 'Invalid value null (type "object"), expected type "string"'
         }
     );
 });
@@ -982,7 +1205,22 @@ test('validateType, dict error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'dict'"
+            'message': 'Invalid value "abc" (type "string"), expected type "dict"'
+        }
+    );
+});
+
+
+test('validateType, dict error array', () => {
+    const obj = [1, 2, 3];
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value [1,2,3] (type "object"), expected type "dict"'
         }
     );
 });
@@ -997,7 +1235,7 @@ test('validateType, dict error value', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'b',
-            'message': "Invalid value \"abc\" (type 'string') for member 'b', expected type 'int'"
+            'message': 'Invalid value "abc" (type "string") for member "b", expected type "int"'
         }
     );
 });
@@ -1012,7 +1250,7 @@ test('validateType, dict error value nested', () => {
         {
             'name': 'ValidationError',
             'memberFqn': '1.b',
-            'message': "Invalid value \"abc\" (type 'string') for member '1.b', expected type 'int'"
+            'message': 'Invalid value "abc" (type "string") for member "1.b", expected type "int"'
         }
     );
 });
@@ -1027,7 +1265,7 @@ test('validateType, dict attribute error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'c',
-            'message': "Invalid value 5 (type 'number') for member 'c', expected type 'int' [< 5]"
+            'message': 'Invalid value 5 (type "number") for member "c", expected type "int" [< 5]'
         }
     );
 });
@@ -1063,7 +1301,7 @@ test('validateType, dict key type', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"C\" (type 'string'), expected type 'MyEnum'"
+            'message': 'Invalid value "C" (type "string"), expected type "MyEnum"'
         }
     );
 });
@@ -1090,7 +1328,7 @@ test('validateType, dict key attr', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abcdefghij\" (type 'string'), expected type 'string' [len < 10]"
+            'message': 'Invalid value "abcdefghij" (type "string"), expected type "string" [len < 10]'
         }
     );
 });
@@ -1120,7 +1358,7 @@ test('validateType, enum', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"c\" (type 'string'), expected type 'MyEnum'"
+            'message': 'Invalid value "c" (type "string"), expected type "MyEnum"'
         }
     );
 });
@@ -1143,7 +1381,7 @@ test('validateType, enum empty', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"a\" (type 'string'), expected type 'MyEnum'"
+            'message': 'Invalid value "a" (type "string"), expected type "MyEnum"'
         }
     );
 });
@@ -1196,7 +1434,7 @@ test('validateType, enum base', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"c\" (type 'string'), expected type 'MyEnum'"
+            'message': 'Invalid value "c" (type "string"), expected type "MyEnum"'
         }
     );
 });
@@ -1224,7 +1462,7 @@ test('validateType, typedef', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 4 (type 'number'), expected type 'MyTypedef' [>= 5]"
+            'message': 'Invalid value 4 (type "number"), expected type "MyTypedef" [>= 5]'
         }
     );
 
@@ -1236,7 +1474,7 @@ test('validateType, typedef', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value null (type 'object'), expected type 'int'"
+            'message': 'Invalid value null (type "object"), expected type "int"'
         }
     );
 
@@ -1248,7 +1486,7 @@ test('validateType, typedef', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"null\" (type 'string'), expected type 'int'"
+            'message': 'Invalid value "null" (type "string"), expected type "int"'
         }
     );
 });
@@ -1285,7 +1523,7 @@ test('validateType, typedef type error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'int'"
+            'message': 'Invalid value "abc" (type "string"), expected type "int"'
         }
     );
 });
@@ -1310,7 +1548,7 @@ test('validateType, typedef attr eq', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 7 (type 'number'), expected type 'MyTypedef' [== 5]"
+            'message': 'Invalid value 7 (type "number"), expected type "MyTypedef" [== 5]'
         }
     );
 });
@@ -1337,7 +1575,7 @@ test('validateType, typedef attr nullable', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'int'"
+            'message': 'Invalid value "abc" (type "string"), expected type "int"'
         }
     );
 });
@@ -1362,7 +1600,7 @@ test('validateType, typedef attr lt', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 5 (type 'number'), expected type 'MyTypedef' [< 5]"
+            'message': 'Invalid value 5 (type "number"), expected type "MyTypedef" [< 5]'
         }
     );
 
@@ -1373,7 +1611,7 @@ test('validateType, typedef attr lt', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 7 (type 'number'), expected type 'MyTypedef' [< 5]"
+            'message': 'Invalid value 7 (type "number"), expected type "MyTypedef" [< 5]'
         }
     );
 });
@@ -1398,7 +1636,7 @@ test('validateType, typedef attr lte', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 7 (type 'number'), expected type 'MyTypedef' [<= 5]"
+            'message': 'Invalid value 7 (type "number"), expected type "MyTypedef" [<= 5]'
         }
     );
 });
@@ -1423,7 +1661,7 @@ test('validateType, typedef attr gt', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 3 (type 'number'), expected type 'MyTypedef' [> 5]"
+            'message': 'Invalid value 3 (type "number"), expected type "MyTypedef" [> 5]'
         }
     );
 
@@ -1434,7 +1672,7 @@ test('validateType, typedef attr gt', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 5 (type 'number'), expected type 'MyTypedef' [> 5]"
+            'message': 'Invalid value 5 (type "number"), expected type "MyTypedef" [> 5]'
         }
     );
 });
@@ -1459,7 +1697,7 @@ test('validateType, typedef attr gte', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value 3 (type 'number'), expected type 'MyTypedef' [>= 5]"
+            'message': 'Invalid value 3 (type "number"), expected type "MyTypedef" [>= 5]'
         }
     );
 });
@@ -1484,7 +1722,7 @@ test('validateType, typedef attr lenEq', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len == 5]"
+            'message': 'Invalid value [1,2,3] (type "object"), expected type "MyTypedef" [len == 5]'
         }
     );
 });
@@ -1509,7 +1747,7 @@ test('validateType, typedef attr lenEq object', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value {\"a\":1,\"b\":2,\"c\":3} (type 'object'), expected type 'MyTypedef' [len == 5]"
+            'message': 'Invalid value {"a":1,"b":2,"c":3} (type "object"), expected type "MyTypedef" [len == 5]'
         }
     );
 });
@@ -1534,7 +1772,7 @@ test('validateType, typedef attr lenLT', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len < 5]"
+            'message': 'Invalid value [1,2,3,4,5] (type "object"), expected type "MyTypedef" [len < 5]'
         }
     );
 });
@@ -1559,7 +1797,7 @@ test('validateType, typedef attr lenLTE', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value [1,2,3,4,5,6,7] (type 'object'), expected type 'MyTypedef' [len <= 5]"
+            'message': 'Invalid value [1,2,3,4,5,6,7] (type "object"), expected type "MyTypedef" [len <= 5]'
         }
     );
 });
@@ -1584,7 +1822,7 @@ test('validateType, typedef attr lenGT', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value [1,2,3,4,5] (type 'object'), expected type 'MyTypedef' [len > 5]"
+            'message': 'Invalid value [1,2,3,4,5] (type "object"), expected type "MyTypedef" [len > 5]'
         }
     );
 });
@@ -1609,7 +1847,7 @@ test('validateType, typedef attr lenGTE', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value [1,2,3] (type 'object'), expected type 'MyTypedef' [len >= 5]"
+            'message': 'Invalid value [1,2,3] (type "object"), expected type "MyTypedef" [len >= 5]'
         }
     );
 });
@@ -1754,7 +1992,7 @@ test('validateType, struct null', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value null (type 'object'), expected type 'MyStruct'"
+            'message': 'Invalid value null (type "object"), expected type "MyStruct"'
         }
     );
 });
@@ -1789,7 +2027,29 @@ test('validateType, struct string error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'Empty'"
+            'message': 'Invalid value "abc" (type "string"), expected type "Empty"'
+        }
+    );
+});
+
+
+test('validateType, struct array error', () => {
+    const types = {
+        'Empty': {
+            'struct': {
+                'name': 'Empty'
+            }
+        }
+    };
+    const obj = [];
+    assert.throws(
+        () => {
+            validateType(types, 'Empty', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value [] (type "object"), expected type "Empty"'
         }
     );
 });
@@ -1823,7 +2083,7 @@ test('validateType, struct union', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value {} (type 'object'), expected type 'MyUnion'"
+            'message': 'Invalid value {} (type "object"), expected type "MyUnion"'
         }
     );
 
@@ -1835,7 +2095,7 @@ test('validateType, struct union', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown member 'c'"
+            'message': 'Unknown member "c"'
         }
     );
 });
@@ -1885,7 +2145,7 @@ test('validateType, struct base', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Required member 'b' missing"
+            'message': 'Required member "b" missing'
         }
     );
 });
@@ -1919,7 +2179,7 @@ test('validateType, struct optional', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Required member 'c' missing"
+            'message': 'Required member "c" missing'
         }
     );
 });
@@ -1960,7 +2220,7 @@ test('validateType, struct nullable', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'a',
-            'message': "Invalid value null (type 'object') for member 'a', expected type 'int'"
+            'message': 'Invalid value null (type "object") for member "a", expected type "int"'
         }
     );
 
@@ -1972,7 +2232,7 @@ test('validateType, struct nullable', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'd',
-            'message': "Invalid value null (type 'object') for member 'd', expected type 'float'"
+            'message': 'Invalid value null (type "object") for member "d", expected type "float"'
         }
     );
 
@@ -1984,7 +2244,7 @@ test('validateType, struct nullable', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Required member 'b' missing"
+            'message': 'Required member "b" missing'
         }
     );
 });
@@ -2014,7 +2274,7 @@ test('validateType, struct nullable attr', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'b',
-            'message': "Invalid value 5 (type 'number') for member 'b', expected type 'int' [< 5]"
+            'message': 'Invalid value 5 (type "number") for member "b", expected type "int" [< 5]'
         }
     );
 
@@ -2058,7 +2318,7 @@ test('validateType, struct member attr invalid', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'a',
-            'message': "Invalid value 7 (type 'number') for member 'a', expected type 'int' [< 5]"
+            'message': 'Invalid value 7 (type "number") for member "a", expected type "int" [< 5]'
         }
     );
 });
@@ -2083,7 +2343,7 @@ test('validateType, struct error invalid value', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value \"abc\" (type 'string'), expected type 'MyStruct'"
+            'message': 'Invalid value "abc" (type "string"), expected type "MyStruct"'
         }
     );
 });
@@ -2108,7 +2368,7 @@ test('validateType, struct error optional null value', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'a',
-            'message': "Invalid value null (type 'object') for member 'a', expected type 'int'"
+            'message': 'Invalid value null (type "object") for member "a", expected type "int"'
         }
     );
 });
@@ -2133,7 +2393,7 @@ test('validateType, struct error member validation', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'a',
-            'message': "Invalid value \"abc\" (type 'string') for member 'a', expected type 'int'"
+            'message': 'Invalid value "abc" (type "string") for member "a", expected type "int"'
         }
     );
 });
@@ -2166,7 +2426,7 @@ test('validateType, struct error nested member validation', () => {
         {
             'name': 'ValidationError',
             'memberFqn': 'a.b',
-            'message': "Invalid value \"abc\" (type 'string') for member 'a.b', expected type 'int'"
+            'message': 'Invalid value "abc" (type "string") for member "a.b", expected type "int"'
         }
     );
 });
@@ -2191,7 +2451,7 @@ test('validateType, struct error unknown member', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown member 'b'"
+            'message': 'Unknown member "b"'
         }
     );
 });
@@ -2222,7 +2482,7 @@ test('validateType, struct error unknown member nested', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown member '1.b'"
+            'message': 'Unknown member "1.b"'
         }
     );
 });
@@ -2244,7 +2504,7 @@ test('validateType, struct error unknown member empty', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown member 'b'"
+            'message': 'Unknown member "b"'
         }
     );
 });
@@ -2270,7 +2530,7 @@ test('validateType, struct error unknown member long', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': `Unknown member '${'b'.repeat(100)}'`
+            'message': `Unknown member "${'b'.repeat(100)}"`
         }
     );
 });
@@ -2295,7 +2555,7 @@ test('validateType, struct error missing member', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Required member 'a' missing"
+            'message': 'Required member "a" missing'
         }
     );
 });
@@ -2317,7 +2577,7 @@ test('validateType, action', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid value {} (type 'object'), expected type 'MyAction'"
+            'message': 'Invalid value {} (type "object"), expected type "MyAction"'
         }
     );
 });
@@ -2378,7 +2638,7 @@ test('validateTypeModel, type validation error', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Required member 'MyStruct.struct.name' missing"
+            'message': 'Required member "MyStruct.struct.name" missing'
         }
     );
 });
@@ -2411,7 +2671,35 @@ test('validateTypeModel, struct inconsistent type name', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Inconsistent type name 'MyStruct2' for 'MyStruct'"
+            'message': 'Inconsistent type name "MyStruct2" for "MyStruct"'
+        }
+    );
+});
+
+
+test('validateTypeModel, struct inconsistent type name and duplicate member', () => {
+    // Type-level (null memberName) and member-level errors for the same type
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStructWrong',
+                'members': [
+                    {'name': 'a', 'type': {'builtin': 'int'}},
+                    {'name': 'a', 'type': {'builtin': 'string'}}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
+Inconsistent type name "MyStructWrong" for "MyStruct"
+Redefinition of "MyStruct" member "a"`
         }
     );
 });
@@ -2435,7 +2723,7 @@ test('validateTypeModel, struct unknown member type', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown type 'UnknownType' from 'MyStruct' member 'a'"
+            'message': 'Unknown type "UnknownType" from "MyStruct" member "a"'
         }
     );
 });
@@ -2461,7 +2749,7 @@ test('validateTypeModel, struct duplicate member name', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Redefinition of 'MyStruct' member 'a'"
+            'message': 'Redefinition of "MyStruct" member "a"'
         }
     );
 });
@@ -2501,8 +2789,8 @@ test('validateTypeModel, struct member attributes invalid', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Invalid attribute 'len <= 10' from 'MyStruct' member 'a'
-Invalid attribute 'len > 0' from 'MyStruct' member 'a'`
+Invalid attribute "len <= 10" from "MyStruct" member "a"
+Invalid attribute "len > 0" from "MyStruct" member "a"`
         }
     );
 });
@@ -2560,7 +2848,7 @@ test('validateTypeModel, struct base unknown', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid struct base type 'Unknown'"
+            'message': 'Invalid struct base type "Unknown"'
         }
     );
 });
@@ -2589,8 +2877,8 @@ test('validateTypeModel, struct base typedef unknown', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Invalid struct base type 'MyTypedef'
-Unknown type 'Unknown' from 'MyTypedef'`
+Invalid struct base type "MyTypedef"
+Unknown type "Unknown" from "MyTypedef"`
         }
     );
 });
@@ -2618,7 +2906,7 @@ test('validateTypeModel, struct base non-user', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid struct base type 'MyInt'"
+            'message': 'Invalid struct base type "MyInt"'
         }
     );
 });
@@ -2645,7 +2933,7 @@ test('validateTypeModel, struct base enum', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid struct base type 'MyEnum'"
+            'message': 'Invalid struct base type "MyEnum"'
         }
     );
 });
@@ -2674,8 +2962,8 @@ test('validateTypeModel, struct base circular', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Circular base type detected for type 'MyStruct'
-Circular base type detected for type 'MyStruct2'`
+Circular base type detected for type "MyStruct"
+Circular base type detected for type "MyStruct2"`
         }
     );
 });
@@ -2703,7 +2991,7 @@ test('validateTypeModel, struct base union', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid struct base type 'MyUnion'"
+            'message': 'Invalid struct base type "MyUnion"'
         }
     );
 });
@@ -2731,7 +3019,7 @@ test('validateTypeModel, struct base union struct', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid struct base type 'MyStruct'"
+            'message': 'Invalid struct base type "MyStruct"'
         }
     );
 });
@@ -2764,7 +3052,7 @@ test('validateTypeModel, enum inconsistent type name', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Inconsistent type name 'MyEnum2' for 'MyEnum'"
+            'message': 'Inconsistent type name "MyEnum2" for "MyEnum"'
         }
     );
 });
@@ -2790,7 +3078,7 @@ test('validateTypeModel,  enum duplicate value', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Redefinition of 'MyEnum' value 'A'"
+            'message': 'Redefinition of "MyEnum" value "A"'
         }
     );
 });
@@ -2848,7 +3136,7 @@ test('validateTypeModel, enum base unknown', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid enum base type 'Unknown'"
+            'message': 'Invalid enum base type "Unknown"'
         }
     );
 });
@@ -2876,7 +3164,7 @@ test('validateTypeModel, enum base non-user', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid enum base type 'MyInt'"
+            'message': 'Invalid enum base type "MyInt"'
         }
     );
 });
@@ -2903,7 +3191,7 @@ test('validateTypeModel, enum base struct', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid enum base type 'MyStruct'"
+            'message': 'Invalid enum base type "MyStruct"'
         }
     );
 });
@@ -2932,8 +3220,8 @@ test('validateTypeModel, enum base circular', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Circular base type detected for type 'MyEnum'
-Circular base type detected for type 'MyEnum2'`
+Circular base type detected for type "MyEnum"
+Circular base type detected for type "MyEnum2"`
         }
     );
 });
@@ -2981,7 +3269,7 @@ test('validateTypeModel, array invalid attribute', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid attribute 'len > 0' from 'MyTypedef'"
+            'message': 'Invalid attribute "len > 0" from "MyTypedef"'
         }
     );
 });
@@ -3003,7 +3291,7 @@ test('validateTypeModel, array unknown type', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown type 'Unknown' from 'MyTypedef'"
+            'message': 'Unknown type "Unknown" from "MyTypedef"'
         }
     );
 });
@@ -3086,7 +3374,7 @@ test('validateTypeModel, dict invalid attribute', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid attribute 'len > 0' from 'MyTypedef'"
+            'message': 'Invalid attribute "len > 0" from "MyTypedef"'
         }
     );
 });
@@ -3108,7 +3396,7 @@ test('validateTypeModel, dict invalid key attribute', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid attribute '> 0' from 'MyTypedef'"
+            'message': 'Invalid attribute "> 0" from "MyTypedef"'
         }
     );
 });
@@ -3130,7 +3418,7 @@ test('validateTypeModel, dict unknown type', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown type 'Unknown' from 'MyTypedef'"
+            'message': 'Unknown type "Unknown" from "MyTypedef"'
         }
     );
 });
@@ -3153,8 +3441,8 @@ test('validateTypeModel, dict unknown key type', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Unknown type 'Unknown' from 'MyTypedef'
-Invalid dictionary key type from 'MyTypedef'`
+Invalid dictionary key type from "MyTypedef"
+Unknown type "Unknown" from "MyTypedef"`
         }
     );
 });
@@ -3182,7 +3470,7 @@ test('validateTypeModel, typedef invalid attribute', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid attribute '< 0' from 'MyTypedef'"
+            'message': 'Invalid attribute "< 0" from "MyTypedef"'
         }
     );
 });
@@ -3243,7 +3531,7 @@ test('validateTypeModel, typedef inconsistent type name', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Inconsistent type name 'MyTypedef2' for 'MyTypedef'"
+            'message': 'Inconsistent type name "MyTypedef2" for "MyTypedef"'
         }
     );
 });
@@ -3271,7 +3559,7 @@ test('validateTypeModel, typedef unknown type', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown type 'MyTypedef3' from 'MyTypedef2'"
+            'message': 'Unknown type "MyTypedef3" from "MyTypedef2"'
         }
     );
 });
@@ -3310,7 +3598,7 @@ test('validateTypeModel, action inconsistent type name', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Inconsistent type name 'MyAction2' for 'MyAction'"
+            'message': 'Inconsistent type name "MyAction2" for "MyAction"'
         }
     );
 });
@@ -3332,7 +3620,7 @@ test('validateTypeModel, action unknown type', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Unknown type 'Unknown' from 'MyAction'"
+            'message': 'Unknown type "Unknown" from "MyAction"'
         }
     );
 });
@@ -3359,7 +3647,7 @@ test('validateTypeModel, action action', () => {
         {
             'name': 'ValidationError',
             'memberFqn': null,
-            'message': "Invalid reference to action 'MyAction2' from 'MyAction'"
+            'message': 'Invalid reference to action "MyAction2" from "MyAction"'
         }
     );
 });
@@ -3401,8 +3689,8 @@ test('validateTypeModel, action duplicate member', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Redefinition of 'MyAction_input' member 'c'
-Redefinition of 'MyAction_query' member 'c'`
+Redefinition of "MyAction_input" member "c"
+Redefinition of "MyAction_query" member "c"`
         }
     );
 });
@@ -3452,8 +3740,8 @@ test('validateTypeModel, action duplicate member inherited', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Redefinition of 'MyAction_input' member 'c'
-Redefinition of 'MyAction_query' member 'c'`
+Redefinition of "MyAction_input" member "c"
+Redefinition of "MyAction_query" member "c"`
         }
     );
 });
@@ -3504,8 +3792,8 @@ test('validateTypeModel, action duplicate member circular', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': `\
-Circular base type detected for type 'MyAction_input'
-Circular base type detected for type 'MyBase'`
+Circular base type detected for type "MyAction_input"
+Circular base type detected for type "MyBase"`
         }
     );
 });

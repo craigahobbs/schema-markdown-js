@@ -258,6 +258,35 @@ test('parseSchemaMarkdown, array', () => {
 });
 
 
+test('parseSchemaMarkdown, action trailing whitespace', () => {
+    const types = parseSchemaMarkdown('action MyAction  \n');
+    assert.deepEqual(types, {
+        'MyAction': {
+            'action': {
+                'name': 'MyAction'
+            }
+        }
+    });
+});
+
+
+test('parseSchemaMarkdown, action trailing garbage', () => {
+    const errors = [
+        ':1: error: Syntax error'
+    ];
+    assert.throws(
+        () => {
+            parseSchemaMarkdown('action MyAction garbage\n');
+        },
+        {
+            'name': 'SchemaMarkdownParserError',
+            'message': errors.join('\n'),
+            'errors': errors
+        }
+    );
+});
+
+
 test('parseSchemaMarkdown, action urls', () => {
     const types = parseSchemaMarkdown(`\
 action MyAction
@@ -308,6 +337,42 @@ action MyAction
         GET
     urls
         GET
+`);
+        },
+        {
+            'name': 'SchemaMarkdownParserError',
+            'message': errors.join('\n'),
+            'errors': errors
+        }
+    );
+});
+
+
+test('parseSchemaMarkdown, action urls empty', () => {
+    const types = parseSchemaMarkdown(`\
+action MyAction
+    urls
+`);
+    assert.deepEqual(types, {
+        'MyAction': {
+            'action': {
+                'name': 'MyAction'
+            }
+        }
+    });
+});
+
+
+test('parseSchemaMarkdown, action urls empty redefinition', () => {
+    const errors = [
+        ':3: error: Redefinition of action urls'
+    ];
+    assert.throws(
+        () => {
+            parseSchemaMarkdown(`\
+action MyAction
+    urls
+    urls
 `);
         },
         {
@@ -459,10 +524,10 @@ struct MyStruct5 (MyStruct2, MyTypedef)
 
 test('parseSchemaMarkdown, struct base types error', () => {
     const errors = [
-        ":1: error: Invalid struct base type 'MyEnum'",
-        ":8: error: Redefinition of 'MyStruct3' member 'a'",
-        ":15: error: Invalid struct base type 'MyDict'",
-        ":16: error: Redefinition of 'MyStruct5' member 'b'"
+        ':1: error: Invalid struct base type "MyEnum"',
+        ':8: error: Redefinition of "MyStruct3" member "a"',
+        ':15: error: Invalid struct base type "MyDict"',
+        ':16: error: Redefinition of "MyStruct5" member "b"'
     ];
     assert.throws(
         () => {
@@ -496,9 +561,9 @@ struct MyStruct5 (MyStruct4, MyDict)
 
 test('parseSchemaMarkdown, struct base types circular', () => {
     const errors = [
-        ":1: error: Circular base type detected for type 'MyStruct'",
-        ":4: error: Circular base type detected for type 'MyStruct2'",
-        ":7: error: Circular base type detected for type 'MyStruct3'"
+        ':1: error: Circular base type detected for type "MyStruct"',
+        ':4: error: Circular base type detected for type "MyStruct2"',
+        ':7: error: Circular base type detected for type "MyStruct3"'
     ];
     assert.throws(
         () => {
@@ -554,10 +619,10 @@ enum MyEnum5 (MyEnum2, MyTypedef)
 
 test('parseSchemaMarkdown, enum base types error', () => {
     const errors = [
-        ":1: error: Invalid enum base type 'MyStruct'",
-        ":8: error: Redefinition of 'MyEnum3' value 'A'",
-        ":15: error: Invalid enum base type 'MyDict'",
-        ":16: error: Redefinition of 'MyEnum5' value 'B'"
+        ':1: error: Invalid enum base type "MyStruct"',
+        ':8: error: Redefinition of "MyEnum3" value "A"',
+        ':15: error: Invalid enum base type "MyDict"',
+        ':16: error: Redefinition of "MyEnum5" value "B"'
     ];
     assert.throws(
         () => {
@@ -591,9 +656,9 @@ enum MyEnum5 (MyEnum4, MyDict)
 
 test('parseSchemaMarkdown, enum base types circular', () => {
     const errors = [
-        ":1: error: Circular base type detected for type 'MyEnum'",
-        ":4: error: Circular base type detected for type 'MyEnum2'",
-        ":7: error: Circular base type detected for type 'MyEnum3'"
+        ':1: error: Circular base type detected for type "MyEnum"',
+        ':4: error: Circular base type detected for type "MyEnum2"',
+        ':7: error: Circular base type detected for type "MyEnum3"'
     ];
     assert.throws(
         () => {
@@ -741,7 +806,7 @@ enum MyEnum2
 
 test('parseSchemaMarkdown, error multiple', () => {
     const errors = [
-        ":1: error: Invalid struct base type 'MyStruct2'"
+        ':1: error: Invalid struct base type "MyStruct2"'
     ];
     const types = parseSchemaMarkdown(`\
 struct MyStruct (MyStruct2)
@@ -888,7 +953,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, invalid attr', () => {
     const errors = [
-        ":2: error: Invalid attribute 'len > 0' from 'MyStruct' member 'a'"
+        ':2: error: Invalid attribute "len > 0" from "MyStruct" member "a"'
     ];
     assert.throws(
         () => {
@@ -909,9 +974,9 @@ struct MyStruct2
 
 test('parseSchemaMarkdown, error unknown type', () => {
     const errors = [
-        "foo:2: error: Unknown type 'MyBadType' from 'Foo' member 'a'",
-        "foo:6: error: Unknown type 'MyBadType2' from 'MyAction_input' member 'a'",
-        "foo:8: error: Unknown type 'MyBadType' from 'MyAction_output' member 'b'"
+        'foo:2: error: Unknown type "MyBadType" from "Foo" member "a"',
+        'foo:6: error: Unknown type "MyBadType2" from "MyAction_input" member "a"',
+        'foo:8: error: Unknown type "MyBadType" from "MyAction_output" member "b"'
     ];
     assert.throws(
         () => {
@@ -937,9 +1002,9 @@ action MyAction
 
 test('parseSchemaMarkdown, error unknown array type', () => {
     const errors = [
-        "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
-        "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
-        "foo:5: error: Unknown type 'MyBadType' from 'MyTypedef'"
+        'foo:2: error: Unknown type "MyBadType" from "MyStruct" member "a"',
+        'foo:3: error: Unknown type "MyBadType" from "MyStruct" member "b"',
+        'foo:5: error: Unknown type "MyBadType" from "MyTypedef"'
     ];
     assert.throws(
         () => {
@@ -962,9 +1027,9 @@ typedef MyBadType MyTypedef
 
 test('parseSchemaMarkdown, error unknown dict type', () => {
     const errors = [
-        "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
-        "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
-        "foo:5: error: Unknown type 'MyBadType' from 'MyTypedef'"
+        'foo:2: error: Unknown type "MyBadType" from "MyStruct" member "a"',
+        'foo:3: error: Unknown type "MyBadType" from "MyStruct" member "b"',
+        'foo:5: error: Unknown type "MyBadType" from "MyTypedef"'
     ];
     assert.throws(
         () => {
@@ -987,11 +1052,11 @@ typedef MyBadType MyTypedef
 
 test('parseSchemaMarkdown, error unknown dict key type', () => {
     const errors = [
-        "foo:2: error: Invalid dictionary key type from 'MyStruct' member 'a'",
-        "foo:2: error: Unknown type 'MyBadType' from 'MyStruct' member 'a'",
-        "foo:3: error: Invalid dictionary key type from 'MyStruct' member 'b'",
-        "foo:3: error: Unknown type 'MyBadType' from 'MyStruct' member 'b'",
-        "foo:5: error: Unknown type 'MyBadType' from 'MyTypedef'"
+        'foo:2: error: Invalid dictionary key type from "MyStruct" member "a"',
+        'foo:2: error: Unknown type "MyBadType" from "MyStruct" member "a"',
+        'foo:3: error: Invalid dictionary key type from "MyStruct" member "b"',
+        'foo:3: error: Unknown type "MyBadType" from "MyStruct" member "b"',
+        'foo:5: error: Unknown type "MyBadType" from "MyTypedef"'
     ];
     assert.throws(
         () => {
@@ -1014,7 +1079,7 @@ typedef MyBadType MyTypedef
 
 test('parseSchemaMarkdown, error action type', () => {
     const errors = [
-        "foo:2: error: Invalid reference to action 'MyAction' from 'Foo' member 'a'"
+        'foo:2: error: Invalid reference to action "MyAction" from "Foo" member "a"'
     ];
     assert.throws(
         () => {
@@ -1355,7 +1420,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute eq', () => {
     const errors = [
-        ":2: error: Invalid attribute '== 7' from 'MyStruct' member 's'"
+        ':2: error: Invalid attribute "== 7" from "MyStruct" member "s"'
     ];
     assert.throws(
         () => {
@@ -1375,7 +1440,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute lt', () => {
     const errors = [
-        ":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'"
+        ':2: error: Invalid attribute "< 7" from "MyStruct" member "s"'
     ];
     assert.throws(
         () => {
@@ -1395,7 +1460,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute gt', () => {
     const errors = [
-        ":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"
+        ':2: error: Invalid attribute "> 7" from "MyStruct" member "s"'
     ];
     assert.throws(
         () => {
@@ -1415,8 +1480,8 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute lt gt', () => {
     const errors = [
-        ":2: error: Invalid attribute '< 7' from 'MyStruct' member 's'",
-        ":2: error: Invalid attribute '> 7' from 'MyStruct' member 's'"
+        ':2: error: Invalid attribute "< 7" from "MyStruct" member "s"',
+        ':2: error: Invalid attribute "> 7" from "MyStruct" member "s"'
     ];
     assert.throws(
         () => {
@@ -1436,8 +1501,8 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute lte gte', () => {
     const errors = [
-        ":6: error: Invalid attribute '>= 1' from 'MyStruct' member 'a'",
-        ":7: error: Invalid attribute '<= 2' from 'MyStruct' member 'b'"
+        ':6: error: Invalid attribute ">= 1" from "MyStruct" member "a"',
+        ':7: error: Invalid attribute "<= 2" from "MyStruct" member "b"'
     ];
     assert.throws(
         () => {
@@ -1462,7 +1527,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute len eq', () => {
     const errors = [
-        ":2: error: Invalid attribute 'len == 1' from 'MyStruct' member 'i'"
+        ':2: error: Invalid attribute "len == 1" from "MyStruct" member "i"'
     ];
     assert.throws(
         () => {
@@ -1482,7 +1547,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute len lt', () => {
     const errors = [
-        ":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'"
+        ':2: error: Invalid attribute "len < 10" from "MyStruct" member "f"'
     ];
     assert.throws(
         () => {
@@ -1502,7 +1567,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute len gt', () => {
     const errors = [
-        ":2: error: Invalid attribute 'len > 1' from 'MyStruct' member 'i'"
+        ':2: error: Invalid attribute "len > 1" from "MyStruct" member "i"'
     ];
     assert.throws(
         () => {
@@ -1522,8 +1587,8 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute len lt gt', () => {
     const errors = [
-        ":2: error: Invalid attribute 'len < 10' from 'MyStruct' member 'f'",
-        ":2: error: Invalid attribute 'len > 10' from 'MyStruct' member 'f'"
+        ':2: error: Invalid attribute "len < 10" from "MyStruct" member "f"',
+        ':2: error: Invalid attribute "len > 10" from "MyStruct" member "f"'
     ];
     assert.throws(
         () => {
@@ -1543,8 +1608,8 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error attribute len lte gte', () => {
     const errors = [
-        ":2: error: Invalid attribute 'len <= 10' from 'MyStruct' member 'f'",
-        ":3: error: Invalid attribute 'len >= 10' from 'MyStruct' member 'f2'"
+        ':2: error: Invalid attribute "len <= 10" from "MyStruct" member "f"',
+        ':3: error: Invalid attribute "len >= 10" from "MyStruct" member "f2"'
     ];
     assert.throws(
         () => {
@@ -1608,7 +1673,7 @@ enum MyEnum
 
 test('parseSchemaMarkdown, error member redefinition', () => {
     const errors = [
-        ":4: error: Redefinition of 'MyStruct' member 'b'"
+        ':4: error: Redefinition of "MyStruct" member "b"'
     ];
     assert.throws(
         () => {
@@ -1630,7 +1695,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error enum duplicate value', () => {
     const errors = [
-        ":4: error: Redefinition of 'MyEnum' value 'bar'"
+        ':4: error: Redefinition of "MyEnum" value "bar"'
     ];
     assert.throws(
         () => {
@@ -1820,7 +1885,7 @@ struct MyStruct
 
 test('parseSchemaMarkdown, error dict non-string key', () => {
     const errors = [
-        ":2: error: Invalid dictionary key type from 'Foo' member 'a'"
+        ':2: error: Invalid dictionary key type from "Foo" member "a"'
     ];
     assert.throws(
         () => {
@@ -1884,14 +1949,14 @@ action Foo
 
 test('parseSchemaMarkdown, error action input member redefinition', () => {
     const errors = [
-        ":3: error: Redefinition of 'MyAction_path' member 'a'",
-        ":4: error: Redefinition of 'MyAction_path' member 'b'",
-        ":6: error: Redefinition of 'MyAction_query' member 'a'",
-        ":8: error: Redefinition of 'MyAction_input' member 'b'",
-        ":11: error: Redefinition of 'MyAction2_path' member 'a'",
-        ":11: error: Redefinition of 'MyAction2_path' member 'b'",
-        ":13: error: Redefinition of 'MyAction2_query' member 'a'",
-        ":15: error: Redefinition of 'MyAction2_input' member 'b'"
+        ':3: error: Redefinition of "MyAction_path" member "a"',
+        ':4: error: Redefinition of "MyAction_path" member "b"',
+        ':6: error: Redefinition of "MyAction_query" member "a"',
+        ':8: error: Redefinition of "MyAction_input" member "b"',
+        ':11: error: Redefinition of "MyAction2_path" member "a"',
+        ':11: error: Redefinition of "MyAction2_path" member "b"',
+        ':13: error: Redefinition of "MyAction2_query" member "a"',
+        ':15: error: Redefinition of "MyAction2_input" member "b"'
     ];
     assert.throws(
         () => {
@@ -2005,11 +2070,11 @@ action BarAction
 
 test('parseSchemaMarkdown, action path non-struct', () => {
     const errors = [
-        ":2: error: Invalid struct base type 'Foo'",
-        ":14: error: Invalid struct base type 'Foo'",
-        ":19: error: Invalid struct base type 'MyUnion'",
-        ":20: error: Redefinition of 'BonkAction_path' member 'a'",
-        ":25: error: Invalid struct base type 'MyDict'"
+        ':2: error: Invalid struct base type "Foo"',
+        ':14: error: Invalid struct base type "Foo"',
+        ':19: error: Invalid struct base type "MyUnion"',
+        ':20: error: Redefinition of "BonkAction_path" member "a"',
+        ':25: error: Invalid struct base type "MyDict"'
     ];
     assert.throws(
         () => {
@@ -2130,11 +2195,11 @@ action BarAction
 
 test('parseSchemaMarkdown, action query non-struct', () => {
     const errors = [
-        ":2: error: Invalid struct base type 'Foo'",
-        ":14: error: Invalid struct base type 'Foo'",
-        ":19: error: Invalid struct base type 'MyUnion'",
-        ":20: error: Redefinition of 'BonkAction_query' member 'a'",
-        ":25: error: Invalid struct base type 'MyDict'"
+        ':2: error: Invalid struct base type "Foo"',
+        ':14: error: Invalid struct base type "Foo"',
+        ':19: error: Invalid struct base type "MyUnion"',
+        ':20: error: Redefinition of "BonkAction_query" member "a"',
+        ':25: error: Invalid struct base type "MyDict"'
     ];
     assert.throws(
         () => {
@@ -2255,11 +2320,11 @@ action BarAction
 
 test('parseSchemaMarkdown, action input non-struct', () => {
     const errors = [
-        ":2: error: Invalid struct base type 'Foo'",
-        ":14: error: Invalid struct base type 'Foo'",
-        ":19: error: Invalid struct base type 'MyUnion'",
-        ":20: error: Redefinition of 'BonkAction_input' member 'a'",
-        ":25: error: Invalid struct base type 'MyDict'"
+        ':2: error: Invalid struct base type "Foo"',
+        ':14: error: Invalid struct base type "Foo"',
+        ':19: error: Invalid struct base type "MyUnion"',
+        ':20: error: Redefinition of "BonkAction_input" member "a"',
+        ':25: error: Invalid struct base type "MyDict"'
     ];
     assert.throws(
         () => {
@@ -2303,11 +2368,11 @@ action MyDictAction
 
 test('parseSchemaMarkdown, action input member redef', () => {
     const errors = [
-        ":2: error: Invalid struct base type 'Foo'",
-        ":14: error: Invalid struct base type 'Foo'",
-        ":19: error: Invalid struct base type 'MyUnion'",
-        ":20: error: Redefinition of 'BonkAction_input' member 'a'",
-        ":25: error: Invalid struct base type 'MyDict'"
+        ':2: error: Invalid struct base type "Foo"',
+        ':14: error: Invalid struct base type "Foo"',
+        ':19: error: Invalid struct base type "MyUnion"',
+        ':20: error: Redefinition of "BonkAction_input" member "a"',
+        ':25: error: Invalid struct base type "MyDict"'
     ];
     assert.throws(
         () => {
@@ -2428,11 +2493,11 @@ action BarAction
 
 test('parseSchemaMarkdown, action output non-struct', () => {
     const errors = [
-        ":2: error: Invalid struct base type 'Foo'",
-        ":14: error: Invalid struct base type 'Foo'",
-        ":19: error: Invalid struct base type 'MyUnion'",
-        ":20: error: Redefinition of 'BonkAction_output' member 'a'",
-        ":25: error: Invalid struct base type 'MyDict'"
+        ':2: error: Invalid struct base type "Foo"',
+        ':14: error: Invalid struct base type "Foo"',
+        ':19: error: Invalid struct base type "MyUnion"',
+        ':20: error: Redefinition of "BonkAction_output" member "a"',
+        ':25: error: Invalid struct base type "MyDict"'
     ];
     assert.throws(
         () => {
@@ -2554,10 +2619,10 @@ action BarAction
 
 test('parseSchemaMarkdown, action errors non-enum', () => {
     const errors = [
-        ":2: error: Invalid enum base type 'Foo'",
-        ":14: error: Invalid enum base type 'Bar'",
-        ":15: error: Redefinition of 'BarAction_errors' value 'A'",
-        ":19: error: Redefinition of 'BonkAction_errors' value 'A'"
+        ':2: error: Invalid enum base type "Foo"',
+        ':14: error: Invalid enum base type "Bar"',
+        ':15: error: Redefinition of "BarAction_errors" value "A"',
+        ':19: error: Redefinition of "BonkAction_errors" value "A"'
     ];
     assert.throws(
         () => {

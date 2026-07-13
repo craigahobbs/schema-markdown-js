@@ -63,7 +63,7 @@ Validation fails if the object does not match the schema:
 try {
     validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, 'asdf', 4]});
 } catch ({message}) {
-    console.assert(message === "Invalid value \"asdf\" (type 'string') for member 'numbers.2', expected type 'int'", message);
+    console.assert(message === 'Invalid value "asdf" (type "string") for member "numbers.2", expected type "int"', message);
 }
 ~~~
 
@@ -73,9 +73,15 @@ Validation also fails if a member constraint is violated:
 try {
     validateType(modelTypes, 'Aggregation', {'numbers': []});
 } catch ({message}) {
-    console.assert(message === "Invalid value [] (type 'object') for member 'numbers', expected type 'array' [len > 0]", message);
+    console.assert(message === 'Invalid value [] (type "object") for member "numbers", expected type "array" [len > 0]', message);
 }
 ~~~
+
+`validateType` validates JSON-like values. In this JavaScript implementation, date values are
+`Date` objects (time-of-day cleared), datetime values are `Date` objects, and uuid strings remain
+strings. A `Date` input is left as a `Date` (date values have time-of-day cleared). See
+[The Schema Markdown Language - Built-in Types](https://craigahobbs.github.io/schema-markdown-js/language/#built-in-types)
+for accepted JSON input formats and host-runtime behavior.
 
 
 ## Schema Documentation
