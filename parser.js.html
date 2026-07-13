@@ -52,7 +52,7 @@ const rFindAttrs = new RegExp(`${rPartAttr}(?:\\s*,\\s*|\\s*$)`, 'g');
 const rLineCont = /\\\s*$/;
 const rComment = /^\s*(?:#-.*|#(?&lt;doc>.*))?$/;
 const rGroup = /^group(?:\s+"(?&lt;group>.+?)")?\s*$/;
-const rAction = new RegExp(`^action\\s+(?&lt;id>${rPartId})`);
+const rAction = new RegExp(`^action\\s+(?&lt;id>${rPartId})\\s*$`);
 const rPartBaseIds = `(?:\\s*\\(\\s*(?&lt;baseIds>${rPartId}(?:\\s*,\\s*${rPartId})*)\\s*\\)\\s*)`;
 const rBaseIdsSplit = /\s*,\s*/;
 const rDefinition = new RegExp(`^(?&lt;type>struct|union|enum)\\s+(?&lt;id>${rPartId})${rPartBaseIds}?\\s*$`);
@@ -339,8 +339,12 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             // Clear parser state
             userType = null;
 
-            // Update the parser state
+            // Update the parser state - attach urls immediately so a second empty
+            // "urls" section is detected as a redefinition (even with no URL lines)
             urls = [];
+            if (!(sectionString in action)) {
+                action[sectionString] = urls;
+            }
 
         // Enum value?
         } else if (matchName === 'value') {
@@ -411,9 +415,6 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             }
 
             // Add the URL
-            if (!('urls' in action)) {
-                action.urls = urls;
-            }
             urls.push(actionUrl);
 
         // Typedef?
@@ -454,6 +455,16 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
         // Unrecognized line syntax
         } else {
             addError('Syntax error', filename, linenum);
+        }
+    }
+
+    // Drop empty action urls arrays (type model requires len > 0 when present)
+    for (const userTypeIter of Object.values(types)) {
+        if ('action' in userTypeIter) {
+            const actionType = userTypeIter.action;
+            if ('urls' in actionType &amp;&amp; actionType.urls.length === 0) {
+                delete actionType.urls;
+            }
         }
     }
 

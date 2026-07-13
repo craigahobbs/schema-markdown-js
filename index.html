@@ -91,16 +91,21 @@ console.assert(obj.numbers[2] === 3);
 <pre class="prettyprint source lang-javascript"><code>try {
     validateType(modelTypes, 'Aggregation', {'numbers': [1, 2, 'asdf', 4]});
 } catch ({message}) {
-    console.assert(message === &quot;Invalid value \&quot;asdf\&quot; (type 'string') for member 'numbers.2', expected type 'int'&quot;, message);
+    console.assert(message === 'Invalid value &quot;asdf&quot; (type &quot;string&quot;) for member &quot;numbers.2&quot;, expected type &quot;int&quot;', message);
 }
 </code></pre>
 <p>Validation also fails if a member constraint is violated:</p>
 <pre class="prettyprint source lang-javascript"><code>try {
     validateType(modelTypes, 'Aggregation', {'numbers': []});
 } catch ({message}) {
-    console.assert(message === &quot;Invalid value [] (type 'object') for member 'numbers', expected type 'array' [len > 0]&quot;, message);
+    console.assert(message === 'Invalid value [] (type &quot;object&quot;) for member &quot;numbers&quot;, expected type &quot;array&quot; [len > 0]', message);
 }
 </code></pre>
+<p><code>validateType</code> validates JSON-like values. In this JavaScript implementation, date values are
+<code>Date</code> objects (time-of-day cleared), datetime values are <code>Date</code> objects, and uuid strings remain
+strings. A <code>Date</code> input is left as a <code>Date</code> (date values have time-of-day cleared). See
+<a href="https://craigahobbs.github.io/schema-markdown-js/language/#built-in-types">The Schema Markdown Language - Built-in Types</a>
+for accepted JSON input formats and host-runtime behavior.</p>
 <h2>Schema Documentation</h2>
 <p>You can document a schema with BareScript's
 <a href="https://craigahobbs.github.io/bare-script/library/#var.vGroup='schemaDoc.bare'">schemaDoc application</a>

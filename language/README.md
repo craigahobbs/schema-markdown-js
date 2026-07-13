@@ -42,9 +42,9 @@ Schema Markdown contains the following built-in types:
 
 - **bool** - a boolean
 
-- **date** - an ISO-8601 date
+- **date** - an ISO-8601 date string (YYYY-MM-DD)
 
-- **datetime** - an ISO-8601 datetime
+- **datetime** - an ISO-8601 datetime string ("T" separator and a required "Z" or ±hh:mm timezone; seconds and fractional seconds optional)
 
 - **float** - a floating point number
 
@@ -52,9 +52,17 @@ Schema Markdown contains the following built-in types:
 
 - **string** - a string
 
-- **uuid** - a UUID
+- **uuid** - a canonical 8-4-4-4-12 hex UUID string
 
 - **any** - a value of any type (use sparingly)
+
+Schema Markdown is implemented on multiple runtimes. The language and type model are shared.
+Validation targets JSON-like values (objects, arrays, strings, numbers, booleans, and null).
+
+Validated date and datetime values are host date/time objects (not strings). Validated uuid
+strings remain strings. Runtimes also accept the host's native date/time (and, where applicable,
+UUID) objects as input; those values are not part of JSON and stay host-defined. Each
+implementation documents its concrete native types and any additional utilities.
 
 
 ## Structure Types
