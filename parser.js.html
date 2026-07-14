@@ -77,6 +77,7 @@ const rValue = new RegExp(`^\\s+(?&lt;id>${rPartId})\\s*$`);
 const rValueQuoted = /^\s+"(?&lt;id>.*?)"\s*$/;
 const rURL = /^\s+(?&lt;method>[A-Za-z]+|\*)(?:\s+(?&lt;path>\/\S*))?/;
 const rLineSplit = /\r?\n/;
+const rIndent = /^\s/;
 
 
 /**
@@ -135,7 +136,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
         linenum += 1;
 
         // Line continuation?
-        const linePartNoContinuation = linePart.replace(rLineCont, '');
+        const linePartNoContinuation = linePart.includes('\\') ? linePart.replace(rLineCont, '') : linePart;
         if (lineContinuation.length || linePartNoContinuation !== linePart) {
             lineContinuation.push(linePartNoContinuation);
         }
@@ -150,47 +151,49 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             line = linePart;
         }
 
-        // Match syntax
+        // Match syntax - each regex is guarded by a cheap string test that only skips it when it cannot match
+        const lineIndented = rIndent.test(line);
+        const lineTrimmed = line.trim();
         let matchName = 'comment';
-        let match = line.match(rComment);
+        let match = (lineTrimmed === '' || lineTrimmed.startsWith('#')) ? line.match(rComment) : null;
         if (match === null) {
             matchName = 'group';
-            match = line.match(rGroup);
+            match = line.startsWith('group') ? line.match(rGroup) : null;
         }
         if (match === null) {
             matchName = 'action';
-            match = line.match(rAction);
+            match = line.startsWith('action') ? line.match(rAction) : null;
         }
         if (match === null) {
             matchName = 'definition';
-            match = line.match(rDefinition);
+            match = (line.startsWith('struct') || line.startsWith('union') || line.startsWith('enum')) ? line.match(rDefinition) : null;
         }
-        if (match === null &amp;&amp; action !== null) {
+        if (match === null &amp;&amp; action !== null &amp;&amp; lineIndented) {
             matchName = 'section';
             match = line.match(rSection);
         }
-        if (match === null &amp;&amp; action !== null) {
+        if (match === null &amp;&amp; action !== null &amp;&amp; lineIndented) {
             matchName = 'sectionPlain';
             match = line.match(rSectionPlain);
         }
-        if (match === null &amp;&amp; userType !== null &amp;&amp; 'enum' in userType) {
+        if (match === null &amp;&amp; userType !== null &amp;&amp; 'enum' in userType &amp;&amp; lineIndented) {
             matchName = 'value';
             match = line.match(rValue);
             if (match === null) {
                 match = line.match(rValueQuoted);
             }
         }
-        if (match === null &amp;&amp; userType !== null &amp;&amp; 'struct' in userType) {
+        if (match === null &amp;&amp; userType !== null &amp;&amp; 'struct' in userType &amp;&amp; lineIndented) {
             matchName = 'member';
             match = line.match(rMember);
         }
-        if (match === null &amp;&amp; urls !== null) {
+        if (match === null &amp;&amp; urls !== null &amp;&amp; lineIndented) {
             matchName = 'urls';
             match = line.match(rURL);
         }
         if (match === null) {
             matchName = 'typedef';
-            match = line.match(rTypedef);
+            match = line.startsWith('typedef') ? line.match(rTypedef) : null;
         }
         if (match === null) {
             matchName = null;
@@ -217,7 +220,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             const actionId = match.groups.id;
 
             // Action already defined?
-            if (actionId in types) {
+            if (Object.hasOwn(types, actionId)) {
                 addError(`Redefinition of action '${actionId}'`, filename, linenum);
             }
 
@@ -243,7 +246,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             const definitionBaseIds = match.groups.baseIds;
 
             // Type already defined?
-            if (builtinTypes.has(definitionId) || definitionId in builtinDeprecated || definitionId in types) {
+            if (builtinTypes.has(definitionId) || Object.hasOwn(builtinDeprecated, definitionId) || Object.hasOwn(types, definitionId)) {
                 addError(`Redefinition of type '${definitionId}'`, filename, linenum);
             }
 
@@ -422,7 +425,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             const definitionId = match.groups.id;
 
             // Type already defined?
-            if (builtinTypes.has(definitionId) || definitionId in builtinDeprecated || definitionId in types) {
+            if (builtinTypes.has(definitionId) || Object.hasOwn(builtinDeprecated, definitionId) || Object.hasOwn(types, definitionId)) {
                 addError(`Redefinition of type '${definitionId}'`, filename, linenum);
             }
 
@@ -477,7 +480,7 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                 errorLinenum = filepos[`${typeName}.${memberName}`] ?? null;
             }
             if (errorLinenum === null) {
-                errorLinenum = filepos[typeName] ?? null;
+                errorLinenum = Object.hasOwn(filepos, typeName) ? filepos[typeName] : null;
             }
             if (errorLinenum === null) {
                 errorFilename = '';
@@ -555,7 +558,7 @@ function parseTypedef(matchTypedef) {
 
 // Helper function to create a type model
 function createType(typeName) {
-    if (typeName in builtinDeprecated) {
+    if (Object.hasOwn(builtinDeprecated, typeName)) {
         return {'builtin': builtinDeprecated[typeName]};
     }
     if (builtinTypes.has(typeName)) {
