@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1 (2026-07-14)
+
+- [9fe9fc8](https://github.com/craigahobbs/schema-markdown-js/commit/9fe9fc8) - performance optimizations: 34% faster validation, 18% faster parsing, 100% test coverage
+
 ## 1.3.0 (2026-07-13)
 
 - [17d3c06](https://github.com/craigahobbs/schema-markdown-js/commit/17d3c06)
