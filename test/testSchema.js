@@ -1,7 +1,7 @@
 // Licensed under the MIT License
 // https://github.com/craigahobbs/schema-markdown-js/blob/main/LICENSE
 
-import {getReferencedTypes, validateType, validateTypeModel} from '../lib/schema.js';
+import {getEnumValues, getReferencedTypes, getStructMembers, validateType, validateTypeModel} from '../lib/schema.js';
 import {strict as assert} from 'node:assert';
 import test from 'node:test';
 import {typeModel} from '../lib/typeModel.js';
@@ -246,6 +246,168 @@ test('getReferencedTypes, enum base', () => {
 });
 
 
+test('getReferencedTypes, object property names', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'user': 'constructor'}}
+                ]
+            }
+        },
+        'constructor': {
+            'struct': {
+                'name': 'constructor',
+                'members': [
+                    {'name': 'b', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    };
+    const referencedTypes = getReferencedTypes(types, 'MyStruct');
+    assert.deepEqual(referencedTypes, types);
+});
+
+
+test('getReferencedTypes, proto type', () => {
+    // JSON.parse builds an own "__proto__" key - an object literal would set the prototype instead
+    const types = JSON.parse(
+        '{"MyStruct": {"struct": {"name": "MyStruct", "members": [{"name": "a", "type": {"user": "__proto__"}}]}},' +
+        ' "__proto__": {"struct": {"name": "__proto__", "members": [{"name": "b", "type": {"builtin": "int"}}]}}}'
+    );
+    const referencedTypes = getReferencedTypes(types, 'MyStruct');
+    assert.deepEqual(Object.keys(referencedTypes).sort(), ['MyStruct', '__proto__']);
+    assert.equal(Object.getPrototypeOf(referencedTypes), Object.prototype);
+    assert.deepEqual(
+        Object.getOwnPropertyDescriptor(referencedTypes, '__proto__').value,
+        Object.getOwnPropertyDescriptor(types, '__proto__').value
+    );
+});
+
+
+test('getReferencedTypes, proto type recursive', () => {
+    const types = JSON.parse(
+        '{"__proto__": {"struct": {"name": "__proto__", "members": [{"name": "a", "type": {"user": "__proto__"}}]}}}'
+    );
+    const referencedTypes = getReferencedTypes(types, '__proto__');
+    assert.deepEqual(Object.keys(referencedTypes), ['__proto__']);
+});
+
+
+test('getReferencedTypes, unknown type', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'user': 'Unknown'}}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            getReferencedTypes(types, 'MyStruct');
+        },
+        {
+            'name': 'ValidationError',
+            'message': 'Unknown type "Unknown"'
+        }
+    );
+});
+
+
+//
+// getStructMembers tests
+//
+
+
+test('getStructMembers, no bases', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    };
+    // The returned array is the type model's live members array (not a copy) - mutating it mutates the model
+    assert.equal(getStructMembers(types, types.MyStruct.struct), types.MyStruct.struct.members);
+});
+
+
+test('getStructMembers, unknown base', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'bases': ['constructor'],
+                'members': [
+                    {'name': 'a', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            getStructMembers(types, types.MyStruct.struct);
+        },
+        {
+            'name': 'ValidationError',
+            'message': 'Unknown type "constructor"'
+        }
+    );
+});
+
+
+//
+// getEnumValues tests
+//
+
+
+test('getEnumValues, no bases', () => {
+    const types = {
+        'MyEnum': {
+            'enum': {
+                'name': 'MyEnum',
+                'values': [
+                    {'name': 'A'}
+                ]
+            }
+        }
+    };
+    // The returned array is the type model's live values array (not a copy) - mutating it mutates the model
+    assert.equal(getEnumValues(types, types.MyEnum.enum), types.MyEnum.enum.values);
+});
+
+
+test('getEnumValues, unknown base', () => {
+    const types = {
+        'MyEnum': {
+            'enum': {
+                'name': 'MyEnum',
+                'bases': ['constructor'],
+                'values': [
+                    {'name': 'A'}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            getEnumValues(types, types.MyEnum.enum);
+        },
+        {
+            'name': 'ValidationError',
+            'message': 'Unknown type "constructor"'
+        }
+    );
+});
+
+
 //
 // validateType tests
 //
@@ -272,6 +434,117 @@ test('validateType, unknown', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': 'Unknown type "Unknown"'
+        }
+    );
+});
+
+
+test('validateType, unknown object property name', () => {
+    assert.throws(
+        () => {
+            validateType({}, 'constructor', null);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Unknown type "constructor"'
+        }
+    );
+});
+
+
+test('validateType, unknown member type', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'user': 'constructor'}}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', {'a': 5});
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Unknown type "constructor"'
+        }
+    );
+});
+
+
+test('validateType, member fqn', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'array': {'type': {'builtin': 'int'}}}}
+                ]
+            }
+        }
+    };
+    const obj = {'a': [1, 'abc']};
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj, 'request');
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'request.a.1',
+            'message': 'Invalid value "abc" (type "string") for member "request.a.1", expected type "int"'
+        }
+    );
+});
+
+
+test('validateType, member fqn non-string', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'array': {'type': {'builtin': 'int'}}}}
+                ]
+            }
+        }
+    };
+    const obj = {'a': [1, 'abc']};
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj, 5);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '5.a.1',
+            'message': 'Invalid value "abc" (type "string") for member "5.a.1", expected type "int"'
+        }
+    );
+});
+
+
+test('validateType, member fqn empty string', () => {
+    const types = {
+        'MyTypedef': {
+            'typedef': {
+                'name': 'MyTypedef',
+                'type': {'builtin': 'int'}
+            }
+        }
+    };
+    // The member part is omitted for an empty-string FQN
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 'abc', '');
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': '',
+            'message': 'Invalid value "abc" (type "string"), expected type "int"'
         }
     );
 });
@@ -1084,6 +1357,16 @@ test('validateType, dict', () => {
 });
 
 
+test('validateType, dict proto key', () => {
+    const obj = JSON.parse('{"__proto__": {"a": 1}, "b": {"c": 2}}');
+    const obj2 = validateTypeHelper({'dict': {'type': {'dict': {'type': {'builtin': 'int'}}}}}, obj);
+    assert.deepEqual(Object.keys(obj2), ['__proto__', 'b']);
+    assert.deepEqual(Object.getOwnPropertyDescriptor(obj2, '__proto__').value, {'a': 1});
+    assert.deepEqual(obj2.b, {'c': 2});
+    assert.equal(Object.getPrototypeOf(obj2), Object.prototype);
+});
+
+
 test('validateType, dict null', () => {
     const obj = null;
     assert.throws(
@@ -1155,6 +1438,23 @@ test('validateType, dict key nullable', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': 'Invalid value null (type "object"), expected type "string"'
+        }
+    );
+});
+
+
+test('validateType, dict key nullable value error', () => {
+    const obj = new Map();
+    obj.set(null, 'bad');
+    // The null key is stringified host-natively in the FQN ("null" here, "None" in the Python port)
+    assert.throws(
+        () => {
+            validateTypeHelper({'dict': {'type': {'builtin': 'int'}, 'keyAttr': {'nullable': true}}}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': 'null',
+            'message': 'Invalid value "bad" (type "string") for member "null", expected type "int"'
         }
     );
 });
@@ -1753,6 +2053,29 @@ test('validateType, typedef attr lenEq object', () => {
 });
 
 
+test('validateType, typedef attr lenEq non-container', () => {
+    const types = {
+        'MyTypedef': {
+            'typedef': {
+                'name': 'MyTypedef',
+                'type': {'builtin': 'int'},
+                'attr': {'lenEq': 5}
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', 5);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value 5 (type "number"), expected type "MyTypedef" [len == 5]'
+        }
+    );
+});
+
+
 test('validateType, typedef attr lenLT', () => {
     const types = {
         'MyTypedef': {
@@ -1977,6 +2300,96 @@ test('validateType, struct map', () => {
 });
 
 
+test('validateType, struct map unknown member', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    };
+    const obj = new Map();
+    obj.set('a', 5);
+    obj.set('c', 7);
+    assert.throws(
+        () => {
+            validateType(types, 'MyStruct', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Unknown member "c"'
+        }
+    );
+});
+
+
+test('validateType, union map', () => {
+    const types = {
+        'MyUnion': {
+            'struct': {
+                'name': 'MyUnion',
+                'members': [
+                    {'name': 'a', 'type': {'builtin': 'int'}},
+                    {'name': 'b', 'type': {'builtin': 'string'}}
+                ],
+                'union': true
+            }
+        }
+    };
+    const obj = new Map();
+    obj.set('b', 'abc');
+    const obj2 = validateType(types, 'MyUnion', obj);
+    assert.equal(obj2 instanceof Map, true);
+    assert.equal(obj2.get('b'), 'abc');
+
+    assert.throws(
+        () => {
+            validateType(types, 'MyUnion', new Map());
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value {} (type "object"), expected type "MyUnion"'
+        }
+    );
+});
+
+
+test('validateType, typedef map len attr', () => {
+    const types = {
+        'MyTypedef': {
+            'typedef': {
+                'name': 'MyTypedef',
+                'type': {'dict': {'type': {'builtin': 'int'}}},
+                'attr': {'lenEq': 2}
+            }
+        }
+    };
+    const obj = new Map();
+    obj.set('a', 1);
+    obj.set('b', 2);
+    const obj2 = validateType(types, 'MyTypedef', obj);
+    assert.equal(obj2 instanceof Map, true);
+    assert.equal(obj2.size, 2);
+
+    obj.set('c', 3);
+    assert.throws(
+        () => {
+            validateType(types, 'MyTypedef', obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value {} (type "object"), expected type "MyTypedef" [len == 2]'
+        }
+    );
+});
+
+
 test('validateType, struct null', () => {
     const types = {
         'MyStruct': {
@@ -2182,6 +2595,39 @@ test('validateType, struct optional', () => {
             'message': 'Required member "c" missing'
         }
     );
+});
+
+
+test('validateType, struct member inherited name', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'constructor', 'type': {'builtin': 'string'}, 'optional': true}
+                ]
+            }
+        }
+    };
+    assert.deepEqual(validateType(types, 'MyStruct', {}), {});
+});
+
+
+test('validateType, struct member proto', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': '__proto__', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    };
+    const obj = validateType(types, 'MyStruct', JSON.parse('{"__proto__": 5}'));
+    assert.deepEqual(Object.keys(obj), ['__proto__']);
+    assert.equal(Object.getOwnPropertyDescriptor(obj, '__proto__').value, 5);
+    assert.equal(Object.getPrototypeOf(obj), Object.prototype);
 });
 
 
@@ -2755,6 +3201,31 @@ test('validateTypeModel, struct duplicate member name', () => {
 });
 
 
+test('validateTypeModel, struct duplicate member name proto', () => {
+    const types = {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': '__proto__', 'type': {'builtin': 'string'}},
+                    {'name': '__proto__', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Redefinition of "MyStruct" member "__proto__"'
+        }
+    );
+});
+
+
 test('validateTypeModel, struct member attributes', () => {
     const types = {
         'MyStruct': {
@@ -3079,6 +3550,31 @@ test('validateTypeModel,  enum duplicate value', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': 'Redefinition of "MyEnum" value "A"'
+        }
+    );
+});
+
+
+test('validateTypeModel, enum duplicate value proto', () => {
+    const types = {
+        'MyEnum': {
+            'enum': {
+                'name': 'MyEnum',
+                'values': [
+                    {'name': '__proto__'},
+                    {'name': '__proto__'}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Redefinition of "MyEnum" value "__proto__"'
         }
     );
 });
@@ -3691,6 +4187,47 @@ test('validateTypeModel, action duplicate member', () => {
             'message': `\
 Redefinition of "MyAction_input" member "c"
 Redefinition of "MyAction_query" member "c"`
+        }
+    );
+});
+
+
+test('validateTypeModel, action duplicate member proto', () => {
+    const types = {
+        'MyAction': {
+            'action': {
+                'name': 'MyAction',
+                'query': 'MyAction_query',
+                'input': 'MyAction_input'
+            }
+        },
+        'MyAction_query': {
+            'struct': {
+                'name': 'MyAction_query',
+                'members': [
+                    {'name': '__proto__', 'type': {'builtin': 'int'}}
+                ]
+            }
+        },
+        'MyAction_input': {
+            'struct': {
+                'name': 'MyAction_input',
+                'members': [
+                    {'name': '__proto__', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
+Redefinition of "MyAction_input" member "__proto__"
+Redefinition of "MyAction_query" member "__proto__"`
         }
     );
 });

@@ -91,6 +91,22 @@ test('decodeQueryString, decode unicode string', () => {
 });
 
 
+test('decodeQueryString, object property names', () => {
+    const obj = decodeQueryString('constructor.a=1&b=2');
+    assert.deepEqual(Object.keys(obj), ['constructor', 'b']);
+    assert.deepEqual(obj.constructor, {'a': '1'});
+    assert.equal(obj.b, '2');
+});
+
+
+test('decodeQueryString, proto key', () => {
+    const obj = decodeQueryString('__proto__.a=1');
+    assert.deepEqual(Object.keys(obj), ['__proto__']);
+    assert.deepEqual(Object.getOwnPropertyDescriptor(obj, '__proto__').value, {'a': '1'});
+    assert.equal(Object.getPrototypeOf(obj), Object.prototype);
+});
+
+
 test('decodeQueryString, keys and values with special characters', () => {
     assert.deepEqual(
         decodeQueryString('a%26b%3Dc%2ed=a%26b%3Dc.d'),

@@ -258,6 +258,178 @@ test('parseSchemaMarkdown, array', () => {
 });
 
 
+test('parseSchemaMarkdown, line continuation trailing whitespace', () => {
+    const types = parseSchemaMarkdown('struct MyStruct\n    int \\ \n        a\n');
+    assert.deepEqual(types, {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'members': [
+                    {'name': 'a', 'type': {'builtin': 'int'}}
+                ]
+            }
+        }
+    });
+});
+
+
+test('parseSchemaMarkdown, line continuation backslash not continuation', () => {
+    const types = parseSchemaMarkdown('# The struct \\s\nstruct MyStruct\n');
+    assert.deepEqual(types, {
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'doc': ['The struct \\s']
+            }
+        }
+    });
+});
+
+
+test('parseSchemaMarkdown, keyword prefix syntax error', () => {
+    const errors = [
+        ':1: error: Syntax error',
+        ':2: error: Syntax error',
+        ':3: error: Syntax error',
+        ':4: error: Syntax error',
+        ':5: error: Syntax error',
+        ':6: error: Syntax error'
+    ];
+    assert.throws(
+        () => {
+            parseSchemaMarkdown(`\
+groups "Group"
+actions MyAction
+structs MyStruct
+unions MyUnion
+enums MyEnum
+typedefs int MyTypedef
+`);
+        },
+        {
+            'name': 'SchemaMarkdownParserError',
+            'message': errors.join('\n'),
+            'errors': errors
+        }
+    );
+});
+
+
+test('parseSchemaMarkdown, object property names', () => {
+    const types = parseSchemaMarkdown(`\
+struct constructor
+    string toString
+    int valueOf
+
+enum hasOwnProperty
+    constructor
+    toString
+
+action isPrototypeOf
+    query
+        string toString
+    output
+        constructor propertyIsEnumerable
+`);
+    assert.deepEqual(types, {
+        'constructor': {
+            'struct': {
+                'name': 'constructor',
+                'members': [
+                    {'name': 'toString', 'type': {'builtin': 'string'}},
+                    {'name': 'valueOf', 'type': {'builtin': 'int'}}
+                ]
+            }
+        },
+        'hasOwnProperty': {
+            'enum': {
+                'name': 'hasOwnProperty',
+                'values': [
+                    {'name': 'constructor'},
+                    {'name': 'toString'}
+                ]
+            }
+        },
+        'isPrototypeOf': {
+            'action': {
+                'name': 'isPrototypeOf',
+                'query': 'isPrototypeOf_query',
+                'output': 'isPrototypeOf_output'
+            }
+        },
+        'isPrototypeOf_query': {
+            'struct': {
+                'name': 'isPrototypeOf_query',
+                'members': [
+                    {'name': 'toString', 'type': {'builtin': 'string'}}
+                ]
+            }
+        },
+        'isPrototypeOf_output': {
+            'struct': {
+                'name': 'isPrototypeOf_output',
+                'members': [
+                    {'name': 'propertyIsEnumerable', 'type': {'user': 'constructor'}}
+                ]
+            }
+        }
+    });
+});
+
+
+test('parseSchemaMarkdown, object property name bases', () => {
+    const types = parseSchemaMarkdown(`\
+struct constructor
+    int a
+
+struct MyStruct (constructor)
+    int b
+
+enum toString
+    A
+
+enum MyEnum (toString)
+    B
+`);
+    assert.deepEqual(types, {
+        'constructor': {
+            'struct': {
+                'name': 'constructor',
+                'members': [
+                    {'name': 'a', 'type': {'builtin': 'int'}}
+                ]
+            }
+        },
+        'MyStruct': {
+            'struct': {
+                'name': 'MyStruct',
+                'bases': ['constructor'],
+                'members': [
+                    {'name': 'b', 'type': {'builtin': 'int'}}
+                ]
+            }
+        },
+        'toString': {
+            'enum': {
+                'name': 'toString',
+                'values': [
+                    {'name': 'A'}
+                ]
+            }
+        },
+        'MyEnum': {
+            'enum': {
+                'name': 'MyEnum',
+                'bases': ['toString'],
+                'values': [
+                    {'name': 'B'}
+                ]
+            }
+        }
+    });
+});
+
+
 test('parseSchemaMarkdown, action trailing whitespace', () => {
     const types = parseSchemaMarkdown('action MyAction  \n');
     assert.deepEqual(types, {
