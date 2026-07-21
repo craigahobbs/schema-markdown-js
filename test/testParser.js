@@ -258,6 +258,28 @@ test('parseSchemaMarkdown, array', () => {
 });
 
 
+test('parseSchemaMarkdown, invalid text', () => {
+    assert.throws(
+        () => {
+            parseSchemaMarkdown(['struct MyStruct', null]);
+        },
+        {
+            'name': 'TypeError',
+            'message': 'Invalid Schema Markdown text null'
+        }
+    );
+    assert.throws(
+        () => {
+            parseSchemaMarkdown([7]);
+        },
+        {
+            'name': 'TypeError',
+            'message': 'Invalid Schema Markdown text 7'
+        }
+    );
+});
+
+
 test('parseSchemaMarkdown, line continuation trailing whitespace', () => {
     const types = parseSchemaMarkdown('struct MyStruct\n    int \\ \n        a\n');
     assert.deepEqual(types, {
