@@ -598,6 +598,33 @@ test('validateType, int string', () => {
 });
 
 
+test('validateType, int string exp', () => {
+    const obj = '1e3';
+    assert.equal(validateTypeHelper({'builtin': 'int'}, obj), 1000);
+});
+
+
+test('validateType, int string exp float', () => {
+    const obj = '1.5e1';
+    assert.equal(validateTypeHelper({'builtin': 'int'}, obj), 15);
+});
+
+
+test('validateType, int string exp error', () => {
+    const obj = '1e400';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'int'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "1e400" (type "string"), expected type "int"'
+        }
+    );
+});
+
+
 test('validateType, int float', () => {
     const obj = 7.1;
     assert.throws(
@@ -716,6 +743,21 @@ test('validateType, float error nan', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': 'Invalid value "nan" (type "string"), expected type "float"'
+        }
+    );
+});
+
+
+test('validateType, float error infinity', () => {
+    const obj = 'Infinity';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'float'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "Infinity" (type "string"), expected type "float"'
         }
     );
 });
