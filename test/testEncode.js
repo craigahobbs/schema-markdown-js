@@ -361,6 +361,32 @@ test('decodeQueryString, first list, then dict', () => {
 });
 
 
+test('decodeQueryString, first dict value, then dict', () => {
+    assert.throws(
+        () => {
+            decodeQueryString('a=5&a.b=7');
+        },
+        {
+            'name': 'Error',
+            'message': "Invalid key 'a.b'"
+        }
+    );
+});
+
+
+test('decodeQueryString, first dict value, then dict - long key/value', () => {
+    assert.throws(
+        () => {
+            decodeQueryString(`${'a'.repeat(2000)}=5&${'a'.repeat(2000)}.b=7`);
+        },
+        {
+            'name': 'Error',
+            'message': `Invalid key '${'a'.repeat(100)}'`
+        }
+    );
+});
+
+
 test('decodeQueryString, first list, then dict - long key/value', () => {
     assert.throws(
         () => {
