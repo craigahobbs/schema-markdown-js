@@ -733,6 +733,36 @@ test('validateType, float error', () => {
 });
 
 
+test('validateType, float error empty string', () => {
+    const obj = '';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'float'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value "" (type "string"), expected type "float"'
+        }
+    );
+});
+
+
+test('validateType, float error whitespace string', () => {
+    const obj = ' ';
+    assert.throws(
+        () => {
+            validateTypeHelper({'builtin': 'float'}, obj);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': 'Invalid value " " (type "string"), expected type "float"'
+        }
+    );
+});
+
+
 test('validateType, float error nan', () => {
     const obj = 'nan';
     assert.throws(
@@ -4098,6 +4128,61 @@ test('validateTypeModel, typedef unknown type', () => {
             'name': 'ValidationError',
             'memberFqn': null,
             'message': 'Unknown type "MyTypedef3" from "MyTypedef2"'
+        }
+    );
+});
+
+
+test('validateTypeModel, typedef circular', () => {
+    const types = {
+        'MyTypedef': {
+            'typedef': {
+                'name': 'MyTypedef',
+                'type': {'user': 'MyTypedef2'}
+            }
+        },
+        'MyTypedef2': {
+            'typedef': {
+                'name': 'MyTypedef2',
+                'type': {'user': 'MyTypedef'}
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
+Circular typedef detected for type "MyTypedef"
+Circular typedef detected for type "MyTypedef2"`
+        }
+    );
+});
+
+
+test('validateTypeModel, typedef circular attribute', () => {
+    const types = {
+        'MyTypedef': {
+            'typedef': {
+                'name': 'MyTypedef',
+                'type': {'user': 'MyTypedef'},
+                'attr': {'gt': 0}
+            }
+        }
+    };
+    assert.throws(
+        () => {
+            validateTypeModel(types);
+        },
+        {
+            'name': 'ValidationError',
+            'memberFqn': null,
+            'message': `\
+Circular typedef detected for type "MyTypedef"
+Invalid attribute "> 0" from "MyTypedef"`
         }
     );
 });
