@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.2 (2026-07-29)
+
+- [7706dce](https://github.com/craigahobbs/schema-markdown-js/commit/7706dce) - restructure the parse loop and type validation to align with the bare-script ports
+
+- [b0fd3e1](https://github.com/craigahobbs/schema-markdown-js/commit/b0fd3e1) - detect circular typedefs and reject empty number strings
+
+- [6b3fac1](https://github.com/craigahobbs/schema-markdown-js/commit/6b3fac1) - error on invalid Schema Markdown text input
+
+- [a70baa8](https://github.com/craigahobbs/schema-markdown-js/commit/a70baa8) - reject non-finite int and float string conversions
+
+- [efa8f2d](https://github.com/craigahobbs/schema-markdown-js/commit/efa8f2d) - error on sub-keying a scalar value in decodeQueryString
+
 ## 1.3.1 (2026-07-14)
 
 - [9fe9fc8](https://github.com/craigahobbs/schema-markdown-js/commit/9fe9fc8) - performance optimizations: 34% faster validation, 18% faster parsing, 100% test coverage
