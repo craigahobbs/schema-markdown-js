@@ -215,10 +215,10 @@ function validateTypeHelper(types, type, value, memberFqn) {
         } else if (builtin === 'int' || builtin === 'float') {
             // Convert string?
             if (typeof value === 'string') {
-                if (isNaN(value)) {
+                valueNew = parseFloat(value);
+                if (isNaN(value) || !Number.isFinite(valueNew)) {
                     throwMemberError(type, value, memberFqn);
                 }
-                valueNew = parseFloat(value);
 
             // Not a number?
             } else if (typeof value !== 'number') {
@@ -305,6 +305,115 @@ function validateTypeHelper(types, type, value, memberFqn) {
             }
         }
 
+    // User type?
+    } else if ('user' in type) {
+        const userType = getUserType(types, type.user);
+
+        // action?
+        if ('action' in userType) {
+            throwMemberError(type, value, memberFqn);
+        }
+
+        // typedef?
+        if ('typedef' in userType) {
+            const {typedef} = userType;
+            const typedefAttr = 'attr' in typedef ? typedef.attr : null;
+
+            // Validate the value
+            const valueNullable = typedefAttr !== null &amp;&amp; 'nullable' in typedefAttr &amp;&amp; typedefAttr.nullable;
+            if (valueNullable &amp;&amp; (value === null || value === 'null')) {
+                valueNew = null;
+            } else {
+                valueNew = validateTypeHelper(types, typedef.type, value, memberFqn);
+                if (typedefAttr !== null) {
+                    validateAttr(type, typedefAttr, valueNew, memberFqn);
+                }
+            }
+
+        // enum?
+        } else if ('enum' in userType) {
+            const enum_ = userType.enum;
+
+            // Not a valid enum value?
+            if (!getEnumValues(types, enum_).some((enumValue) => value === enumValue.name)) {
+                throwMemberError(type, value, memberFqn);
+            }
+
+        // struct?
+        } else if ('struct' in userType) {
+            const {struct} = userType;
+
+            // Valid value type?
+            if (value === '') {
+                valueNew = {};
+            } else if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+                throwMemberError({'user': struct.name}, value, memberFqn);
+            }
+
+            // Valid union?
+            const isMap = valueNew instanceof Map;
+            const isUnion = 'union' in struct ? struct.union : false;
+            if (isUnion) {
+                if ((isMap ? valueNew.size : Object.keys(valueNew).length) !== 1) {
+                    throwMemberError({'user': struct.name}, value, memberFqn);
+                }
+            }
+
+            // Validate the struct members
+            const valueCopy = isMap ? new Map() : {};
+            for (const member of getStructMembers(types, struct)) {
+                const memberName = member.name;
+                const memberFqnMember = [memberFqn, memberName];
+                const memberOptional = 'optional' in member &amp;&amp; member.optional;
+                const memberAttr = 'attr' in member ? member.attr : null;
+
+                // Missing non-optional member? Check own properties only - "in" matches inherited
+                // Object.prototype properties for member names like "constructor"
+                if (!(isMap ? valueNew.has(memberName) : Object.hasOwn(valueNew, memberName))) {
+                    if (!memberOptional &amp;&amp; !isUnion) {
+                        throw new ValidationError(`Required member "${memberFqnStr(memberFqnMember)}" missing`);
+                    }
+                } else {
+                    // Validate the member value
+                    let memberValue = isMap ? valueNew.get(memberName) : valueNew[memberName];
+
+                    // No member attributes? Validate the member value directly
+                    if (memberAttr === null) {
+                        memberValue = validateTypeHelper(types, member.type, memberValue, memberFqnMember);
+
+                    // Nullable null?
+                    } else if ('nullable' in memberAttr &amp;&amp; memberAttr.nullable &amp;&amp;
+                               (memberValue === null || memberValue === 'null')) {
+                        memberValue = null;
+                    } else {
+                        memberValue = validateTypeHelper(types, member.type, memberValue, memberFqnMember);
+                        validateAttr(member.type, memberAttr, memberValue, memberFqnMember);
+                    }
+
+                    // Copy the validated member
+                    if (isMap) {
+                        valueCopy.set(memberName, memberValue);
+                    } else {
+                        setValue(valueCopy, memberName, memberValue);
+                    }
+                }
+            }
+
+            // Any unknown members?
+            const valueCopyCount = isMap ? valueCopy.size : Object.keys(valueCopy).length;
+            const valueNewCount = isMap ? valueNew.size : Object.keys(valueNew).length;
+            if (valueCopyCount !== valueNewCount) {
+                const memberSet = new Set(getStructMembers(types, struct).map((member) => member.name));
+                const valueNewKeys = isMap ? Array.from(valueNew.keys()) : Object.keys(valueNew);
+                const [unknownKey] = valueNewKeys.filter((key) => !memberSet.has(key));
+                const unknownFqn = memberFqnStr([memberFqn, unknownKey]);
+                throw new ValidationError(`Unknown member "${unknownFqn.slice(0, 100)}"`);
+            }
+
+            // Return the validated, transformed copy
+            valueNew = valueCopy;
+        }
+
     // array?
     } else if ('array' in type) {
         // Valid value type?
@@ -389,111 +498,6 @@ function validateTypeHelper(types, type, value, memberFqn) {
 
         // Return the validated, transformed copy
         valueNew = valueCopy;
-
-    // User type?
-    } else if ('user' in type) {
-        const userType = getUserType(types, type.user);
-
-        // action?
-        if ('action' in userType) {
-            throwMemberError(type, value, memberFqn);
-        }
-
-        // typedef?
-        if ('typedef' in userType) {
-            const {typedef} = userType;
-            const typedefAttr = 'attr' in typedef ? typedef.attr : null;
-
-            // Validate the value
-            const valueNullable = typedefAttr !== null &amp;&amp; 'nullable' in typedefAttr &amp;&amp; typedefAttr.nullable;
-            if (valueNullable &amp;&amp; (value === null || value === 'null')) {
-                valueNew = null;
-            } else {
-                valueNew = validateTypeHelper(types, typedef.type, value, memberFqn);
-                if (typedefAttr !== null) {
-                    validateAttr(type, typedefAttr, valueNew, memberFqn);
-                }
-            }
-
-        // enum?
-        } else if ('enum' in userType) {
-            const enum_ = userType.enum;
-
-            // Not a valid enum value?
-            if (!getEnumValues(types, enum_).some((enumValue) => value === enumValue.name)) {
-                throwMemberError(type, value, memberFqn);
-            }
-
-        // struct?
-        } else if ('struct' in userType) {
-            const {struct} = userType;
-
-            // Valid value type?
-            if (value === '') {
-                valueNew = {};
-            } else if (value === null || typeof value !== 'object' || Array.isArray(value)) {
-                throwMemberError({'user': struct.name}, value, memberFqn);
-            }
-
-            // Valid union?
-            const isMap = valueNew instanceof Map;
-            const isUnion = 'union' in struct ? struct.union : false;
-            if (isUnion) {
-                if ((isMap ? valueNew.size : Object.keys(valueNew).length) !== 1) {
-                    throwMemberError({'user': struct.name}, value, memberFqn);
-                }
-            }
-
-            // Validate the struct members
-            const valueCopy = isMap ? new Map() : {};
-            for (const member of getStructMembers(types, struct)) {
-                const memberName = member.name;
-                const memberFqnMember = [memberFqn, memberName];
-                const memberOptional = 'optional' in member &amp;&amp; member.optional;
-                const memberAttr = 'attr' in member ? member.attr : null;
-                const memberNullable = memberAttr !== null &amp;&amp; 'nullable' in memberAttr &amp;&amp; memberAttr.nullable;
-
-                // Missing non-optional member? Check own properties only - "in" matches inherited
-                // Object.prototype properties for member names like "constructor"
-                if (!(isMap ? valueNew.has(memberName) : Object.hasOwn(valueNew, memberName))) {
-                    if (!memberOptional &amp;&amp; !isUnion) {
-                        throw new ValidationError(`Required member "${memberFqnStr(memberFqnMember)}" missing`);
-                    }
-                } else {
-                    // Validate the member value
-                    let memberValue = isMap ? valueNew.get(memberName) : valueNew[memberName];
-                    if (memberNullable &amp;&amp; (memberValue === null || memberValue === 'null')) {
-                        memberValue = null;
-                    } else {
-                        memberValue = validateTypeHelper(types, member.type, memberValue, memberFqnMember);
-                        if (memberAttr !== null) {
-                            validateAttr(member.type, memberAttr, memberValue, memberFqnMember);
-                        }
-                    }
-
-                    // Copy the validated member
-                    if (isMap) {
-                        valueCopy.set(memberName, memberValue);
-                    } else {
-                        setValue(valueCopy, memberName, memberValue);
-                    }
-                }
-            }
-
-            // Any unknown members?
-            const valueCopyCount = isMap ? valueCopy.size : Object.keys(valueCopy).length;
-            const valueNewCount = isMap ? valueNew.size : Object.keys(valueNew).length;
-            if (valueCopyCount !== valueNewCount) {
-                const memberSet = new Set(getStructMembers(types, struct).map((member) => member.name));
-                const valueNewKeys = isMap ? Array.from(valueNew.keys()) : Object.keys(valueNew);
-                const [unknownKey] = valueNewKeys.filter((key) => !memberSet.has(key));
-                const unknownFqn = memberFqnStr([memberFqn, unknownKey]);
-                throw new ValidationError(`Unknown member "${unknownFqn.slice(0, 100)}"`);
-            }
-
-            // Return the validated, transformed copy
-            valueNew = valueCopy;
-        }
     }
 
     return valueNew;

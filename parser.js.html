@@ -125,6 +125,9 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
         lines.push(...text.split(rLineSplit));
     } else {
         for (const textPart of text) {
+            if (typeof textPart !== 'string') {
+                throw new TypeError(`Invalid Schema Markdown text ${JSON.stringify(textPart)}`.slice(0, 100));
+            }
             lines.push(...textPart.split(rLineSplit));
         }
     }
@@ -137,66 +140,66 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
 
         // Line continuation?
         const linePartNoContinuation = linePart.includes('\\') ? linePart.replace(rLineCont, '') : linePart;
-        if (lineContinuation.length || linePartNoContinuation !== linePart) {
-            lineContinuation.push(linePartNoContinuation);
-        }
-        if (linePartNoContinuation !== linePart) {
-            continue;
-        }
         let line;
-        if (lineContinuation.length) {
+        if (linePartNoContinuation === linePart &amp;&amp; !lineContinuation.length) {
+            line = linePart;
+        } else {
+            lineContinuation.push(linePartNoContinuation);
+            if (linePartNoContinuation !== linePart) {
+                continue;
+            }
             line = lineContinuation.join('');
             lineContinuation.length = 0;
-        } else {
-            line = linePart;
         }
 
         // Match syntax - each regex is guarded by a cheap string test that only skips it when it cannot match
-        const lineIndented = rIndent.test(line);
         const lineTrimmed = line.trim();
         let matchName = 'comment';
         let match = (lineTrimmed === '' || lineTrimmed.startsWith('#')) ? line.match(rComment) : null;
+
+        // Not a comment or blank line? Try the remaining syntax
         if (match === null) {
+            const lineIndented = rIndent.test(line);
             matchName = 'group';
             match = line.startsWith('group') ? line.match(rGroup) : null;
-        }
-        if (match === null) {
-            matchName = 'action';
-            match = line.startsWith('action') ? line.match(rAction) : null;
-        }
-        if (match === null) {
-            matchName = 'definition';
-            match = (line.startsWith('struct') || line.startsWith('union') || line.startsWith('enum')) ? line.match(rDefinition) : null;
-        }
-        if (match === null &amp;&amp; action !== null &amp;&amp; lineIndented) {
-            matchName = 'section';
-            match = line.match(rSection);
-        }
-        if (match === null &amp;&amp; action !== null &amp;&amp; lineIndented) {
-            matchName = 'sectionPlain';
-            match = line.match(rSectionPlain);
-        }
-        if (match === null &amp;&amp; userType !== null &amp;&amp; 'enum' in userType &amp;&amp; lineIndented) {
-            matchName = 'value';
-            match = line.match(rValue);
             if (match === null) {
-                match = line.match(rValueQuoted);
+                matchName = 'action';
+                match = line.startsWith('action') ? line.match(rAction) : null;
             }
-        }
-        if (match === null &amp;&amp; userType !== null &amp;&amp; 'struct' in userType &amp;&amp; lineIndented) {
-            matchName = 'member';
-            match = line.match(rMember);
-        }
-        if (match === null &amp;&amp; urls !== null &amp;&amp; lineIndented) {
-            matchName = 'urls';
-            match = line.match(rURL);
-        }
-        if (match === null) {
-            matchName = 'typedef';
-            match = line.startsWith('typedef') ? line.match(rTypedef) : null;
-        }
-        if (match === null) {
-            matchName = null;
+            if (match === null) {
+                matchName = 'definition';
+                match = (line.startsWith('struct') || line.startsWith('union') || line.startsWith('enum')) ? line.match(rDefinition) : null;
+            }
+            if (match === null &amp;&amp; action !== null &amp;&amp; lineIndented) {
+                matchName = 'section';
+                match = line.match(rSection);
+            }
+            if (match === null &amp;&amp; action !== null &amp;&amp; lineIndented) {
+                matchName = 'sectionPlain';
+                match = line.match(rSectionPlain);
+            }
+            if (match === null &amp;&amp; userType !== null &amp;&amp; 'enum' in userType &amp;&amp; lineIndented) {
+                matchName = 'value';
+                match = line.match(rValue);
+                if (match === null) {
+                    match = line.match(rValueQuoted);
+                }
+            }
+            if (match === null &amp;&amp; userType !== null &amp;&amp; 'struct' in userType &amp;&amp; lineIndented) {
+                matchName = 'member';
+                match = line.match(rMember);
+            }
+            if (match === null &amp;&amp; urls !== null &amp;&amp; lineIndented) {
+                matchName = 'urls';
+                match = line.match(rURL);
+            }
+            if (match === null) {
+                matchName = 'typedef';
+                match = line.startsWith('typedef') ? line.match(rTypedef) : null;
+            }
+            if (match === null) {
+                matchName = null;
+            }
         }
 
         // Comment?
@@ -206,38 +209,35 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                 doc.push(!docString.startsWith(' ') ? docString : docString.slice(1));
             }
 
-        // Documentation group?
-        } else if (matchName === 'group') {
-            docGroup = match.groups.group;
-            if (typeof docGroup !== 'undefined') {
-                docGroup = docGroup.trim();
-            } else {
-                docGroup = null;
+        // Struct member?
+        } else if (matchName === 'member') {
+            const optional = typeof match.groups.optional !== 'undefined';
+            const memberName = match.groups.id;
+
+            // Add the member
+            const {struct} = userType;
+            if (!('members' in struct)) {
+                struct.members = [];
+            }
+            const [memberType, memberAttr] = parseTypedef(match);
+            const memberDoc = getDoc();
+            const member = {
+                'name': memberName,
+                'type': memberType
+            };
+            struct.members.push(member);
+            if (memberAttr !== null) {
+                member.attr = memberAttr;
+            }
+            if (memberDoc !== null) {
+                member.doc = memberDoc;
+            }
+            if (optional) {
+                member.optional = true;
             }
 
-        // Action?
-        } else if (matchName === 'action') {
-            const actionId = match.groups.id;
-
-            // Action already defined?
-            if (Object.hasOwn(types, actionId)) {
-                addError(`Redefinition of action '${actionId}'`, filename, linenum);
-            }
-
-            // Clear parser state
-            urls = null;
-            userType = null;
-            const actionDoc = getDoc();
-
-            // Create the new action
-            action = {'name': actionId};
-            types[actionId] = {'action': action};
-            if (actionDoc !== null) {
-                action.doc = actionDoc;
-            }
-            if (docGroup !== null) {
-                action.docGroup = docGroup;
-            }
+            // Record the definition's line number
+            filepos[`${struct.name}.${memberName}`] = linenum;
 
         // Definition?
         } else if (matchName === 'definition') {
@@ -295,6 +295,93 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
             // Record the definition's line number
             filepos[definitionId] = linenum;
 
+        // Enum value?
+        } else if (matchName === 'value') {
+            const valueString = match.groups.id;
+
+            // Add the enum value
+            const enum_ = userType.enum;
+            if (!('values' in enum_)) {
+                enum_.values = [];
+            }
+            const enumValue = {'name': valueString};
+            enum_.values.push(enumValue);
+            const enumValueDoc = getDoc();
+            if (enumValueDoc !== null) {
+                enumValue.doc = enumValueDoc;
+            }
+
+            // Record the definition's line number
+            filepos[`${enum_.name}.${valueString}`] = linenum;
+
+        // Typedef?
+        } else if (matchName === 'typedef') {
+            const definitionId = match.groups.id;
+
+            // Type already defined?
+            if (builtinTypes.has(definitionId) || Object.hasOwn(builtinDeprecated, definitionId) || Object.hasOwn(types, definitionId)) {
+                addError(`Redefinition of type '${definitionId}'`, filename, linenum);
+            }
+
+            // Clear parser state
+            action = null;
+            urls = null;
+            userType = null;
+            const typedefDoc = getDoc();
+
+            // Create the typedef
+            const [typedefType, typedefAttr] = parseTypedef(match);
+            const typedef = {
+                'name': definitionId,
+                'type': typedefType
+            };
+            types[definitionId] = {'typedef': typedef};
+            if (typedefAttr !== null) {
+                typedef.attr = typedefAttr;
+            }
+            if (typedefDoc !== null) {
+                typedef.doc = typedefDoc;
+            }
+            if (docGroup !== null) {
+                typedef.docGroup = docGroup;
+            }
+
+            // Record the definition's line number
+            filepos[definitionId] = linenum;
+
+        // Documentation group?
+        } else if (matchName === 'group') {
+            docGroup = match.groups.group;
+            if (typeof docGroup !== 'undefined') {
+                docGroup = docGroup.trim();
+            } else {
+                docGroup = null;
+            }
+
+        // Action?
+        } else if (matchName === 'action') {
+            const actionId = match.groups.id;
+
+            // Action already defined?
+            if (Object.hasOwn(types, actionId)) {
+                addError(`Redefinition of action '${actionId}'`, filename, linenum);
+            }
+
+            // Clear parser state
+            urls = null;
+            userType = null;
+            const actionDoc = getDoc();
+
+            // Create the new action
+            action = {'name': actionId};
+            types[actionId] = {'action': action};
+            if (actionDoc !== null) {
+                action.doc = actionDoc;
+            }
+            if (docGroup !== null) {
+                action.docGroup = docGroup;
+            }
+
         // Action section?
         } else if (matchName === 'section') {
             const sectionString = match.groups.type;
@@ -349,55 +436,6 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
                 action[sectionString] = urls;
             }
 
-        // Enum value?
-        } else if (matchName === 'value') {
-            const valueString = match.groups.id;
-
-            // Add the enum value
-            const enum_ = userType.enum;
-            if (!('values' in enum_)) {
-                enum_.values = [];
-            }
-            const enumValue = {'name': valueString};
-            enum_.values.push(enumValue);
-            const enumValueDoc = getDoc();
-            if (enumValueDoc !== null) {
-                enumValue.doc = enumValueDoc;
-            }
-
-            // Record the definition's line number
-            filepos[`${enum_.name}.${valueString}`] = linenum;
-
-        // Struct member?
-        } else if (matchName === 'member') {
-            const optional = typeof match.groups.optional !== 'undefined';
-            const memberName = match.groups.id;
-
-            // Add the member
-            const {struct} = userType;
-            if (!('members' in struct)) {
-                struct.members = [];
-            }
-            const [memberType, memberAttr] = parseTypedef(match);
-            const memberDoc = getDoc();
-            const member = {
-                'name': memberName,
-                'type': memberType
-            };
-            struct.members.push(member);
-            if (memberAttr !== null) {
-                member.attr = memberAttr;
-            }
-            if (memberDoc !== null) {
-                member.doc = memberDoc;
-            }
-            if (optional) {
-                member.optional = true;
-            }
-
-            // Record the definition's line number
-            filepos[`${struct.name}.${memberName}`] = linenum;
-
         // URL?
         } else if (matchName === 'urls') {
             const {method, path} = match.groups;
@@ -419,41 +457,6 @@ export function parseSchemaMarkdown(text, {types = {}, filename = '', validate =
 
             // Add the URL
             urls.push(actionUrl);
-
-        // Typedef?
-        } else if (matchName === 'typedef') {
-            const definitionId = match.groups.id;
-
-            // Type already defined?
-            if (builtinTypes.has(definitionId) || Object.hasOwn(builtinDeprecated, definitionId) || Object.hasOwn(types, definitionId)) {
-                addError(`Redefinition of type '${definitionId}'`, filename, linenum);
-            }
-
-            // Clear parser state
-            action = null;
-            urls = null;
-            userType = null;
-            const typedefDoc = getDoc();
-
-            // Create the typedef
-            const [typedefType, typedefAttr] = parseTypedef(match);
-            const typedef = {
-                'name': definitionId,
-                'type': typedefType
-            };
-            types[definitionId] = {'typedef': typedef};
-            if (typedefAttr !== null) {
-                typedef.attr = typedefAttr;
-            }
-            if (typedefDoc !== null) {
-                typedef.doc = typedefDoc;
-            }
-            if (docGroup !== null) {
-                typedef.docGroup = docGroup;
-            }
-
-            // Record the definition's line number
-            filepos[definitionId] = linenum;
 
         // Unrecognized line syntax
         } else {
