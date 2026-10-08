@@ -20,9 +20,23 @@ $(eval $(call WGET, https://craigahobbs.github.io/javascript-build/eslint.config
 include Makefile.base
 
 
+help:
+	@echo "            [test-emacs]"
+
+
 clean:
 	rm -rf Makefile.base jsdoc.json eslint.config.js
 
 
 doc:
 	cp -R static/* build/doc/
+
+
+# The Emacs Schema Markdown mode (static/language/schema-markdown-mode.el) unit tests
+EMACS ?= emacs
+
+.PHONY: test-emacs
+commit: test-emacs
+test-emacs:
+	$(EMACS) -Q --batch -L static/language -l static/language/test/schema-markdown-mode-test.el \
+		--eval '(ert-run-tests-batch-and-exit $(if $(TEST),"$(TEST)",t))'
