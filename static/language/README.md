@@ -42,7 +42,13 @@ Schema Markdown contains the following built-in types:
 
 - **bool** - a boolean
 
-- **date** - an ISO-8601 date string (YYYY-MM-DD)
+- **date** - an ISO-8601 date string (YYYY-MM-DD), or a datetime string (as for **datetime**) at midnight in its
+  own timezone, whose date is the string's date (e.g. "2026-10-09T00:00:00-07:00" is 2026-10-09). A date
+  object is the start of its day - local midnight, or the day's first time when a timezone change skips
+  midnight. So in a timezone whose clocks jump at midnight, a date object serialized as a datetime string on
+  such a day (e.g. "2026-03-08T01:00:00-04:00" in Havana) isn't at midnight, and doesn't validate as a date. In
+  JavaScript, `JSON.stringify` writes a `Date` in UTC (e.g. "2026-10-09T07:00:00.000Z" for a Los Angeles
+  date), which isn't midnight either - send a date member's original string, not its validated `Date`.
 
 - **datetime** - an ISO-8601 datetime string ("T" separator and a required "Z" or ±hh:mm timezone; seconds and fractional seconds optional)
 

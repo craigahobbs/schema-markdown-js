@@ -3,6 +3,7 @@
 
 import {getEnumValues, getReferencedTypes, getStructMembers, validateType, validateTypeModel} from '../lib/schema.js';
 import {strict as assert} from 'node:assert';
+import {env} from 'node:process';
 import test from 'node:test';
 import {typeModel} from '../lib/typeModel.js';
 
@@ -910,6 +911,69 @@ test('validateType, date string datetime', () => {
             'message': 'Invalid value "2013-05-26T13:11:00-07:00" (type "string"), expected type "date"'
         }
     );
+});
+
+
+test('validateType, date string datetime midnight', () => {
+    // A datetime at midnight in its own offset is the string's date
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, '2013-05-26T00:00:00-07:00'), new Date(2013, 4, 26));
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, '2013-05-26T00:00Z'), new Date(2013, 4, 26));
+    assert.deepEqual(validateTypeHelper({'builtin': 'date'}, '2013-05-26T00:00:00.000+09:00'), new Date(2013, 4, 26));
+});
+
+
+test('validateType, date string datetime midnight invalid', () => {
+    for (const obj of [
+        '2013-05-26T00:00:00.001Z',
+        '2013-05-26T00:00:00',
+        '2013-05-26T00:00:00+24:00',
+        '2013-05-26T00:00:00+05:60',
+        '2013-05-26T00:00:00+\u0660\u0665:00'
+    ]) {
+        assert.throws(
+            () => {
+                validateTypeHelper({'builtin': 'date'}, obj);
+            },
+            {
+                'name': 'ValidationError',
+                'memberFqn': null,
+                'message': `Invalid value "${obj}" (type "string"), expected type "date"`
+            }
+        );
+    }
+});
+
+
+test('validateType, date string year before 100', () => {
+    for (const obj of ['0050-01-01', '0050-01-01T00:00Z']) {
+        const value = validateTypeHelper({'builtin': 'date'}, obj);
+        assert.deepEqual([value.getFullYear(), value.getMonth(), value.getDate(), value.getHours()], [50, 0, 1, 0]);
+    }
+});
+
+
+test('validateType, date skipped midnight', () => {
+    // In a timezone whose clocks jump from midnight to 01:00, the day starts at 01:00
+    const tz = env.TZ;
+    env.TZ = 'America/Havana';
+    try {
+        const value = validateTypeHelper({'builtin': 'date'}, '2026-03-08');
+        assert.equal(value.getHours(), 1);
+        assert.deepEqual(validateTypeHelper({'builtin': 'date'}, value), value);
+        assert.throws(
+            () => {
+                validateTypeHelper({'builtin': 'date'}, new Date(2026, 2, 8, 2));
+            },
+            {'name': 'ValidationError', 'memberFqn': null}
+        );
+    } finally {
+        if (tz === undefined) {
+            delete env.TZ;
+        /* c8 ignore next 3 */
+        } else {
+            env.TZ = tz;
+        }
+    }
 });
 
 
