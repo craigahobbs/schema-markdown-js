@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.3 (2026-10-09)
+
+- [b7ac66b](https://github.com/craigahobbs/schema-markdown-js/commit/b7ac66b) - a date member also accepts a datetime string at midnight in its own timezone, so a serialized date value \(e.g. "2026-10-09T00:00:00-07:00"\) validates as a date, a date value is valid at the start of its day, and a date string's year 0 through 99 is no longer 1900 through 1999
+
+- [e010a71](https://github.com/craigahobbs/schema-markdown-js/commit/e010a71) - schema-markdown-mode.el 1.0 - comments only at the start of a line, strings without escapes that don't run on, highlighting and indentation that follow the language structure, and commenting out code with "#-" \(not documentation\); add the Emacs mode unit tests \(make test-emacs, run by make commit\)
+
 ## 1.3.2 (2026-07-29)
 
 - [7706dce](https://github.com/craigahobbs/schema-markdown-js/commit/7706dce) - restructure the parse loop and type validation to align with the bare-script ports
