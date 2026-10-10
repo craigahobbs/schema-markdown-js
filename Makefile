@@ -32,11 +32,15 @@ doc:
 	cp -R static/* build/doc/
 
 
-# The Emacs Schema Markdown mode (static/language/schema-markdown-mode.el) unit tests
+# The Emacs Schema Markdown mode (static/language/schema-markdown-mode.el) unit tests - skipped if Emacs isn't installed
 EMACS ?= emacs
 
 .PHONY: test-emacs
 commit: test-emacs
 test-emacs:
-	$(EMACS) -Q --batch -L static/language -l static/language/test/schema-markdown-mode-test.el \
-		--eval '(ert-run-tests-batch-and-exit $(if $(TEST),"$(TEST)",t))'
+	if command -v $(EMACS) > /dev/null 2>&1; then \
+		$(EMACS) -Q --batch -L static/language -l static/language/test/schema-markdown-mode-test.el \
+			--eval '(ert-run-tests-batch-and-exit $(if $(TEST),"$(TEST)",t))'; \
+	else \
+		echo "$(EMACS) not found - skipping the Emacs mode tests"; \
+	fi
